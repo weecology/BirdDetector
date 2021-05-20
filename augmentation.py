@@ -26,6 +26,11 @@ def get_transform(augment):
     """Albumentations transformation of bounding boxs"""
     if augment:
         transform = A.Compose([
+            A.OneOf([
+            ZoomSafe(height=300,width=300),
+            ZoomSafe(height=400,width=400),
+            ZoomSafe(height=500,width=500),
+            ]),
             A.GaussianBlur(),
             A.Flip(p=0.5),
             A.RandomBrightnessContrast(),
@@ -53,12 +58,18 @@ class ZoomSafe(A.DualTransform):
         uint8, float32
     """
 
-    def __init__(self, height, width, erosion_rate=0.0, interpolation=cv2.INTER_LINEAR, always_apply=False, p=1.0):
+    def __init__(self, height, width, interpolation=cv2.INTER_LINEAR, always_apply=False, p=1.0):
         super(ZoomSafe, self).__init__(always_apply, p)
         self.height = height
         self.width = width
         self.interpolation = interpolation
-        self.erosion_rate = erosion_rate
+        
+        #Sanity check
+        if self.height > height:
+            raise ValueError("Requested crop height {} is greater than image height {}".format(self.height, height))
+
+        if self.width > width:
+            raise ValueError("Requested crop width {} is greater than image width {}".format(self.width, width))
 
     def apply(self, img, crop_height=0, crop_width=0, h_start=0, w_start=0, interpolation=cv2.INTER_LINEAR, **params):
         crop = F.random_crop(img, crop_height, crop_width, h_start, w_start)
@@ -67,32 +78,44 @@ class ZoomSafe(A.DualTransform):
     def get_params_dependent_on_targets(self, params):
         img_h, img_w = params["image"].shape[:2]
         if len(params["bboxes"]) == 0:  # less likely, this class is for use with bboxes.
-            erosive_h = int(img_h * (1.0 - self.erosion_rate))
-            crop_height = img_h if erosive_h >= img_h else random.randint(erosive_h, img_h)
             return {
                 "h_start": random.random(),
                 "w_start": random.random(),
-                "crop_height": crop_height,
-                "crop_width": int(crop_height * img_w / img_h),
+                "crop_height": self.height,
+                "crop_width": self.width,
             }
-        # get union of selected bboxes
-        index = np.random.choice(params["bboxes"].shape[0], 1, replace=False)
-        selected_boxes = params["bboxes"][index,:]
+        # get union of selected bboxes (single box)
+        index = np.random.choice(len(params["bboxes"]), 1, replace=False)[0]
+        selected_boxes = [params["bboxes"][index]]
         x, y, x2, y2 = union_of_bboxes(
-            width=img_w, height=img_h, bboxes=selected_boxes, erosion_rate=self.erosion_rate
+            width=img_w, height=img_h, bboxes=selected_boxes, erosion_rate=0
         )
         # Create a box around the x, y
         x_box_width = x2-x
         side_width = img_w - x2
-        w_lower = np.max(x - (self.width - x_box_width), 0)
+        w_lower = np.max([x - (self.width - x_box_width), 0])
         w_upper = x - (self.width - x_box_width - side_width)
-        w_start = np.random.randint(w_lower,w_upper)
+        
+        #Edge case, if box touches the edge of the image, the w_start has to be exactly at img_w - self.width
+        if w_lower == w_upper:
+            w_start = w_lower
+        else:
+            w_start = np.random.randint(w_lower,w_upper)
         
         y_box_height = y2-y
         side_height = img_h - y2
-        h_lower = np.max(y - (self.height - y_box_height), 0)
+        h_lower = np.max([y - (self.height - y_box_height), 0])
         h_upper = y - (self.height - y_box_height - side_height)
-        h_start = np.random.randint(h_lower,h_upper)
+        
+        #Same edge case as above
+        if h_lower == h_upper:
+            h_start = h_lower
+        else:
+            h_start = np.random.randint(h_lower,h_upper)
+                    
+        #Downstream function want h_start and w_start as fractions of image shape
+        h_start = h_start/img_h
+        w_start = w_start/img_w
         
         return {"h_start": h_start, "w_start": w_start, "crop_height": self.height, "crop_width": self.width}
 
