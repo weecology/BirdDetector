@@ -97,7 +97,7 @@ class ZoomSafe(A.DualTransform):
         w_upper = x - (self.width - x_box_width - side_width)
         
         #Edge case, if box touches the edge of the image, the w_start has to be exactly at img_w - self.width
-        if w_lower == w_upper:
+        if w_lower >= w_upper:
             w_start = w_lower
         else:
             w_start = np.random.randint(w_lower,w_upper)
@@ -108,7 +108,7 @@ class ZoomSafe(A.DualTransform):
         h_upper = y - (self.height - y_box_height - side_height)
         
         #Same edge case as above
-        if h_lower == h_upper:
+        if h_lower >= h_upper:
             h_start = h_lower
         else:
             h_start = np.random.randint(h_lower,h_upper)
