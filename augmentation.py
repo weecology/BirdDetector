@@ -26,12 +26,12 @@ def get_transform(augment):
     """Albumentations transformation of bounding boxs"""
     if augment:
         transform = A.Compose([
-            A.PadIfNeeded(min_height=350,min_width=350),
+            A.PadIfNeeded(min_height=600,min_width=600),
             A.OneOf([
-            ZoomSafe(height=300,width=300),
-            ZoomSafe(height=400,width=400),
             ZoomSafe(height=500,width=500),
-            ]),
+            ZoomSafe(height=500,width=500),
+            ZoomSafe(height=500,width=500),
+            ], p=1),
             A.GaussianBlur(),
             A.Flip(p=0.5),
             A.RandomBrightnessContrast(),
@@ -94,25 +94,25 @@ class ZoomSafe(A.DualTransform):
         # Create a box around the x, y
         x_box_width = x2-x
         side_width = img_w - x2
-        w_lower = np.max([x - (self.width - x_box_width), 0])
-        w_upper = x - (self.width - x_box_width - side_width)
+        w_lower = int(np.max([x - (self.width - x_box_width), 0]))
+        w_upper = int(x - (self.width - x_box_width - side_width))
         
         #Edge case, if box touches the edge of the image, the w_start has to be exactly at img_w - self.width
         if w_lower >= w_upper:
             w_start = w_lower
         else:
-            w_start = np.random.randint(int(w_lower),int(w_upper))
+            w_start = np.random.randint(w_lower,w_upper)
         
         y_box_height = y2-y
         side_height = img_h - y2
-        h_lower = np.max([y - (self.height - y_box_height), 0])
-        h_upper = y - (self.height - y_box_height - side_height)
+        h_lower = int(np.max([y - (self.height - y_box_height), 0]))
+        h_upper = int(y - (self.height - y_box_height - side_height))
         
         #Same edge case as above
         if h_lower >= h_upper:
             h_start = h_lower
         else:
-            h_start = np.random.randint(int(h_lower),int(h_upper))
+            h_start = np.random.randint(h_lower,h_upper)
                     
         #Downstream function want h_start and w_start as fractions of image shape
         h_start = h_start/img_h

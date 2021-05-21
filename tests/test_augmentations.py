@@ -14,6 +14,10 @@ def test_get_transform():
     m.config["workers"] = 0
     ds = m.load_dataset(csv_file=csv_file, root_dir=os.path.dirname(csv_file), augment=True)
     
+    #Probabilistic transforms
+    for x in range(10):
+        step = next(iter(ds))
+        
     step = next(iter(ds))
     assert len(step) == 3
     
