@@ -1,8 +1,6 @@
 #Transform augmentations
 import albumentations as A
 from albumentations import functional as F
-from albumentations.augmentations.bbox_utils import union_of_bboxes
-import random
 import numpy as np
 import cv2
 
@@ -92,6 +90,11 @@ class ZoomSafe(A.DualTransform):
             selected_box = params["bboxes"][index]            
         
         x, y, x2, y2 = selected_box[:4]
+        #Buffer due to rounding errors to give a little space
+        x = x - 0.01
+        y = y - 0.01
+        x2 = x2 + 0.01
+        y2 = y2 + 0.01
         
         # Create a box around the x, y
         x_box_width = x2-x
@@ -99,7 +102,7 @@ class ZoomSafe(A.DualTransform):
         if x_box_width > crop_width:
             raise ValueError("Box width {} is larger than crop width {}".format(x_box_width, crop_width))
         
-        w_lower = np.max([x - ( crop_width- x_box_width), 0])
+        w_lower = np.clip(x - ( crop_width- x_box_width), 0,1)
         w_upper = np.max([1-crop_width-side_width,x])
         
         #Edge case, if box touches the edge of the image, the w_start has to be exactly at img_w - self.width
@@ -114,7 +117,7 @@ class ZoomSafe(A.DualTransform):
             raise ValueError("Box height {} is larger than crop height {}".format(y_box_height, crop_height))
         
         side_height = 1 - y2
-        h_lower = np.max([y - (crop_height - y_box_height), 0])
+        h_lower = np.clip(y - (crop_height - y_box_height),0,1)
         h_upper = np.max([1-crop_height-side_height,y])
         
         #Same edge case as above
@@ -126,12 +129,7 @@ class ZoomSafe(A.DualTransform):
         return {"h_start": h_start, "w_start": w_start, "crop_height": self.height, "crop_width": self.width}
 
     def apply_to_bbox(self, bbox, crop_height=0, crop_width=0, h_start=0, w_start=0, rows=0, cols=0, **params):
-        augmented_boxes = F.bbox_random_crop(bbox, crop_height, crop_width, h_start, w_start, rows, cols)
-        if len(augmented_boxes) == 0:
-            raise ValueError("Blank annotations created from input boxes {}, with crop height {}, crop width {}, h_start {}, w_start, rows {}, cols {}".format(
-            bbox, crop_height, crop_width, h_start, w_start, rows, cols))
-        else:
-            return augmented_boxes
+        return F.bbox_random_crop(bbox, crop_height, crop_width, h_start, w_start, rows, cols)
 
     @property
     def targets_as_params(self):
