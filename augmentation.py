@@ -77,42 +77,52 @@ class ZoomSafe(A.DualTransform):
 
     def get_params_dependent_on_targets(self, params):
         img_h, img_w = params["image"].shape[:2]
+        
+        crop_width = self.width/img_w
+        crop_height = self.height/img_h
+        
         if len(params["bboxes"]) == 0:
             raise ValueError("No bounding boxes found for image")
 
         # get union of selected bboxes (single box)
         index = np.random.choice(len(params["bboxes"]), 1, replace=False)[0]
-        selected_boxes = [params["bboxes"][index]]
-        x, y, x2, y2 = union_of_bboxes(
-            width=img_w, height=img_h, bboxes=selected_boxes, erosion_rate=0
-        )
+        if type(params["bboxes"]) == np.ndarray:
+            selected_box = params["bboxes"][index,:]
+        else:
+            selected_box = params["bboxes"][index]            
+        
+        x, y, x2, y2 = selected_box[:4]
+        
         # Create a box around the x, y
         x_box_width = x2-x
-        side_width = img_w - x2
-        w_lower = int(np.max([x - (self.width - x_box_width), 0]))
-        w_upper = int(x - (self.width - x_box_width - side_width))
+        side_width = 1 - x2
+        if x_box_width > crop_width:
+            raise ValueError("Box width {} is larger than crop width {}".format(x_box_width, crop_width))
+        
+        w_lower = np.max([x - ( crop_width- x_box_width), 0])
+        w_upper = np.max([1-crop_width-side_width,x])
         
         #Edge case, if box touches the edge of the image, the w_start has to be exactly at img_w - self.width
         if w_lower >= w_upper:
             w_start = w_lower
         else:
-            w_start = np.random.randint(w_lower,w_upper)
+            w_start = np.random.random() * (w_upper-w_lower) + w_lower
         
         y_box_height = y2-y
-        side_height = img_h - y2
-        h_lower = int(np.max([y - (self.height - y_box_height), 0]))
-        h_upper = int(y - (self.height - y_box_height - side_height))
+        
+        if y_box_height > crop_height:
+            raise ValueError("Box height {} is larger than crop height {}".format(y_box_height, crop_height))
+        
+        side_height = 1 - y2
+        h_lower = np.max([y - (crop_height - y_box_height), 0])
+        h_upper = np.max([1-crop_height-side_height,y])
         
         #Same edge case as above
         if h_lower >= h_upper:
             h_start = h_lower
         else:
-            h_start = np.random.randint(h_lower,h_upper)
-                    
-        #Downstream function want h_start and w_start as fractions of image shape
-        h_start = h_start/img_h
-        w_start = w_start/img_w
-        
+            h_start = np.random.random() * (h_upper-h_lower) + h_lower
+    
         return {"h_start": h_start, "w_start": w_start, "crop_height": self.height, "crop_width": self.width}
 
     def apply_to_bbox(self, bbox, crop_height=0, crop_width=0, h_start=0, w_start=0, rows=0, cols=0, **params):
