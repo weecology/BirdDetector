@@ -527,7 +527,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
             except Exception as e:
                 print(e)    
     if save_dir:
-        model.trainer.save_checkpoint("{}/species_model.pl".format(save_dir))
+        model.trainer.save_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_list)))
     
     #delete model and free up memory
     del model
@@ -582,3 +582,9 @@ if __name__ =="__main__":
         images = glob.glob("{}/*.png".format(savedir))
         for img in images:
             comet_logger.experiment.log_image(img, image_scale=0.25)    
+
+    #Joint model
+    train_list = ["terns","palmyra","penguins","pfeifer","hayes","everglades"]
+    test_sets = ["murres","pelicans","schedl"]
+    recall, precision = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
+    
