@@ -101,7 +101,7 @@ class ZoomSafe(A.DualTransform):
         if w_lower >= w_upper:
             w_start = w_lower
         else:
-            w_start = np.random.randint(w_lower,w_upper)
+            w_start = np.random.randint(int(w_lower),int(w_upper))
         
         y_box_height = y2-y
         side_height = img_h - y2
@@ -112,7 +112,7 @@ class ZoomSafe(A.DualTransform):
         if h_lower >= h_upper:
             h_start = h_lower
         else:
-            h_start = np.random.randint(h_lower,h_upper)
+            h_start = np.random.randint(int(h_lower),int(h_upper))
                     
         #Downstream function want h_start and w_start as fractions of image shape
         h_start = h_start/img_h
