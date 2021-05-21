@@ -120,7 +120,12 @@ class ZoomSafe(A.DualTransform):
         return {"h_start": h_start, "w_start": w_start, "crop_height": self.height, "crop_width": self.width}
 
     def apply_to_bbox(self, bbox, crop_height=0, crop_width=0, h_start=0, w_start=0, rows=0, cols=0, **params):
-        return F.bbox_random_crop(bbox, crop_height, crop_width, h_start, w_start, rows, cols)
+        augmented_boxes = F.bbox_random_crop(bbox, crop_height, crop_width, h_start, w_start, rows, cols)
+        if len(augmented_boxes) == 0:
+            raise ValueError("Blank annotations created from input boxes {}, with crop height {}, crop width {}, h_start {}, w_start, rows {}, cols {}".format(
+            bbox, crop_height, crop_width, h_start, w_start, rows, cols))
+        else:
+            return augmented_boxes
 
     @property
     def targets_as_params(self):

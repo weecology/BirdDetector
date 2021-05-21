@@ -32,8 +32,8 @@ def test_ZoomSafe():
     z = augmentation.ZoomSafe(height=300, width=300)
     image = np.array(Image.open(get_data("OSBS_029.png")))
     df = pd.read_csv(get_data("OSBS_029.csv"))
-    bboxes = df[["xmin", "ymin", "xmax","ymax"]].values.astype(float)    
+    bboxes = df[["xmin", "ymin", "xmax","ymax"]].iloc[0].values.astype(float)    
     for x in range(100):
-        augmented_image = z(image=image, bboxes=bboxes)["image"]
+        augmented_image = z(image=image, bboxes=[bboxes])["image"]
         #pyplot.figure()
         #pyplot.imshow(augmented_image)

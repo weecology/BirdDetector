@@ -154,26 +154,7 @@ def prepare_palmyra(generate=True):
             allow_empty=False
         )
         
-        src = rio.open("/orange/ewhite/everglades/Palmyra/CooperEelPond_53M.tif")
-        numpy_image = src.read()
-        numpy_image = np.moveaxis(numpy_image,0,2)
-        training_image = numpy_image[:,:,:3].astype("uint8")
-        
-        df = shapefile_to_annotations(shapefile="/orange/ewhite/everglades/Palmyra/CooperEelPond_53m_annotation.shp", 
-                                      rgb="/orange/ewhite/everglades/Palmyra/CooperEelPond_53M.tif", buffer_size=0.15)
-    
-        df.to_csv("Figures/training_annotations.csv",index=False)        
-        train_annotations_2 = preprocess.split_raster(
-            numpy_image=training_image,
-            annotations_file="Figures/training_annotations.csv",
-            patch_size=1500,
-            patch_overlap=0.05,
-            base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
-            image_name="CooperEelPond_53M.tif",
-            allow_empty=False
-        )
-        
-        train_annotations = pd.concat([train_annotations_1, train_annotations_2])
+        train_annotations = pd.concat([train_annotations_1])
         train_annotations.to_csv(train_path,index=False)
             
     return {"train":train_path, "test":test_path}
@@ -423,8 +404,11 @@ def prepare_schedl(generate=True):
     return {"test":test_path}
 
 
-def view_training(paths,comet_logger):
-    """For each site, grab three images and view annotations"""
+def view_training(paths,comet_logger, n=10):
+    """For each site, grab three images and view annotations
+    Args:
+        n: number of images to load
+    """
     m = main.deepforest(label_dict={"Bird":0}, transforms=get_transform)
     
     with comet_logger.experiment.context_manager("view_training"):
@@ -587,4 +571,4 @@ if __name__ =="__main__":
     train_list = ["terns","palmyra","penguins","pfeifer","hayes","everglades"]
     test_sets = ["murres","pelicans","schedl"]
     recall, precision = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
-    
+    #Don't log validation scores till the end of project
