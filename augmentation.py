@@ -26,7 +26,7 @@ def get_transform(augment):
     """Albumentations transformation of bounding boxs"""
     if augment:
         transform = A.Compose([
-            A.PadIfNeeded(min_height=350,width=350),
+            A.PadIfNeeded(min_height=350,min_width=350),
             A.OneOf([
             ZoomSafe(height=300,width=300),
             ZoomSafe(height=400,width=400),
