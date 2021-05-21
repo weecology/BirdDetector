@@ -77,13 +77,9 @@ class ZoomSafe(A.DualTransform):
 
     def get_params_dependent_on_targets(self, params):
         img_h, img_w = params["image"].shape[:2]
-        if len(params["bboxes"]) == 0:  # less likely, this class is for use with bboxes.
-            return {
-                "h_start": random.random(),
-                "w_start": random.random(),
-                "crop_height": self.height,
-                "crop_width": self.width,
-            }
+        if len(params["bboxes"]) == 0:
+            raise ValueError("No bounding boxes found for image")
+
         # get union of selected bboxes (single box)
         index = np.random.choice(len(params["bboxes"]), 1, replace=False)[0]
         selected_boxes = [params["bboxes"][index]]
