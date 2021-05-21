@@ -28,10 +28,10 @@ def get_transform(augment):
         transform = A.Compose([
             A.PadIfNeeded(min_height=600,min_width=600),
             A.OneOf([
+            ZoomSafe(height=300,width=300),
+            ZoomSafe(height=400,width=400),
             ZoomSafe(height=500,width=500),
-            ZoomSafe(height=500,width=500),
-            ZoomSafe(height=500,width=500),
-            ], p=1),
+            ], p=0.5),
             A.GaussianBlur(),
             A.Flip(p=0.5),
             A.RandomBrightnessContrast(),
