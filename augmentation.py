@@ -27,7 +27,7 @@ def get_transform(augment):
     if augment:
         transform = A.Compose([
             A.PadIfNeeded(min_height=600,min_width=600, border_mode=cv2.BORDER_CONSTANT, value=0),
-            RandomBBoxSafeCrop(p=0.75, n=3),
+            A.RandomSizedBBoxSafeCrop(height=600, width=600, erosion_rate=1),
             A.Flip(p=0.5),
             A.pytorch.ToTensorV2(),
         ], bbox_params=A.BboxParams(format='pascal_voc',label_fields=["category_ids"]))
@@ -192,7 +192,7 @@ class RandomBBoxSafeCrop(A.DualTransform):
         x, y, x2, y2 = union_of_bboxes(
             width=img_w, height=img_h, bboxes=selected_boxes, erosion_rate=self.erosion_rate
         )
-        # find bigger region
+        # find bigger region while mantaining x,y ratio 
         min_expand = random.random()
         max_expand = random.random()
         
