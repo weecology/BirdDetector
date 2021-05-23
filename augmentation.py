@@ -84,11 +84,11 @@ class ZoomSafe(A.DualTransform):
             raise ValueError("No bounding boxes found for image")
 
         # get union of selected bboxes (single box)
-        #index = np.random.choice(len(params["bboxes"]), 1, replace=False)[0]
+        index = np.random.choice(len(params["bboxes"]), 1, replace=False)[0]
         if type(params["bboxes"]) == np.ndarray:
-            selected_box = params["bboxes"][1,:]
+            selected_box = params["bboxes"][index,:]
         else:
-            selected_box = params["bboxes"][1]            
+            selected_box = params["bboxes"][index]            
         
         x, y, x2, y2 = selected_box[:4]
         
