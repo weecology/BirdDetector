@@ -430,7 +430,7 @@ def view_training(paths,comet_logger, n=10):
                         with tempfile.TemporaryDirectory() as tmpdirname:
                             image = image * 255
                             image = image.astype("uint8")
-                            cv2.imwrite("{}/{}".format(tmpdirname, image_path[0]), )
+                            cv2.imwrite("{}/{}".format(tmpdirname, image_path[0]),image )
                             comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]),image_scale=0.25)                
                 except Exception as e:
                     print(e)
