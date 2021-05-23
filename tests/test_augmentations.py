@@ -5,7 +5,7 @@ from deepforest import main
 from deepforest import get_data
 from PIL import Image
 import numpy as np
-from matplotlib import pyplot
+from matplotlib import pyplot as plt
 import pandas as pd
     
 def test_get_transform():
@@ -27,7 +27,31 @@ def test_get_transform():
     m.create_trainer()
     
     m.trainer.fit(m)
+
+def test_RandomBBoxSafeCrop():
+    z = augmentation.RandomBBoxSafeCrop()
+    image = np.array(Image.open("/Users/benweinstein/Downloads/46544951.png"))
+    df = pd.read_csv("/Users/benweinstein/Downloads/everglades_train.csv")
+    df = df[df.image_path == '46544951.png']
+    bboxes = df[["xmin", "ymin", "xmax","ymax"]].values.astype(float)    
+    fig = plt.figure()
+    for x in range(25):
+        augmented = z(image=image, bboxes=bboxes/image.shape[0])
+        augmented_image = augmented["image"]
+        augmented_image.shape[0] == augmented_image.shape[1] 
+        passes = False
+        ax = fig.add_subplot(5,5, x+1)
+        ax.imshow(augmented_image)
+        #Atleast one box passes
+        for x in augmented["bboxes"]:
+            if all([(y >= 0) & (y<=1) for y in list(x)]):
+                passes = True
+            
+        assert passes
     
+    #plt.show()
+    print("end")
+        
 def test_ZoomSafe():
     z = augmentation.ZoomSafe(height=100, width=100)
     image = np.array(Image.open("/Users/benweinstein/Downloads/46544951.png"))
