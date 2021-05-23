@@ -29,13 +29,25 @@ def test_get_transform():
     m.trainer.fit(m)
     
 def test_ZoomSafe():
-    z = augmentation.ZoomSafe(height=500, width=500)
+    z = augmentation.ZoomSafe(height=100, width=100)
     image = np.array(Image.open("/Users/benweinstein/Downloads/46544951.png"))
     df = pd.read_csv("/Users/benweinstein/Downloads/everglades_train.csv")
     df = df[df.image_path == '46544951.png']
     bboxes = df[["xmin", "ymin", "xmax","ymax"]].values.astype(float)    
     for x in range(100):
-        augmented_image = z(image=image, bboxes=bboxes/image.shape[0])["image"]
+        print(x)
+        augmented = z(image=image, bboxes=bboxes/image.shape[0])
+        augmented_image = augmented["image"]
+        assert augmented_image.shape[0] == 100
+        passes = False
+        
+        #Atleast one box passes
+        for x in augmented["bboxes"]:
+            if all([(y >= 0) & (y<=1) for y in list(x)]):
+                passes = True
+            
+        assert passes
+        
         #pyplot.figure()
         #pyplot.imshow(augmented_image)
         
@@ -44,11 +56,14 @@ def test_ZoomSafe_dataset(tmpdir):
     
     df = pd.read_csv("/Users/benweinstein/Downloads/everglades_train.csv")
     df = df[df.image_path == '46544951.png']
-    print(df)
     df.to_csv("{}/example.csv".format(tmpdir))
     
     m.config["workers"] = 0
     ds = m.load_dataset(csv_file="{}/example.csv".format(tmpdir), root_dir="/Users/benweinstein/Downloads/", augment=True)
     
-    for x in ds:
-        path, image, targets = x
+    for x in range(10):    
+        print(x)
+        for x in ds:
+            path, image, targets = x
+            print(targets[0]["boxes"])
+            assert not len(targets[0]["boxes"]) == 0
