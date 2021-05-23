@@ -26,7 +26,7 @@ def get_transform(augment):
     """Albumentations transformation of bounding boxs"""
     if augment:
         transform = A.Compose([
-            #A.PadIfNeeded(min_height=600,min_width=600, border_mode=cv2.BORDER_CONSTANT, value=0),
+            A.PadIfNeeded(min_height=600,min_width=600, border_mode=cv2.BORDER_CONSTANT, value=0),
             A.OneOf([
             ZoomSafe(height=200,width=200),                
             ZoomSafe(height=300,width=300),
