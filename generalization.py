@@ -1,20 +1,21 @@
 #Prepare all training sets
 import comet_ml
 import cv2
-import model
+from model import BirdDetector
 import glob
 from PIL import ImageFile
 from pytorch_lightning.loggers import CometLogger
 from deepforest import preprocess
 from deepforest import visualize
+from datetime import datetime
 from augmentation import get_transform
 from shapely.geometry import Point, box
+
 import geopandas as gpd
 import pandas as pd
 import rasterio as rio
 import numpy as np
 import os
-from datetime import datetime
 import PIL
 import tempfile
 import random
@@ -409,7 +410,7 @@ def view_training(paths,comet_logger, n=10):
     Args:
         n: number of images to load
     """
-    m = model.BirdDetector(transforms=get_transform)
+    m = BirdDetector(transforms=get_transform)
     
     with comet_logger.experiment.context_manager("view_training"):
         for site in paths:
@@ -478,7 +479,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     comet_logger.experiment.log_parameter("training_images",len(train_annotations.image_path.unique()))
     comet_logger.experiment.log_parameter("training_annotations",train_annotations.shape[0])
 
-    model = model.BirdDetector(transforms = get_transform)
+    model = BirdDetector(transforms = get_transform)
     model.config = config
 
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv"
@@ -534,7 +535,7 @@ if __name__ =="__main__":
     except Exception as e:
         print(e)
         
-    model = model.BirdDetector(transforms=get_transform)
+    model = BirdDetector(transforms=get_transform)
     config = model.config
     
     path_dict = prepare()
