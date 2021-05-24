@@ -1,6 +1,7 @@
 #Test Augmentations
 import augmentation
 import os
+import model
 from deepforest import main
 from deepforest import get_data
 from PIL import Image
@@ -9,8 +10,9 @@ from matplotlib import pyplot as plt
 import pandas as pd
     
 def test_get_transform():
-    csv_file = get_data("example.csv")    
-    m = main.deepforest(num_classes=1, label_dict={"Tree":0},transforms=augmentation.get_transform)
+    ROOT = os.path.dirname(model.__file__)    
+    csv_file = "{}/data/46544951.csv".format(ROOT)    
+    m = model.BirdDetector(transforms=augmentation.get_transform)
     m.config["workers"] = 0
     ds = m.load_dataset(csv_file=csv_file, root_dir=os.path.dirname(csv_file), augment=True)
     
