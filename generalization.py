@@ -409,7 +409,7 @@ def view_training(paths,comet_logger, n=10):
     Args:
         n: number of images to load
     """
-    m = model.BirdDetector(label_dict={"Bird":0}, transforms=get_transform)
+    m = model.BirdDetector(transforms=get_transform)
     
     with comet_logger.experiment.context_manager("view_training"):
         for site in paths:
@@ -478,7 +478,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     comet_logger.experiment.log_parameter("training_images",len(train_annotations.image_path.unique()))
     comet_logger.experiment.log_parameter("training_annotations",train_annotations.shape[0])
 
-    model = model.BirdDetector(label_dict={"Bird":0}, transforms = get_transform)
+    model = model.BirdDetector(transforms = get_transform)
     model.config = config
 
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv"
@@ -534,7 +534,7 @@ if __name__ =="__main__":
     except Exception as e:
         print(e)
         
-    model = model.BirdDetector(label_dict={"Bird":0}, transforms=get_transform)
+    model = model.BirdDetector(transforms=get_transform)
     config = model.config
     
     path_dict = prepare()
