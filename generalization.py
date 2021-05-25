@@ -515,7 +515,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
             except Exception as e:
                 print(e)    
     if save_dir:
-        model.trainer.save_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_list)))
+        model.trainer.save_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
     
     #delete model and free up memory
     del model
