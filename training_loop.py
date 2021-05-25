@@ -44,10 +44,8 @@ def prepare_palmyra(generate=True):
         
     return {"train":train_path, "test":test_path}
     
-def training(proportion, epochs=20, patch_size=2000,pretrained=True, iteration=None):
+def training(proportion,pretrained=True, comet_logger=None):
 
-    comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
-                                  project_name="everglades", workspace="bw4sz")
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     save_dir="/orange/ewhite/everglades/Palmyra/"
@@ -143,7 +141,10 @@ def training(proportion, epochs=20, patch_size=2000,pretrained=True, iteration=N
     
     return formatted_results
 
-def run(patch_size=2500, generate=False, client=None, epochs=10, ratio=2, pretrained=True):
+def run(generate=False, pretrained=True):
+    comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
+                                project_name="everglades", workspace="bw4sz",auto_output_logging = "simple") 
+    
     if generate:
         folder = 'crops/'
         for filename in os.listdir(folder):
@@ -160,11 +161,11 @@ def run(patch_size=2500, generate=False, client=None, epochs=10, ratio=2, pretra
     
     result_df = []
     for x in np.arange(0.25, 1.25, 0.25):
-        results = training(proportion=x, pretrained=pretrained)
+        results = training(proportion=x, pretrained=pretrained, comet_logger=comet_logger)
         result_df.append(results)
     result_df = pd.concat(result_df)
     result_df.to_csv("Figures/Palmyra_results_pretrained_{}.csv".format(pretrained))
     
-if __name__ == "__main__":
+if __name__ == "__main__":   
     run(pretrained=False, generate=True)
     run(pretrained=True, generate=True)
