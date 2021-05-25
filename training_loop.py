@@ -4,7 +4,6 @@
 import pandas as pd
 import comet_ml
 import gc
-import start_cluster
 from pytorch_lightning.loggers import CometLogger
 from deepforest import main
 from deepforest import preprocess
@@ -138,7 +137,7 @@ def training(proportion, epochs=20, patch_size=2000,pretrained=True, iteration=N
     formatted_results = pd.DataFrame({"proportion":[proportion], "pretrained": [pretrained], "annotations": [train_annotations.shape[0]],"precision": [precision],"recall": [recall], "iteration":[iteration]})
     
     #free up
-    model.trainer.save_checkpoint("{}/Palmyra_proportion_{}_pretrained_{}.pl".format(model_savedir,proportion, pretrained))
+    #model.trainer.save_checkpoint("{}/Palmyra_proportion_{}_pretrained_{}.pl".format(model_savedir,proportion, pretrained))
     
     del model
     torch.cuda.empty_cache()

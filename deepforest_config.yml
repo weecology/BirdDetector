@@ -1,0 +1,30 @@
+# Config file for DeepForest-pytorch module
+
+#cpu workers for data loaders
+#Dataloaders
+workers: 10
+gpus: 2
+distributed_backend: ddp
+
+batch_size: 3
+nms_thresh: 0.2
+score_thresh: 0.2
+train:
+    csv_file:
+    root_dir:
+    
+    #Optomizer  initial learning rate
+    lr: 0.001
+    
+    #Print loss every n epochs
+    print_freq: 1
+    epochs: 10
+    
+    #Useful debugging flag in pytorch lightning, set to True to get a single batch of training to test settings.
+    fast_dev_run: False
+validation:
+    #callback args
+    csv_file:
+    root_dir:
+    #Intersection over union evaluation
+    iou_threshold: 0.4
