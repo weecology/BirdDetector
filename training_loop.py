@@ -160,8 +160,8 @@ def run(patch_size=2500, generate=False, client=None, epochs=10, ratio=2, pretra
         prepare_palmyra(generate=generate)
     
     result_df = []
-    for x in np.arange(0.25, 1, 0.25):
-        results = training(proportion=1, pretrained=pretrained)
+    for x in np.arange(0.25, 1.25, 0.25):
+        results = training(proportion=x, pretrained=pretrained)
         result_df.append(results)
     result_df = pd.concat(result_df)
     result_df.to_csv("Figures/Palmyra_results_pretrained_{}.csv".format(pretrained))
