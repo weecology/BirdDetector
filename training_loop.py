@@ -3,6 +3,7 @@
 # conda activate Zooniverse_pytorch
 import comet_ml
 from deepforest import main
+import pandas as pd
 import gc
 from pytorch_lightning.loggers import CometLogger
 from deepforest import preprocess
@@ -167,5 +168,5 @@ def run(generate=False, pretrained=True):
     result_df.to_csv("Figures/Palmyra_results_pretrained_{}.csv".format(pretrained))
     
 if __name__ == "__main__":   
-    run(pretrained=False, generate=True)
-    run(pretrained=True, generate=True)
+    run(pretrained=False, generate=False)
+    run(pretrained=True, generate=False)
