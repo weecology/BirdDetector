@@ -128,10 +128,10 @@ def training(proportion,pretrained=True, comet_logger=None):
     comet_logger.experiment.log_metric("recall", recall)
     
     #log images
-    model.predict_file(csv_file = model.config["validation"]["csv_file"], root_dir = model.config["validation"]["root_dir"], savedir=model_savedir)
-    images = glob.glob("{}/*.png".format(model_savedir))
-    for img in images:
-        comet_logger.experiment.log_image(img, image_scale=0.2)
+   # model.predict_file(csv_file = model.config["validation"]["csv_file"], root_dir = model.config["validation"]["root_dir"], savedir=model_savedir)
+   # images = glob.glob("{}/*.png".format(model_savedir))
+   # for img in images:
+   #     comet_logger.experiment.log_image(img, image_scale=0.2)
      
     formatted_results = pd.DataFrame({"proportion":[proportion], "pretrained": [pretrained], "annotations": [train_annotations.shape[0]],"precision": [precision],"recall": [recall]})
     
