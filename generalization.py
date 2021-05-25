@@ -461,9 +461,12 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         
         try:
             df = pd.read_csv(path_dict[x]["train"])
+            df_test = pd.read_csv(path_dict[x]["test"])
+            
         except:
             raise ValueError("No training path supplied for {}".format(x))
         all_sets.append(df)
+        all_sets.append(df_test)
     
     train_annotations = pd.concat(all_sets)
     train_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv")
