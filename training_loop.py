@@ -1,11 +1,10 @@
 """Script to take the trained everglades model and predict the Palmyra data"""
 #srun -p gpu --gpus=2 --mem 70GB --time 5:00:00 --pty -u bash -i
 # conda activate Zooniverse_pytorch
-import pandas as pd
 import comet_ml
+from deepforest import main
 import gc
 from pytorch_lightning.loggers import CometLogger
-from deepforest import main
 from deepforest import preprocess
 import glob
 from generalization import shapefile_to_annotations
