@@ -166,7 +166,7 @@ def run(generate=False, pretrained=True):
         for x in np.arange(0.25, 1.25, 0.25):
             results = training(proportion=x, pretrained=pretrained, comet_logger=comet_logger)
             result_df.append(results)
-        result_df = pd.concat(result_df)
+    result_df = pd.concat(result_df)
     result_df.to_csv("Figures/Palmyra_results_pretrained_{}.csv".format(pretrained))
     
 if __name__ == "__main__":   
