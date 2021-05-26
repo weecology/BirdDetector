@@ -127,10 +127,10 @@ def training(proportion,pretrained=True, comet_logger=None):
     comet_logger.experiment.log_metric("recall", recall)
     
     #log images
-   # model.predict_file(csv_file = model.config["validation"]["csv_file"], root_dir = model.config["validation"]["root_dir"], savedir=model_savedir)
-   # images = glob.glob("{}/*.png".format(model_savedir))
-   # for img in images:
-   #     comet_logger.experiment.log_image(img, image_scale=0.2)
+    model.predict_file(csv_file = model.config["validation"]["csv_file"], root_dir = model.config["validation"]["root_dir"], savedir=model_savedir)
+    images = glob.glob("{}/*.png".format(model_savedir))
+    for img in images:
+        comet_logger.experiment.log_image(img, image_scale=0.2)
      
     formatted_results = pd.DataFrame({"proportion":[proportion], "pretrained": [pretrained], "annotations": [train_annotations.shape[0]],"precision": [precision],"recall": [recall]})
     
@@ -159,16 +159,17 @@ def run(generate=False, pretrained=True):
                 print('Failed to delete %s. Reason: %s' % (file_path, e))
         
         prepare_palmyra(generate=generate)
-    
-    result_df = []
-    for y in range(5):  
-        print("Iteration {}".format(y))
-        for x in np.arange(0.25, 1.25, 0.25):
-            results = training(proportion=x, pretrained=pretrained, comet_logger=comet_logger)
-            result_df.append(results)
-    result_df = pd.concat(result_df)
-    result_df.to_csv("Figures/Palmyra_results_pretrained_{}.csv".format(pretrained))
+        
+    training(proportion=1, pretrained=pretrained, comet_logger=comet_logger)
+    #result_df = []
+    #for y in range(5):  
+        #print("Iteration {}".format(y))
+        #for x in np.arange(0.25, 1.25, 0.25):
+            #results = training(proportion=x, pretrained=pretrained, comet_logger=comet_logger)
+            #result_df.append(results)
+    #result_df = pd.concat(result_df)
+    #result_df.to_csv("Figures/Palmyra_results_pretrained_{}.csv".format(pretrained))
     
 if __name__ == "__main__":   
-    #run(pretrained=False, generate=False)
+    run(pretrained=False, generate=False)
     run(pretrained=True, generate=False)
