@@ -1,11 +1,11 @@
 #DeepForest bird detection from extracted Zooniverse predictions
 import comet_ml
+import pandas as pd
 from pytorch_lightning.loggers import CometLogger
 from deepforest.callbacks import images_callback
 from deepforest import visualize
 from deepforest import main
 import traceback
-import pandas as pd
 import os
 import numpy as np
 import torch
