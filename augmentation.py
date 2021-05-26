@@ -33,7 +33,10 @@ def get_transform(augment):
         ], bbox_params=A.BboxParams(format='pascal_voc',label_fields=["category_ids"]))
         
     else:
-        transform = A.Compose([A.pytorch.ToTensorV2()])
+        transform = A.Compose([
+            A.PadIfNeeded(min_height=600,min_width=600, border_mode=cv2.BORDER_CONSTANT, value=0),            
+            A.pytorch.ToTensorV2()
+        ])
         
     return transform
 
