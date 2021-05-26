@@ -32,7 +32,7 @@ def prepare_palmyra(generate=True):
     train_annotations = preprocess.split_raster(
         numpy_image=training_image,
         annotations_file="Figures/training_annotations.csv",
-        patch_size=1500,
+        patch_size=13000,
         patch_overlap=0.05,
         base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
         image_name="CooperEelPond_53M.tif",
@@ -171,5 +171,5 @@ def run(generate=False, pretrained=True):
     #result_df.to_csv("Figures/Palmyra_results_pretrained_{}.csv".format(pretrained))
     
 if __name__ == "__main__":   
-    run(pretrained=False, generate=False)
+    run(pretrained=False, generate=True)
     run(pretrained=True, generate=False)
