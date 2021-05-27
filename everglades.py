@@ -108,7 +108,6 @@ def train_model(train_path, test_path, empty_images_path=None, save_dir=".", deb
     #Set config and train
     model.config["validation"]["csv_file"] = test_path
     model.config["validation"]["root_dir"] = os.path.dirname(test_path)
-    model.config["train"]["epochs"] = 20
     
     if debug:
         print("DEBUG")
