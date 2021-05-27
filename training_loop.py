@@ -161,14 +161,14 @@ def run(generate=False, pretrained=True):
         prepare_palmyra(generate=generate)
         
     training(proportion=1, pretrained=pretrained, comet_logger=comet_logger)
-    #result_df = []
-    #for y in range(5):  
-        #print("Iteration {}".format(y))
-        #for x in np.arange(0.25, 1.25, 0.25):
-            #results = training(proportion=x, pretrained=pretrained, comet_logger=comet_logger)
-            #result_df.append(results)
-    #result_df = pd.concat(result_df)
-    #result_df.to_csv("Figures/Palmyra_results_pretrained_{}.csv".format(pretrained))
+    result_df = []
+    for y in range(5):  
+        print("Iteration {}".format(y))
+        for x in np.arange(0.25, 1.25, 0.25):
+            results = training(proportion=x, pretrained=pretrained, comet_logger=comet_logger)
+            result_df.append(results)
+    result_df = pd.concat(result_df)
+    result_df.to_csv("Figures/Palmyra_results_pretrained_{}.csv".format(pretrained))
     
 if __name__ == "__main__":   
     run(pretrained=False, generate=True)
