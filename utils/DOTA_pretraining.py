@@ -15,10 +15,10 @@ comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
 
 comet_logger.experiment.add_tag("DOTA")
 
+save_dir = "/orange/ewhite/b.weinstein/DOTA/snapshots"
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 model_savedir = "{}/{}".format(save_dir,timestamp)  
 
-save_dir = "/orange/ewhite/b.weinstein/DOTA/snapshots"
 files = glob.glob("/orange/ewhite/b.weinstein/DOTA/train/labelTxt-v1.5/*.txt")
 
 train_data = []
@@ -42,9 +42,9 @@ n_classes = len(train_df.category.unique())
 m  = main.deepforest(num_classes= n_classes, label_dict=label_dict)
 
 m.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/DOTA/train/train.csv"
-m.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/DOTA/images/images/"
+m.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/DOTA/train/images/images/"
 m.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/DOTA/validation/validation.csv"
-m.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/DOTA/images/images/"
+m.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/DOTA/validation/images/images/"
 
 m.config
 m.create_trainer()
