@@ -565,14 +565,16 @@ if __name__ =="__main__":
     comet_logger.experiment.log_metric(name="Mean LOO Recall", value=results.recall.mean())
     comet_logger.experiment.log_metric(name="Mean LOO Precision", value=results.precision.mean())
     
+    #Joint model
+    train_list = ["terns","palmyra","penguins","pfeifer","hayes","everglades"]
+    test_sets = ["murres","pelicans","schedl"]
+    recall, precision = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
+    #Don't log validation scores till the end of project
+    
     #log images
     with comet_logger.experiment.context_manager("validation"):
         images = glob.glob("{}/*.png".format(savedir))
         for img in images:
             comet_logger.experiment.log_image(img, image_scale=0.25)    
 
-    #Joint model
-    train_list = ["terns","palmyra","penguins","pfeifer","hayes","everglades"]
-    test_sets = ["murres","pelicans","schedl"]
-    recall, precision = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
-    #Don't log validation scores till the end of project
+
