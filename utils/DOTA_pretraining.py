@@ -26,7 +26,7 @@ for x in files:
     df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
     train_data.append(df)
 
-train_df = pd.read_csv(train_data)
+train_df = pd.concat(train_data)
 train_df.to_csv("/orange/ewhite/b.weinstein/DOTA/train/train.csv")
 
 test_data = []
@@ -34,7 +34,7 @@ for x in files:
     df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
     test_data.append(df)
 
-test_df = pd.read_csv(test_data)
+test_df = pd.concat(test_data)
 test_df.to_csv("/orange/ewhite/b.weinstein/DOTA/validation/validation.csv")
 
 label_dict = {x: index for x, index in enumerate(train_df.category.unique())}
