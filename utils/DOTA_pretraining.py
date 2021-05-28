@@ -42,8 +42,8 @@ test_df = pd.concat(test_data)
 test_df = test_df[["image_path","x1","y1","x3","y3","category"]].rename(columns={"x1":"xmin","y1":"ymin","x3":"xmax","y3":"ymax","category":"label"})
 test_df.to_csv("/orange/ewhite/b.weinstein/DOTA/validation/validation.csv")
 
-label_dict = {x: index for x, index in enumerate(train_df.category.unique())}
-n_classes = len(train_df.category.unique())
+label_dict = {x: index for x, index in enumerate(train_df.label.unique())}
+n_classes = len(train_df.label.unique())
 m  = main.deepforest(num_classes= n_classes, label_dict=label_dict)
 
 m.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/DOTA/train/train.csv"
