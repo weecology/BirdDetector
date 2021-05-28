@@ -483,10 +483,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     comet_logger.experiment.log_parameter("training_annotations",train_annotations.shape[0])
 
     model = BirdDetector(transforms = get_transform)
-    
-    #Start from tree release
-    model.use_release()
-    
+        
     model.config = config
 
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv"
