@@ -28,6 +28,7 @@ for x in files:
     train_data.append(df)
 
 train_df = pd.concat(train_data)
+train_df = train_df[["image_path","x1","y1","x3","y3","category"]].rename(columns={"x1":"xmin","y1":"ymin","x3":"xmax","y3":"ymax","category":"label"})
 train_df.to_csv("/orange/ewhite/b.weinstein/DOTA/train/train.csv")
 
 files = glob.glob("/orange/ewhite/b.weinstein/DOTA/validation/labelTxt-v1.0/*.txt")
@@ -38,6 +39,7 @@ for x in files:
     test_data.append(df)
 
 test_df = pd.concat(test_data)
+test_df = test_df[["image_path","x1","y1","x3","y3","category"]].rename(columns={"x1":"xmin","y1":"ymin","x3":"xmax","y3":"ymax","category":"label"})
 test_df.to_csv("/orange/ewhite/b.weinstein/DOTA/validation/validation.csv")
 
 label_dict = {x: index for x, index in enumerate(train_df.category.unique())}
