@@ -24,7 +24,7 @@ files = glob.glob("/orange/ewhite/b.weinstein/DOTA/train/labelTxt-v1.5/*.txt")
 train_data = []
 for x in files:
     df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
-    df["image_path"] = os.path.basename(x)    
+    df["image_path"] = "{}.png".format(os.path.splitext(os.path.basename(x))[0])
     train_data.append(df)
 
 train_df = pd.concat(train_data)
@@ -33,7 +33,7 @@ train_df.to_csv("/orange/ewhite/b.weinstein/DOTA/train/train.csv")
 test_data = []
 for x in files:
     df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
-    df["image_path"] = os.path.basename(x)
+    df["image_path"] = "{}.png".format(os.path.splitext(os.path.basename(x))[0])
     test_data.append(df)
 
 test_df = pd.concat(test_data)
