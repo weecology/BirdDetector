@@ -30,6 +30,7 @@ for x in files:
 train_df = pd.concat(train_data)
 train_df.to_csv("/orange/ewhite/b.weinstein/DOTA/train/train.csv")
 
+files = glob.glob("/orange/ewhite/b.weinstein/DOTA/validation/labelTxt-v1.5/*.txt")
 test_data = []
 for x in files:
     df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
