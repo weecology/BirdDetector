@@ -19,7 +19,7 @@ save_dir = "/orange/ewhite/b.weinstein/DOTA/snapshots"
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 model_savedir = "{}/{}".format(save_dir,timestamp)  
 
-files = glob.glob("/orange/ewhite/b.weinstein/DOTA/train/labelTxt-v1.5/*.txt")
+files = glob.glob("/orange/ewhite/b.weinstein/DOTA/train/labelTxt-v1.0/*.txt")
 
 train_data = []
 for x in files:
