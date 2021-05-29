@@ -22,13 +22,13 @@ def prepare():
     for x in files:
         df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
         df["image_path"] = "{}.png".format(os.path.splitext(os.path.basename(x))[0])
-        train_df["xmin"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
-        train_df["xmax"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
-        train_df["ymin"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
-        train_df["ymax"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
-        train_df = train_df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
-        fname = "/orange/ewhite/b.weinstein/DOTA/train/labels/{}".format(os.path.basename(x))
-        train_df.to_csv(fname)
+        df["xmin"] = df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
+        df["xmax"] = df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
+        df["ymin"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
+        df["ymax"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
+        df = df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
+        fname = "/orange/ewhite/b.weinstein/DOTA/val/labels/{}".format(os.path.basename(x))
+        df.to_csv(fname)
         
         split_labels = preprocess.split_raster(
             annotations_file=fname,
@@ -46,13 +46,13 @@ def prepare():
     for x in files:
         df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
         df["image_path"] = "{}.png".format(os.path.splitext(os.path.basename(x))[0])
-        test_df["xmin"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
-        test_df["xmax"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
-        test_df["ymin"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
-        test_df["ymax"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
-        test_df = test_df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
+        df["xmin"] = df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
+        df["xmax"] = df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
+        df["ymin"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
+        df["ymax"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
+        df = df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
         fname = "/orange/ewhite/b.weinstein/DOTA/val/labels/{}".format(os.path.basename(x))
-        test_df.to_csv(fname)
+        df.to_csv(fname)
         split_labels = preprocess.split_raster(
             annotations_file=fname,
             patch_size=1024,
