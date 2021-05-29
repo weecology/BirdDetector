@@ -19,7 +19,7 @@ def get_transform(augment):
     """Albumentations transformation of bounding boxs"""
     if augment:
         transform = A.Compose([
-            A.RandomCrop(height=100,width=100),
+            A.RandomCrop(height=75,width=75,p=1),
             A.Flip(p=0.5),
             A.RandomBrightnessContrast(),
             A.pytorch.ToTensorV2()
