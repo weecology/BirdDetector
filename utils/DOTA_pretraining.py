@@ -1,14 +1,37 @@
 #Pretrain on DOTA benchmark
 #https://captain-whu.github.io/DOTA/dataset.html
 import comet_ml
+import cv2
 from pytorch_lightning.loggers import CometLogger
 import torch
 import os
 import pandas as pd
 import glob
 from deepforest import main
+from deepforest import visualize
+import tempfile
 import traceback
 from datetime import datetime
+import albumentations as A
+import numpy as np
+                
+def get_transform(augment):
+    """Albumentations transformation of bounding boxs"""
+    if augment:
+        transform = A.Compose([
+            A.RandomCrop(height=100,width=100),
+            A.Flip(p=0.5),
+            A.RandomBrightnessContrast(),
+            A.pytorch.ToTensorV2()
+        ], bbox_params=A.BboxParams(format='pascal_voc',label_fields=["category_ids"]))
+        
+    else:
+        transform = A.Compose([
+            A.pytorch.ToTensorV2()
+        ])
+        
+    return transform
+
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                               project_name="everglades", workspace="bw4sz")
 comet_logger.experiment.add_tag("DOTA")
@@ -56,6 +79,18 @@ m.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/DOTA/train/images/im
 m.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/DOTA/validation/validation.csv"
 m.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/DOTA/validation/images/images/"
 
+#view traning
+ds = m.load_dataset(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], shuffle=True, augment=True)
+for i in np.arange(10):
+    batch = next(iter(ds))
+    image_path, image, targets = batch
+    df = visualize.format_boxes(targets[0], scores=False)
+    image = np.moveaxis(image[0].numpy(),0,2)[:,:,::-1] * 255
+    image = visualize.plot_predictions(image, df)
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        cv2.imwrite("{}/{}".format(tmpdirname, image_path[0]),image )
+        comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]),image_scale=0.25)   
+        
 m.config
 m.create_trainer()
 m.trainer.fit(m)
