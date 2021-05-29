@@ -36,7 +36,7 @@ def prepare():
     train.to_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
     test.to_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/test.csv")
 
-    train, test
+    return train, test
     
 def get_transform(augment):
     """Albumentations transformation of bounding boxs"""
