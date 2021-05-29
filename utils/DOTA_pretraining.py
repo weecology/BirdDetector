@@ -17,7 +17,7 @@ import albumentations as A
 import numpy as np
 
 def prepare():
-    files = glob.glob("/orange/ewhite/b.weinstein/DOTA/train/labelTxt-v1.0/*.txt")
+    files = glob.glob("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/labelTxt/*.txt")
     train_data = []
     for x in files:
         df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
@@ -27,46 +27,16 @@ def prepare():
         df["ymin"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
         df["ymax"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
         df = df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
-        fname = "/orange/ewhite/b.weinstein/DOTA/val/labels/{}".format(os.path.basename(x))
-        df.to_csv(fname)
-        
-        split_labels = preprocess.split_raster(
-            path_to_raster="/orange/ewhite/b.weinstein/DOTA/train/images/images/{}.png".format(os.path.splitext(os.path.basename(x))[0]),
-            annotations_file=fname,
-            patch_size=1024,
-            allow_empty=False,
-         base_dir="/orange/ewhite/b.weinstein/DOTA/val/images/images/")
-        
-        train_data.append(split_labels)
+        train_data.append(df)
     
     train_df = pd.concat(train_data)
-    train_df.to_csv("/orange/ewhite/b.weinstein/DOTA/train/train.csv")
-    
-    files = glob.glob("/orange/ewhite/b.weinstein/DOTA/test/labelTxt-v1.0/*.txt")
-    test_data = []
-    for x in files:
-        df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
-        df["image_path"] = "{}.png".format(os.path.splitext(os.path.basename(x))[0])
-        df["xmin"] = df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
-        df["xmax"] = df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
-        df["ymin"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
-        df["ymax"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
-        df = df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
-        fname = "/orange/ewhite/b.weinstein/DOTA/val/labels/{}".format(os.path.basename(x))
-        df.to_csv(fname)
-        split_labels = preprocess.split_raster(
-            path_to_raster="/orange/ewhite/b.weinstein/DOTA/val/images/images/{}.png".format(os.path.splitext(os.path.basename(x))[0]),
-            annotations_file=fname,
-            patch_size=1024,
-            allow_empty=False,
-            base_dir="/orange/ewhite/b.weinstein/DOTA/val/images/images/")
-        
-        test_data.append(split_labels)
-    
-    test_df = pd.concat(test_data)
-    test_df.to_csv("/orange/ewhite/b.weinstein/DOTA/val/test.csv")
+    train_images = train_df.image_path.sample(frac=0.9)
+    train = train_df[train_df.image_path.isin(train_images)]
+    test = train_df[~(train_df.image_path.isin(train_images))]
+    train.to_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
+    test.to_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/test.csv")
 
-    train_df, test_df
+    train, test
     
 def get_transform(augment):
     """Albumentations transformation of bounding boxs"""
