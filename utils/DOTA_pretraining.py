@@ -9,17 +9,67 @@ import pandas as pd
 import glob
 from deepforest import main
 from deepforest import visualize
+from deepforest import preprocess
 import tempfile
 import traceback
 from datetime import datetime
 import albumentations as A
 import numpy as np
-                
+
+def prepare():
+    files = glob.glob("/orange/ewhite/b.weinstein/DOTA/train/labelTxt-v1.0/*.txt")
+    train_data = []
+    for x in files:
+        df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
+        df["image_path"] = "{}.png".format(os.path.splitext(os.path.basename(x))[0])
+        train_df["xmin"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
+        train_df["xmax"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
+        train_df["ymin"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
+        train_df["ymax"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
+        train_df = train_df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
+        fname = "/orange/ewhite/b.weinstein/DOTA/train/labels/{}".format(os.path.basename(x))
+        train_df.to_csv(fname)
+        
+        split_labels = preprocess.split_raster(
+            annotations_file=fname,
+            patch_size=1024,
+            allow_empty=False,
+         base_dir="/orange/ewhite/b.weinstein/DOTA/val/images/images/")
+        
+        train_data.append(split_labels)
+    
+    train_df = pd.concat(train_data)
+    train_df.to_csv("/orange/ewhite/b.weinstein/DOTA/train/train.csv")
+    
+    files = glob.glob("/orange/ewhite/b.weinstein/DOTA/test/labelTxt-v1.0/*.txt")
+    test_data = []
+    for x in files:
+        df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
+        df["image_path"] = "{}.png".format(os.path.splitext(os.path.basename(x))[0])
+        test_df["xmin"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
+        test_df["xmax"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
+        test_df["ymin"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
+        test_df["ymax"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
+        test_df = test_df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
+        fname = "/orange/ewhite/b.weinstein/DOTA/val/labels/{}".format(os.path.basename(x))
+        test_df.to_csv(fname)
+        split_labels = preprocess.split_raster(
+            annotations_file=fname,
+            patch_size=1024,
+            allow_empty=False,
+            base_dir="/orange/ewhite/b.weinstein/DOTA/val/images/images/")
+        
+        test_data.append(split_labels)
+    
+    test_df = pd.concat(test_data)
+    test_df.to_csv("/orange/ewhite/b.weinstein/DOTA/val/test.csv")
+
+    train_df, test_df
+    
 def get_transform(augment):
     """Albumentations transformation of bounding boxs"""
     if augment:
         transform = A.Compose([
-            A.RandomCrop(height=75,width=75,p=1),
             A.Flip(p=0.5),
             A.RandomBrightnessContrast(),
             A.pytorch.ToTensorV2()
@@ -38,37 +88,8 @@ comet_logger.experiment.add_tag("DOTA")
 save_dir = "/orange/ewhite/b.weinstein/DOTA/snapshots"
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 model_savedir = "{}/{}".format(save_dir,timestamp)  
-files = glob.glob("/orange/ewhite/b.weinstein/DOTA/train/labelTxt-v1.0/*.txt")
-train_data = []
-for x in files:
-    df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
-    df["image_path"] = "{}.png".format(os.path.splitext(os.path.basename(x))[0])
-    train_data.append(df)
 
-train_df = pd.concat(train_data)
-train_df["xmin"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
-train_df["xmax"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
-train_df["ymin"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
-train_df["ymax"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
-train_df = train_df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
-
-train_df.to_csv("/orange/ewhite/b.weinstein/DOTA/train/train.csv")
-
-files = glob.glob("/orange/ewhite/b.weinstein/DOTA/validation/labelTxt-v1.0/*.txt")
-test_data = []
-for x in files:
-    df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
-    df["image_path"] = "{}.png".format(os.path.splitext(os.path.basename(x))[0])
-    test_data.append(df)
-
-test_df = pd.concat(test_data)
-test_df["xmin"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
-test_df["xmax"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
-test_df["ymin"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
-test_df["ymax"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
-test_df = test_df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
-
-test_df.to_csv("/orange/ewhite/b.weinstein/DOTA/validation/validation.csv")
+train_df, test_df = prepare()
 
 label_dict = {x: index for index, x in enumerate(train_df.label.unique())}
 n_classes = len(train_df.label.unique())
@@ -76,20 +97,20 @@ m  = main.deepforest(num_classes= n_classes, label_dict=label_dict)
 
 m.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/DOTA/train/train.csv"
 m.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/DOTA/train/images/images/"
-m.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/DOTA/validation/validation.csv"
+m.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/DOTA/val/test.csv"
 m.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/DOTA/validation/images/images/"
 
 #view traning
-#ds = m.load_dataset(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], shuffle=True, augment=True)
-#for i in np.arange(10):
-    #batch = next(iter(ds))
-    #image_path, image, targets = batch
-    #df = visualize.format_boxes(targets[0], scores=False)
-    #image = np.moveaxis(image[0].numpy(),0,2)[:,:,::-1] * 255
-    #image = visualize.plot_predictions(image, df)
-    #with tempfile.TemporaryDirectory() as tmpdirname:
-        #cv2.imwrite("{}/{}".format(tmpdirname, image_path[0]),image )
-        #comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]),image_scale=0.25)   
+ds = m.load_dataset(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], shuffle=True, augment=True)
+for i in np.arange(10):
+    batch = next(iter(ds))
+    image_path, image, targets = batch
+    df = visualize.format_boxes(targets[0], scores=False)
+    image = np.moveaxis(image[0].numpy(),0,2)[:,:,::-1] * 255
+    image = visualize.plot_predictions(image, df)
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        cv2.imwrite("{}/{}".format(tmpdirname, image_path[0]),image )
+        comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]),image_scale=0.25)   
         
 m.create_trainer()
 m.trainer.fit(m)
