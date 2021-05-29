@@ -80,18 +80,17 @@ m.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/DOTA/validation
 m.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/DOTA/validation/images/images/"
 
 #view traning
-ds = m.load_dataset(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], shuffle=True, augment=True)
-for i in np.arange(10):
-    batch = next(iter(ds))
-    image_path, image, targets = batch
-    df = visualize.format_boxes(targets[0], scores=False)
-    image = np.moveaxis(image[0].numpy(),0,2)[:,:,::-1] * 255
-    image = visualize.plot_predictions(image, df)
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        cv2.imwrite("{}/{}".format(tmpdirname, image_path[0]),image )
-        comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]),image_scale=0.25)   
+#ds = m.load_dataset(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], shuffle=True, augment=True)
+#for i in np.arange(10):
+    #batch = next(iter(ds))
+    #image_path, image, targets = batch
+    #df = visualize.format_boxes(targets[0], scores=False)
+    #image = np.moveaxis(image[0].numpy(),0,2)[:,:,::-1] * 255
+    #image = visualize.plot_predictions(image, df)
+    #with tempfile.TemporaryDirectory() as tmpdirname:
+        #cv2.imwrite("{}/{}".format(tmpdirname, image_path[0]),image )
+        #comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]),image_scale=0.25)   
         
-m.config
 m.create_trainer()
 m.trainer.fit(m)
 
