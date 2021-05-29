@@ -26,7 +26,7 @@ train_df["xmin"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=
 train_df["xmax"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: x.max(),axis=1)
 train_df["ymin"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
 train_df["ymax"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: y.max(),axis=1)
-train_df = train_df[["image_path","x1","y1","x3","y3","category"]].rename(columns={"category":"label"})
+train_df = train_df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
 
 train_df.to_csv("/orange/ewhite/b.weinstein/DOTA/train/train.csv")
 
@@ -42,7 +42,7 @@ test_df["xmin"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
 test_df["xmax"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: x.max(),axis=1)
 test_df["ymin"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
 test_df["ymax"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: y.max(),axis=1)
-test_df = test_df[["image_path","x1","y1","x3","y3","category"]].rename(columns={"category":"label"})
+test_df = test_df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
 
 test_df.to_csv("/orange/ewhite/b.weinstein/DOTA/validation/validation.csv")
 
