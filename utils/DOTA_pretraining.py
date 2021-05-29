@@ -9,7 +9,6 @@ import pandas as pd
 import glob
 from deepforest import main
 from deepforest import visualize
-from deepforest import preprocess
 import tempfile
 import traceback
 from datetime import datetime
@@ -67,10 +66,10 @@ label_dict = {x: index for index, x in enumerate(train_df.label.unique())}
 n_classes = len(train_df.label.unique())
 m  = main.deepforest(num_classes= n_classes, label_dict=label_dict)
 
-m.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/DOTA/train/train.csv"
-m.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/DOTA/train/images/images/"
-m.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/DOTA/val/test.csv"
-m.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/DOTA/validation/images/images/"
+m.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv"
+m.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/images/"
+m.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/test.csv"
+m.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/images/"
 
 #view traning
 ds = m.load_dataset(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], shuffle=True, augment=True)
