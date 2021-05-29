@@ -31,6 +31,7 @@ def prepare():
         df.to_csv(fname)
         
         split_labels = preprocess.split_raster(
+            path_to_raster="/orange/ewhite/b.weinstein/DOTA/train/images/images/{}.png".format(os.path.splitext(os.path.basename(x))[0]),
             annotations_file=fname,
             patch_size=1024,
             allow_empty=False,
@@ -54,6 +55,7 @@ def prepare():
         fname = "/orange/ewhite/b.weinstein/DOTA/val/labels/{}".format(os.path.basename(x))
         df.to_csv(fname)
         split_labels = preprocess.split_raster(
+            path_to_raster="/orange/ewhite/b.weinstein/DOTA/val/images/images/{}.png".format(os.path.splitext(os.path.basename(x))[0]),
             annotations_file=fname,
             patch_size=1024,
             allow_empty=False,
