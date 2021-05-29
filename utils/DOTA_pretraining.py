@@ -7,6 +7,7 @@ import os
 import pandas as pd
 import glob
 from deepforest import main
+import traceback
 from datetime import datetime
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                               project_name="everglades", workspace="bw4sz")
@@ -22,10 +23,10 @@ for x in files:
     train_data.append(df)
 
 train_df = pd.concat(train_data)
-train_df["xmin"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: x.min()+2,axis=1)
-train_df["xmax"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
-train_df["ymin"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: y.min()+2,axis=1)
-train_df["ymax"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
+train_df["xmin"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: int(x.min()),axis=1)
+train_df["xmax"] = train_df[["x1","x2","x3","x4"]].apply(lambda x: int(x.max()),axis=1)
+train_df["ymin"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: int(y.min()),axis=1)
+train_df["ymax"] = train_df[["y1","y2","y3","y4"]].apply(lambda y: int(y.max()),axis=1)
 train_df = train_df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
 
 train_df.to_csv("/orange/ewhite/b.weinstein/DOTA/train/train.csv")
@@ -38,10 +39,10 @@ for x in files:
     test_data.append(df)
 
 test_df = pd.concat(test_data)
-test_df["xmin"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: x.min()+2,axis=1)
-test_df["xmax"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
-test_df["ymin"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: y.min()+2,axis=1)
-test_df["ymax"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
+test_df["xmin"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: int(x.min()),axis=1)
+test_df["xmax"] = test_df[["x1","x2","x3","x4"]].apply(lambda x: int(x.max()),axis=1)
+test_df["ymin"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: int(y.min()),axis=1)
+test_df["ymax"] = test_df[["y1","y2","y3","y4"]].apply(lambda y: int(y.max()),axis=1)
 test_df = test_df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
 
 test_df.to_csv("/orange/ewhite/b.weinstein/DOTA/validation/validation.csv")
@@ -93,6 +94,6 @@ if comet_logger is not None:
 
     #log images
     with comet_logger.experiment.context_manager("validation"):
-        images = glob.glob("{}/*.png".format(savedir))
+        images = glob.glob("{}/*.png".format(model_savedir))
         for img in images:
             comet_logger.experiment.log_image(img, image_scale=0.25)    
