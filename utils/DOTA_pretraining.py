@@ -31,8 +31,8 @@ def prepare():
     train_df = pd.concat(train_data)
     
     #make sure no images have bad boxes
-    train_df = train_df[~(train_df.xmin == train_df.xmax)]
-    train_df = train_df[~(train_df.ymin == train_df.ymax)]
+    train_df = train_df[~(train_df.xmin >= train_df.xmax)]
+    train_df = train_df[~(train_df.ymin >= train_df.ymax)]
     
     train_images = train_df.image_path.sample(frac=0.9)
     train = train_df[train_df.image_path.isin(train_images)]
