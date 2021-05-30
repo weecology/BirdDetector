@@ -89,7 +89,7 @@ for i in np.arange(10):
         cv2.imwrite("{}/{}".format(tmpdirname, image_path[0]),image )
         comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]),image_scale=0.25)   
         
-m.create_trainer()
+m.create_trainer(logger=comet_logger)
 m.trainer.fit(m)
 
 results = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=model_savedir)
