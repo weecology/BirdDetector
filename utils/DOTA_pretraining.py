@@ -15,31 +15,36 @@ from datetime import datetime
 import albumentations as A
 import numpy as np
 
-def prepare():
-    files = glob.glob("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/labelTxt/*.txt")
-    train_data = []
-    for x in files:
-        df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
-        df["image_path"] = "{}.png".format(os.path.splitext(os.path.basename(x))[0])
-        df["xmin"] = df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
-        df["xmax"] = df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
-        df["ymin"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
-        df["ymax"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
-        df = df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
-        train_data.append(df)
-    
-    train_df = pd.concat(train_data)
-    
-    #make sure no images have bad boxes
-    train_df = train_df[~(train_df.xmin >= train_df.xmax)]
-    train_df = train_df[~(train_df.ymin >= train_df.ymax)]
-    
-    train_images = train_df.image_path.sample(frac=0.9)
-    train = train_df[train_df.image_path.isin(train_images)]
-    test = train_df[~(train_df.image_path.isin(train_images))]
-    train.to_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
-    test.to_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/test.csv")
-
+def prepare(generate=True):
+    if generate:
+            
+        files = glob.glob("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/labelTxt/*.txt")
+        train_data = []
+        for x in files:
+            df = pd.read_csv(x,skiprows=[0,1],names=["x1", "y1", "x2", "y2", "x3", "y3", "x4", "y4", "category", "difficult"],sep=" ")
+            df["image_path"] = "{}.png".format(os.path.splitext(os.path.basename(x))[0])
+            df["xmin"] = df[["x1","x2","x3","x4"]].apply(lambda x: x.min(),axis=1)
+            df["xmax"] = df[["x1","x2","x3","x4"]].apply(lambda x: x.max()-2,axis=1)
+            df["ymin"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.min(),axis=1)
+            df["ymax"] = df[["y1","y2","y3","y4"]].apply(lambda y: y.max()-2,axis=1)
+            df = df[["image_path","xmin","ymin","xmax","ymax","category"]].rename(columns={"category":"label"})
+            train_data.append(df)
+        
+        train_df = pd.concat(train_data)
+        
+        #make sure no images have bad boxes
+        train_df = train_df[~(train_df.xmin >= train_df.xmax)]
+        train_df = train_df[~(train_df.ymin >= train_df.ymax)]
+        
+        train_images = train_df.image_path.sample(frac=0.9)
+        train = train_df[train_df.image_path.isin(train_images)]
+        test = train_df[~(train_df.image_path.isin(train_images))]
+        train.to_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
+        test.to_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/test.csv")
+    else:
+        train = pd.read_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
+        test = pd.read_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/test.csv")
+        
     return train, test
     
 def get_transform(augment):
@@ -61,11 +66,11 @@ def get_transform(augment):
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                               project_name="everglades", workspace="bw4sz")
 comet_logger.experiment.add_tag("DOTA")
-save_dir = "/orange/ewhite/b.weinstein/DOTA/snapshots"
+save_dir = "/orange/ewhite/b.weinstein/AerialDetection/snapshots"
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 model_savedir = "{}/{}".format(save_dir,timestamp)  
 
-train_df, test_df = prepare()
+train_df, test_df = prepare(generate=False)
 
 label_dict = {x: index for index, x in enumerate(train_df.label.unique())}
 n_classes = len(train_df.label.unique())
@@ -82,7 +87,6 @@ for i in np.arange(10):
     batch = next(iter(ds))
     image_path, image, targets = batch
     df = visualize.format_boxes(targets[0], scores=False)
-    df.label = 0
     image = np.moveaxis(image[0].numpy(),0,2)[:,:,::-1] * 255
     image = visualize.plot_predictions(image, df)
     with tempfile.TemporaryDirectory() as tmpdirname:
@@ -123,7 +127,6 @@ if comet_logger is not None:
     except Exception as e:
         print("logger exception: {} with traceback \n {}".format(e, traceback.print_exc()))
         
-
     #log images
     with comet_logger.experiment.context_manager("validation"):
         images = glob.glob("{}/*.png".format(model_savedir))
