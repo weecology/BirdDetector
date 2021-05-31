@@ -70,6 +70,11 @@ save_dir = "/orange/ewhite/b.weinstein/AerialDetection/snapshots"
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 model_savedir = "{}/{}".format(save_dir,timestamp)  
 
+try:
+    os.mkdir(model_savedir)
+except:
+    pass
+
 train_df, test_df = prepare(generate=False)
 
 label_dict = {x: index for index, x in enumerate(train_df.label.unique())}
