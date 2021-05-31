@@ -102,6 +102,7 @@ m.create_trainer(logger=comet_logger)
 m.trainer.fit(m)
 
 results = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], savedir=model_savedir)
+m.trainer.save_checkpoint("{}/DOTA.pl".format(model_savedir))
 
 if comet_logger is not None:
     try:
