@@ -7,6 +7,8 @@ from PIL import ImageFile
 from pytorch_lightning.loggers import CometLogger
 from deepforest import preprocess
 from deepforest import visualize
+from deepforest.model import create_model
+from deepforest import main
 from datetime import datetime
 from augmentation import get_transform
 from shapely.geometry import Point, box
@@ -481,9 +483,16 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
 
     comet_logger.experiment.log_parameter("training_images",len(train_annotations.image_path.unique()))
     comet_logger.experiment.log_parameter("training_annotations",train_annotations.shape[0])
-
+    
+    train_df =  pd.read_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
+    label_dict = {x: index for index, x in enumerate(train_df.label.unique())}    
+    pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
+    
     model = BirdDetector(transforms = get_transform)
-        
+    
+    #update backbone weights with new Retinanet head
+    model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
+    
     model.config = config
 
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv"
