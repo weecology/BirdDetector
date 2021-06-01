@@ -5,12 +5,12 @@
 #SBATCH --account=ewhite
 #SBATCH --nodes=1                 # Number of MPI ranks
 #SBATCH --cpus-per-task=10
-#SBATCH --mem=100GB
+#SBATCH --mem=80GB
 #SBATCH --time=5:00:00       #Time limit hrs:min:sec
 #SBATCH --output=/home/b.weinstein/logs/Palmyra_%j.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/Palmyra_%j.err
 #SBATCH --partition=gpu
-#SBATCH --gpus=4
+#SBATCH --gpus=3
 
 source activate Zooniverse_pytorch
 
