@@ -44,8 +44,8 @@ def prepare_palmyra(generate=True):
     train_annotations = pd.concat([train_annotations, previous_train])
     
     #buffer slightly off the edge
-    train_annotations.xmax = train_annotations.xmax - 1
-    train_annotations.ymax = train_annotations.ymax - 1
+    train_annotations.xmax = train_annotations.xmax - 5
+    train_annotations.ymax = train_annotations.ymax - 5
     
     train_annotations.to_csv(train_path,index=False)
         
