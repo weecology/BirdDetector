@@ -277,7 +277,7 @@ def prepare_hayes(generate=True):
         train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
         train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
         
-        train_images = train_annotations.image_path.sample(n=500)
+        #train_images = train_annotations.image_path.sample(n=500)
         train_annotations = train_annotations[train_annotations.image_path.isin(train_images)]
         train_annotations.to_csv(train_path, index=False)
         
@@ -441,12 +441,12 @@ def prepare():
     paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
     paths["penguins"] = prepare_penguin(generate=False)
-    paths["palmyra"] = prepare_palmyra(generate=True)
+    paths["palmyra"] = prepare_palmyra(generate=False)
     paths["pelicans"] = prepare_pelicans(generate=False)
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
-    paths["hayes"] = prepare_hayes(generate=False)
+    paths["hayes"] = prepare_hayes(generate=True)
 
     return paths
 
