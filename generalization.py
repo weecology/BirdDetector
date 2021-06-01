@@ -268,14 +268,6 @@ def prepare_hayes(generate=True):
         train_annotations = pd.concat([hayes_albatross_train, hayes_albatross_test, hayes_penguin_train, hayes_penguin_test, hayes_penguin_val])
         train_annotations.label = "Bird"
         
-        #A couple illegal boxes, make slightly smaller
-        train_annotations["xmin"] = train_annotations["xmin"] + 2
-        train_annotations["xmax"] = train_annotations["xmax"] - 2
-        train_annotations["ymin"] = train_annotations["ymin"] + 2
-        train_annotations["ymax"] = train_annotations["ymax"] + -2
-        
-        train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
-        train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
         
         #train_images = train_annotations.image_path.sample(n=500)
         #train_annotations = train_annotations[train_annotations.image_path.isin(train_images)]
@@ -471,6 +463,16 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         all_sets.append(df_test)
     
     train_annotations = pd.concat(all_sets)
+    
+    #A couple illegal boxes, make slightly smaller
+    train_annotations["xmin"] = train_annotations["xmin"] + 2
+    train_annotations["xmax"] = train_annotations["xmax"] - 2
+    train_annotations["ymin"] = train_annotations["ymin"] + 2
+    train_annotations["ymax"] = train_annotations["ymax"] + -2
+    
+    train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
+    train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
+    
     train_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv")
 
     all_val_sets = []
@@ -479,6 +481,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         all_val_sets.append(df)
     
     test_annotations = pd.concat(all_val_sets)
+    
     test_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv")
 
     comet_logger.experiment.log_parameter("training_images",len(train_annotations.image_path.unique()))
