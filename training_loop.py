@@ -7,7 +7,6 @@ import pandas as pd
 import gc
 from pytorch_lightning.loggers import CometLogger
 from deepforest import preprocess
-import glob
 from generalization import shapefile_to_annotations
 import rasterio as rio
 import numpy as np
@@ -32,7 +31,7 @@ def prepare_palmyra(generate=True):
     train_annotations = preprocess.split_raster(
         numpy_image=training_image,
         annotations_file="Figures/training_annotations.csv",
-        patch_size=13000,
+        patch_size=1300,
         patch_overlap=0.05,
         base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
         image_name="CooperEelPond_53M.tif",
@@ -76,7 +75,7 @@ def training(proportion,pretrained=True, comet_logger=None):
     comet_logger.experiment.log_parameter("training_annotations",train_annotations.shape[0])
         
     if pretrained:
-        model = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/generalization/20210524_155722/terns_palmyra_penguins_pfeifer_hayes.pl")
+        model = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/generalization/20210531_231758/terns_palmyra_penguins_pfeifer_everglades.pl")
         model.label_dict = {"Bird":0}
         
     else:
@@ -127,10 +126,10 @@ def training(proportion,pretrained=True, comet_logger=None):
     comet_logger.experiment.log_metric("recall", recall)
     
     #log images
-    model.predict_file(csv_file = model.config["validation"]["csv_file"], root_dir = model.config["validation"]["root_dir"], savedir=model_savedir)
-    images = glob.glob("{}/*.png".format(model_savedir))
-    for img in images:
-        comet_logger.experiment.log_image(img, image_scale=0.2)
+    #model.predict_file(csv_file = model.config["validation"]["csv_file"], root_dir = model.config["validation"]["root_dir"], savedir=model_savedir)
+    #images = glob.glob("{}/*.png".format(model_savedir))
+    #for img in images:
+        #comet_logger.experiment.log_image(img, image_scale=0.2)
      
     formatted_results = pd.DataFrame({"proportion":[proportion], "pretrained": [pretrained], "annotations": [train_annotations.shape[0]],"precision": [precision],"recall": [recall]})
     
