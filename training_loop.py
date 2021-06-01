@@ -43,6 +43,9 @@ def prepare_palmyra(generate=True):
     previous_train = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/palmyra_train.csv")
     train_annotations = pd.concat([train_annotations, previous_train])
     
+    train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
+    train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
+    
     train_annotations.to_csv(train_path,index=False)
         
     return {"train":train_path, "test":test_path}
