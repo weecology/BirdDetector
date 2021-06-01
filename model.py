@@ -70,8 +70,8 @@ class BirdDataset(Dataset):
                                                  self.image_names[idx]]
             
             # make sure none fall off edge
-            x_edge = image.shape[1]
-            y_edge = image.shape[2]
+            x_edge = image.shape[0]
+            y_edge = image.shape[1]
             image_annotations.xmax = image_annotations.xmax.apply(lambda x: x_edge if x > x_edge else x)
             image_annotations.ymax = image_annotations.ymax.apply(lambda x: y_edge if x > y_edge else x)
             
