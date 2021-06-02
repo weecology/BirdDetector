@@ -3,8 +3,6 @@ import comet_ml
 from pytorch_lightning.loggers import CometLogger
 from deepforest.callbacks import images_callback
 from deepforest import main
-from deepforest import dataset
-from deepforest import utilities
 from deepforest import visualize
 import pandas as pd
 import os
@@ -203,8 +201,7 @@ def train_model(train_path, test_path, empty_images_path=None, save_dir=".", deb
     
     #Save a full set of predictions to file.
     boxes = model.predict_file(model.config["validation"]["csv_file"], root_dir=model.config["validation"]["root_dir"])
-    visualize.plot_prediction_dataframe(df = boxes, savedir = model_savedir, root_dir=model.config["validation"]["root_dir"])
-    
+    visualize.plot_prediction_dataframe(df = boxes, savedir = model_savedir, root_dir=model.config["validation"]["root_dir"]
     
     return model
 
