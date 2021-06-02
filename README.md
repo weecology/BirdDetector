@@ -3,6 +3,13 @@
 A global bird detector model for the DeepForest-pytorch package.
 This repo recreates the analysis for the [manuscript](https://docs.google.com/document/d/15zqYo-3hmOMDLRKiUfkQwx7jesIhz0AypJLa30d8nA8/edit?usp=sharing).
 
+## Getting Started
+
+Here is a colab tutorial that demonstrates the basic package workflow.
+
+https://colab.research.google.com/drive/1e9_pZM0n_v3MkZpSjVRjm55-LuCE2IYE?usp=sharing
+
+
 ## Environment
 
 ```
