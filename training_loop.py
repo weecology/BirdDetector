@@ -103,7 +103,7 @@ def training(proportion,pretrained=True, comet_logger=None):
     if not proportion == 0:
         model.trainer.fit(model)
     
-    test_results = model.evaluate(csv_file=model.config["validation"]["csv_file"], root_dir=model.config["validation"]["root_dir"], iou_threshold=0.25)
+    test_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/palmyra_test.csv", root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
     
     if comet_logger is not None:
         try:
