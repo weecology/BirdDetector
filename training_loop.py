@@ -37,14 +37,11 @@ def prepare_palmyra(generate=True):
         image_name="CooperEelPond_53M.tif",
         allow_empty=False
     )
-    
 
     previous_train = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/palmyra_train.csv")
     train_annotations = pd.concat([train_annotations, previous_train])
 
     #buffer slightly off the edge
-    train_annotations.xmax = train_annotations.xmax - 3
-    train_annotations.ymax = train_annotations.ymax - 3
     train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
     train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
     
