@@ -269,8 +269,8 @@ def prepare_hayes(generate=True):
         train_annotations.label = "Bird"
         
         
-        #train_images = train_annotations.image_path.sample(n=500)
-        #train_annotations = train_annotations[train_annotations.image_path.isin(train_images)]
+        train_images = train_annotations.image_path.sample(n=500)
+        train_annotations = train_annotations[train_annotations.image_path.isin(train_images)]
         train_annotations.to_csv(train_path, index=False)
         
         hayes_albatross_val.label="Bird"
@@ -438,7 +438,7 @@ def prepare():
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
-    paths["hayes"] = prepare_hayes(generate=False)
+    paths["hayes"] = prepare_hayes(generate=True)
 
     return paths
 
@@ -500,8 +500,8 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
 
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv"
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops"    
-    model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
-    model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops"
+    #model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
+    #model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops"
         
     model.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))
     comet_logger.experiment.log_parameters(model.config)
