@@ -49,7 +49,7 @@ def prepare_palmyra(generate=True):
         
     return {"train":train_path, "test":test_path}
     
-def training(proportion,pretrained=True, comet_logger=None):
+def training(proportion,pretrained=True, comet_logger=None, config=None):
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     save_dir="/orange/ewhite/everglades/Palmyra/"
@@ -88,6 +88,9 @@ def training(proportion,pretrained=True, comet_logger=None):
         os.mkdir("/orange/ewhite/everglades/Palmyra/{}/".format(proportion))
     except:
         pass
+    
+    if config:
+        model.config = config
     
     model.config["train"]["csv_file"] = "crops/loop_training_annotations.csv"
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"    
@@ -149,6 +152,9 @@ def run(generate=False, pretrained=True):
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                 project_name="everglades", workspace="bw4sz",auto_output_logging = "simple") 
     
+    #hold to the original config to make iteration contained
+    original_model = main.deepforest(label_dict={"Bird":0})
+    config = original_model.config
     if generate:
         folder = 'crops/'
         for filename in os.listdir(folder):
@@ -163,12 +169,11 @@ def run(generate=False, pretrained=True):
         
         prepare_palmyra(generate=generate)
         
-    training(proportion=1, pretrained=pretrained, comet_logger=comet_logger)
     result_df = []
     for y in range(5):  
         print("Iteration {}".format(y))
         for x in np.arange(0.25, 1.25, 0.25):
-            results = training(proportion=x, pretrained=pretrained, comet_logger=comet_logger)
+            results = training(proportion=x, pretrained=pretrained, comet_logger=comet_logger, config=config)
             result_df.append(results)
     result_df = pd.concat(result_df)
     result_df.to_csv("Figures/Palmyra_results_pretrained_{}.csv".format(pretrained))
