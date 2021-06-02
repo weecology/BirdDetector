@@ -39,7 +39,6 @@ def prepare_palmyra(generate=True):
     )
     
 
-    
     previous_train = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/palmyra_train.csv")
     train_annotations = pd.concat([train_annotations, previous_train])
 
@@ -55,7 +54,6 @@ def prepare_palmyra(generate=True):
     
 def training(proportion,pretrained=True, comet_logger=None):
 
-    
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     save_dir="/orange/ewhite/everglades/Palmyra/"
     model_savedir = "{}/{}".format(save_dir,timestamp)  
@@ -96,8 +94,8 @@ def training(proportion,pretrained=True, comet_logger=None):
     
     model.config["train"]["csv_file"] = "crops/loop_training_annotations.csv"
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"    
-    model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/palmyra_test.csv"
-    model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
+    #model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/palmyra_test.csv"
+    #model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
     
     model.create_trainer(logger=comet_logger)
     comet_logger.experiment.log_parameters(model.config)
