@@ -411,8 +411,8 @@ def prepare_USGS(generate=True):
     
     def cut(x):
         annotations = preprocess.split_raster(
-            path_to_raster="/orange/ewhite/USGSImagery/migbirds/migbirds/{}".format(x),
-            annotations_file="/orange/ewhite/USGSImagery/migbirds/annotations.csv",
+            path_to_raster="/orange/ewhite/b.weinstein/USGS/migbirds/migbirds/{}".format(x),
+            annotations_file="/orange/ewhite/b.weinstein/USGS/migbirds/annotations.csv",
             patch_size=1200,
             patch_overlap=0,
             base_dir="/orange/ewhite/b.weinstein/generalization/crops",
