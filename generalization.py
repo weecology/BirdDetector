@@ -403,12 +403,14 @@ def prepare_USGS(generate=True):
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/USGS_test.csv"
     
     input_data = pd.read_csv("/orange/ewhite/USGSImagery/migbirds/migbirds2020_07_31.csv")
+    input_data["image_path"] = input_data.file_basename
+    input_data.to_csv("/orange/ewhite/USGSImagery/migbirds/annotations.csv")
     
     crop_annotations = []
     for x in input_data.file_basename:
         annotations = preprocess.split_raster(
             path_to_raster="/orange/ewhite/USGSImagery/migbirds/migbirds/{}".format(x),
-            annotations_file="/orange/ewhite/USGSImagery/migbirds/migbirds2020_07_31.csv",
+            annotations_file="/orange/ewhite/USGSImagery/migbirds/annotations.csv",
             patch_size=800,
             patch_overlap=0,
             base_dir="/orange/ewhite/b.weinstein/generalization/crops",
