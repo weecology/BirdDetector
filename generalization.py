@@ -398,6 +398,68 @@ def prepare_schedl(generate=True):
         
     return {"test":test_path}
 
+def prepare_monash(generate=True):
+    client = start_cluster.start(cpus=30, mem_size="10GB")
+    
+    train_path = "/orange/ewhite/b.weinstein/generalization/crops/Monash_train.csv"
+    test_path = "/orange/ewhite/b.weinstein/generalization/crops/Monash_test.csv"
+    
+    #Find all the shapefiles
+    shps = glob.glob("/orange/ewhite/b.weinstein/Monash/**/*.shp",recursive=True)
+    shps = [x for x in shps if not "AQUA" in x]
+    
+    annotation_list = []
+    for x in shps:
+        components = x.split("_")
+        tif_path = "/orange/ewhite/b.weinstein/Monash/Transect {letter}/Transect {letter} {year}/Transect_{letter}_{year}.tif".format(letter=components[1],year=components[2])
+        jpg_path = "/orange/ewhite/b.weinstein/Monash/Transect {letter}/Transect {letter} {year}/Transect_{letter}_{year}.jpg".format(letter=components[1],year=components[2])
+        
+        if os.path.exists(tif_path):
+            rgb_path = tif_path
+        elif os.path.exists(jpg_path):
+            rgb_path = jpg_path
+        else:
+            print("Cannot find corresponding image to annotations {}".format(x))
+            
+        annotations = shapefile_to_annotations(shapefile=x, rgb_path)
+        annotations["image_path"] = rgb_path
+        annotation_list.append(annotations)
+        
+    input_data = pd.concat(annotation_list)
+    input_data.to_csv("/orange/ewhite/b.weinstein/USGS/migbirds/annotations.csv")
+    
+    def cut(x):
+        annotations = preprocess.split_raster(
+            path_to_raster="/orange/ewhite/b.weinstein/USGS/migbirds/migbirds/{}".format(x),
+            annotations_file="/orange/ewhite/b.weinstein/USGS/migbirds/annotations.csv",
+            patch_size=1200,
+            patch_overlap=0,
+            base_dir="/orange/ewhite/b.weinstein/generalization/crops",
+            allow_empty=False
+        )
+        
+        return annotations
+    
+    crop_annotations = []
+    futures = client.map(cut,input_data.image_path.unique())
+    for x in futures:
+        try:
+            crop_annotations.append(x.result())
+        except Exception as e:
+            print(e)
+            pass
+    
+    df = pd.concat(crop_annotations)
+    df.label = "Bird"
+    train_images = df.file_basename.sample(frac=0.9)
+    train_annotations = df[df.image_path.isin(train_images)]
+    train_annotations.to_csv(train_path, index=False)    
+
+    test_annotations = df[~(df.image_path.isin(train_images))]
+    test_annotations.to_csv(test_path, index=False)    
+    
+    return {"train":train_path, "test":test_path}
+
 def prepare_USGS(generate=True):
     
     client = start_cluster.start(cpus=30, mem_size="10GB")
@@ -481,7 +543,8 @@ def prepare():
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
     paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=True)
+    paths["USGS"] = prepare_USGS(generate=False)
+    paths["monash"] = prepare_USGS(generate=True)
 
     return paths
 
@@ -603,7 +666,7 @@ if __name__ =="__main__":
     
     view_training(path_dict, comet_logger=comet_logger)
     ###leave one out
-    train_list = ["USGS","terns","palmyra","penguins","pfeifer","hayes"]
+    train_list = ["USGS","monash","terns","palmyra","penguins","pfeifer","hayes"]
     results = []
     for x in train_list:
         train_sets = [y for y in train_list if not y==x]
@@ -622,7 +685,7 @@ if __name__ =="__main__":
     comet_logger.experiment.log_metric(name="Mean LOO Precision", value=results.precision.mean())
     
     #Joint model
-    train_sets = ["terns","palmyra","penguins","pfeifer","hayes","everglades","USGS"]
+    train_sets = ["terns","palmyra","penguins","pfeifer","hayes","everglades","USGS","monash"]
     test_sets = ["murres","pelicans","schedl"]
     recall, precision = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
     #Don't log validation scores till the end of project
