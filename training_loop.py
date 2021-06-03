@@ -14,7 +14,7 @@ import os
 import shutil
 from datetime import datetime
 import torch
- 
+
 def prepare_palmyra(generate=True):
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/palmyra_test.csv"
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/palmyra_finetune.csv"      

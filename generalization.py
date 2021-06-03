@@ -12,6 +12,7 @@ from deepforest import main
 from datetime import datetime
 from augmentation import get_transform
 from shapely.geometry import Point, box
+from utils import start_cluster
 
 import geopandas as gpd
 import pandas as pd
@@ -20,7 +21,6 @@ import numpy as np
 import os
 import PIL
 import tempfile
-import random
 import torch
 import gc
 from pytorch_lightning.plugins import DDPPlugin
@@ -399,24 +399,36 @@ def prepare_schedl(generate=True):
     return {"test":test_path}
 
 def prepare_USGS(generate=True):
+    
+    client = start_cluster.start(cpus=30)
+    
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/USGS_train.csv"
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/USGS_test.csv"
     
-    input_data = pd.read_csv("/orange/ewhite/USGSImagery/migbirds/migbirds2020_07_31.csv")
+    input_data = pd.read_csv("/orange/ewhite/b.weinstein/USGS/migbirds/migbirds2020_07_31.csv")
     input_data["image_path"] = input_data.file_basename
-    input_data.to_csv("/orange/ewhite/USGSImagery/migbirds/annotations.csv")
+    input_data.to_csv("/orange/ewhite/b.weinstein/USGS/migbirds/annotations.csv")
     
-    crop_annotations = []
-    for x in input_data.file_basename:
+    def cut(x):
         annotations = preprocess.split_raster(
             path_to_raster="/orange/ewhite/USGSImagery/migbirds/migbirds/{}".format(x),
             annotations_file="/orange/ewhite/USGSImagery/migbirds/annotations.csv",
-            patch_size=800,
+            patch_size=1200,
             patch_overlap=0,
             base_dir="/orange/ewhite/b.weinstein/generalization/crops",
             allow_empty=False
         )
-        crop_annotations.append(annotations)
+        
+        return annotations
+    
+    crop_annotations = []
+    futures = client.map(cut,input_data.image_path.unique())
+    for x in futures:
+        try:
+            crop_annotations.append(x.result())
+        except Exception as e:
+            print(e)
+            pass
     
     df = pd.concat(crop_annotations)
     train_images = df.file_basename.sample(frac=0.9)
