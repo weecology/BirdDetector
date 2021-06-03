@@ -407,7 +407,7 @@ def prepare_USGS(generate=True):
     crop_annotations = []
     for x in input_data.file_basename:
         annotations = preprocess.split_raster(
-            path_to_raster="/orange/ewhite/USGSImagery/migbirds/migbirds/{}.png".format(x),
+            path_to_raster="/orange/ewhite/USGSImagery/migbirds/migbirds/{}".format(x),
             annotations_file="/orange/ewhite/USGSImagery/migbirds/migbirds2020_07_31.csv",
             patch_size=800,
             patch_overlap=0,
