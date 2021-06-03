@@ -400,7 +400,7 @@ def prepare_schedl(generate=True):
 
 def prepare_USGS(generate=True):
     
-    client = start_cluster.start(cpus=30)
+    client = start_cluster.start(cpus=30, mem_size="10GB")
     
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/USGS_train.csv"
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/USGS_test.csv"
