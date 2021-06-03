@@ -89,6 +89,7 @@ def train_model(train_path, test_path, empty_images_path=None, save_dir=".", deb
         print(e)
     
     comet_logger.experiment.log_parameter("timestamp",timestamp)
+    comet_logger.experiment.add_tag("species")
     
     #Log the number of training and test
     train = pd.read_csv(train_path)

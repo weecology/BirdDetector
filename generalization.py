@@ -398,6 +398,33 @@ def prepare_schedl(generate=True):
         
     return {"test":test_path}
 
+def prepare_USGS(generate=True):
+    train_path = "/orange/ewhite/b.weinstein/generalization/crops/USGS_train.csv"
+    test_path = "/orange/ewhite/b.weinstein/generalization/crops/USGS_test.csv"
+    
+    input_data = pd.read_csv("/orange/ewhite/USGSImagery/migbirds/migbirds2020_07_31.csv")
+    
+    crop_annotations = []
+    for x in input_data.file_basename:
+        annotations = preprocess.split_raster(
+            path_to_raster="/orange/ewhite/USGSImagery/migbirds/migbirds/{}.png".format(x),
+            annotations_file="/orange/ewhite/USGSImagery/migbirds/migbirds2020_07_31.csv",
+            patch_size=800,
+            patch_overlap=0,
+            base_dir="/orange/ewhite/b.weinstein/generalization/crops",
+            allow_empty=False
+        )
+        crop_annotations.append(annotations)
+    
+    df = pd.concat(crop_annotations)
+    train_images = df.file_basename.sample(frac=0.9)
+    train_annotations = df[df.image_path.isin(train_images)]
+    train_annotations.to_csv(train_path, index=False)    
+
+    test_annotations = df[~(df.image_path.isin(train_images))]
+    test_annotations.to_csv(train_path, index=False)    
+    
+    return {"train":train_path, "test":test_path}
 
 def view_training(paths,comet_logger, n=10):
     """For each site, grab three images and view annotations
@@ -438,7 +465,8 @@ def prepare():
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
-    paths["hayes"] = prepare_hayes(generate=True)
+    paths["hayes"] = prepare_hayes(generate=False)
+    paths["USGS"] = prepare_USGS(generate=True)
 
     return paths
 
@@ -560,7 +588,7 @@ if __name__ =="__main__":
     
     view_training(path_dict, comet_logger=comet_logger)
     ###leave one out
-    train_list = ["terns","palmyra","penguins","pfeifer","hayes"]
+    train_list = ["USGS","terns","palmyra","penguins","pfeifer","hayes"]
     results = []
     for x in train_list:
         train_sets = [y for y in train_list if not y==x]
@@ -579,7 +607,7 @@ if __name__ =="__main__":
     comet_logger.experiment.log_metric(name="Mean LOO Precision", value=results.precision.mean())
     
     #Joint model
-    train_sets = ["terns","palmyra","penguins","pfeifer","hayes","everglades"]
+    train_sets = ["terns","palmyra","penguins","pfeifer","hayes","everglades","USGS"]
     test_sets = ["murres","pelicans","schedl"]
     recall, precision = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
     #Don't log validation scores till the end of project
