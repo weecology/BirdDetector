@@ -436,7 +436,7 @@ def prepare_USGS(generate=True):
     train_annotations.to_csv(train_path, index=False)    
 
     test_annotations = df[~(df.image_path.isin(train_images))]
-    test_annotations.to_csv(train_path, index=False)    
+    test_annotations.to_csv(test_path, index=False)    
     
     return {"train":train_path, "test":test_path}
 
