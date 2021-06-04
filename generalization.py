@@ -410,7 +410,7 @@ def prepare_monash(generate=True):
     
     annotation_list = []
     for x in shps:
-        components = x.split("_")
+        components = os.path.basename(x).split("_")
         tif_path = "/orange/ewhite/b.weinstein/Monash/Transect {letter}/Transect {letter} {year}/Transect_{letter}_{year}.tif".format(letter=components[1],year=components[2])
         jpg_path = "/orange/ewhite/b.weinstein/Monash/Transect {letter}/Transect {letter} {year}/Transect_{letter}_{year}.jpg".format(letter=components[1],year=components[2])
         
@@ -420,6 +420,7 @@ def prepare_monash(generate=True):
             rgb_path = jpg_path
         else:
             print("Cannot find corresponding image to annotations {}".format(x))
+            
             
         annotations = shapefile_to_annotations(shapefile=x, rgb=rgb_path)
         annotations["image_path"] = rgb_path
@@ -547,8 +548,8 @@ def prepare():
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
     paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=True)
-    #paths["monash"] = prepare_USGS(generate=True)
+    paths["USGS"] = prepare_USGS(generate=False)
+    paths["monash"] = prepare_monash(generate=True)
 
     return paths
 
