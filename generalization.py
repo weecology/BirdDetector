@@ -497,7 +497,7 @@ def prepare_USGS(generate=True):
         
         df = pd.concat(crop_annotations)
         df.label = "Bird"
-        train_images = df.image_path.sample(frac=0.9)
+        train_images = df.image_path.sample(frac=0.75)
         train_annotations = df[df.image_path.isin(train_images)]
         train_annotations.to_csv(train_path, index=False)    
     
