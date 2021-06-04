@@ -674,7 +674,7 @@ if __name__ =="__main__":
     
     view_training(path_dict, comet_logger=comet_logger)
     ###leave one out
-    train_list = ["USGS","terns","palmyra","penguins","pfeifer","hayes"]
+    train_list = ["monash","USGS","terns","palmyra","penguins","pfeifer","hayes"]
     results = []
     for x in train_list:
         train_sets = [y for y in train_list if not y==x]
@@ -693,7 +693,7 @@ if __name__ =="__main__":
     comet_logger.experiment.log_metric(name="Mean LOO Precision", value=results.precision.mean())
     
     #Joint model
-    train_sets = ["terns","palmyra","penguins","pfeifer","hayes","everglades","USGS"]
+    train_sets = ["terns","palmyra","penguins","pfeifer","hayes","everglades","USGS","monash"]
     test_sets = ["murres","pelicans","schedl"]
     recall, precision = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
     #Don't log validation scores till the end of project
