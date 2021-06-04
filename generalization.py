@@ -453,13 +453,13 @@ def prepare_monash(generate=True):
     
     df = pd.concat(crop_annotations)
     df.label = "Bird"
-    train_images = df.file_basename.sample(frac=0.9)
-    train_annotations = df[df.image_path.isin(train_images)]
-    train_annotations.to_csv(train_path, index=False)    
-
-    test_annotations = df[~(df.image_path.isin(train_images))]
-    test_annotations.to_csv(test_path, index=False)    
     
+    train_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
+    train_annotations.to_csv(train_path, index=False)    
+    
+    test_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
+    test_annotations.to_csv(test_path, index=False)    
+
     return {"train":train_path, "test":test_path}
 
 def prepare_USGS(generate=True):
