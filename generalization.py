@@ -399,66 +399,68 @@ def prepare_schedl(generate=True):
     return {"test":test_path}
 
 def prepare_monash(generate=True):
-    client = start_cluster.start(cpus=30, mem_size="10GB")
-    
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/Monash_train.csv"
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/Monash_test.csv"
-    
-    #Find all the shapefiles
-    shps = glob.glob("/orange/ewhite/b.weinstein/Monash/**/*.shp",recursive=True)
-    shps = [x for x in shps if not "AQUA" in x]
-    
-    annotation_list = []
-    matched_tiles = []
-    for x in shps:
-        components = os.path.basename(x).split("_")
-        tif_path = "/orange/ewhite/b.weinstein/Monash/Transect {letter}/Transect {letter} {year}/Transect_{letter}_{year}.tif".format(letter=components[1],year=components[2])
-        jpg_path = "/orange/ewhite/b.weinstein/Monash/Transect {letter}/Transect {letter} {year}/Transect_{letter}_{year}.jpg".format(letter=components[1],year=components[2])
         
-        if os.path.exists(tif_path):
-            rgb_path = tif_path
-        elif os.path.exists(jpg_path):
-            rgb_path = jpg_path
-        else:
-            print("Cannot find corresponding image to annotations {}".format(x))
+    if generate:
+        client = start_cluster.start(cpus=30, mem_size="10GB")
+  
+        #Find all the shapefiles
+        shps = glob.glob("/orange/ewhite/b.weinstein/Monash/**/*.shp",recursive=True)
+        shps = [x for x in shps if not "AQUA" in x]
+        
+        annotation_list = []
+        matched_tiles = []
+        for x in shps:
+            components = os.path.basename(x).split("_")
+            tif_path = "/orange/ewhite/b.weinstein/Monash/Transect {letter}/Transect {letter} {year}/Transect_{letter}_{year}.tif".format(letter=components[1],year=components[2])
+            jpg_path = "/orange/ewhite/b.weinstein/Monash/Transect {letter}/Transect {letter} {year}/Transect_{letter}_{year}.jpg".format(letter=components[1],year=components[2])
             
-        annotations = shapefile_to_annotations(shapefile=x, rgb=rgb_path)
-        annotations["image_path"] = os.path.basename(rgb_path)
-        annotation_list.append(annotations)
-        matched_tiles.append(rgb_path)
+            if os.path.exists(tif_path):
+                rgb_path = tif_path
+            elif os.path.exists(jpg_path):
+                rgb_path = jpg_path
+            else:
+                print("Cannot find corresponding image to annotations {}".format(x))
+                
+            annotations = shapefile_to_annotations(shapefile=x, rgb=rgb_path)
+            annotations["image_path"] = os.path.basename(rgb_path)
+            annotation_list.append(annotations)
+            matched_tiles.append(rgb_path)
+            
+        input_data = pd.concat(annotation_list)
+        input_data.to_csv("/orange/ewhite/b.weinstein/Monash/annotations.csv")
         
-    input_data = pd.concat(annotation_list)
-    input_data.to_csv("/orange/ewhite/b.weinstein/Monash/annotations.csv")
-    
-    def cut(x):
-        annotations = preprocess.split_raster(
-            path_to_raster=x,
-            annotations_file="/orange/ewhite/b.weinstein/Monash/annotations.csv",
-            patch_size=1000,
-            patch_overlap=0,
-            base_dir="/orange/ewhite/b.weinstein/generalization/crops",
-            allow_empty=False
-        )
+        def cut(x):
+            annotations = preprocess.split_raster(
+                path_to_raster=x,
+                annotations_file="/orange/ewhite/b.weinstein/Monash/annotations.csv",
+                patch_size=1000,
+                patch_overlap=0,
+                base_dir="/orange/ewhite/b.weinstein/generalization/crops",
+                allow_empty=False
+            )
+            
+            return annotations
         
-        return annotations
-    
-    crop_annotations = []
-    futures = client.map(cut,matched_tiles)
-    for x in futures:
-        try:
-            crop_annotations.append(x.result())
-        except Exception as e:
-            print(e)
-            pass
-    
-    df = pd.concat(crop_annotations)
-    df.label = "Bird"
-    
-    train_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
-    train_annotations.to_csv(train_path, index=False)    
-    
-    test_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
-    test_annotations.to_csv(test_path, index=False)    
+        crop_annotations = []
+        futures = client.map(cut,matched_tiles)
+        for x in futures:
+            try:
+                crop_annotations.append(x.result())
+            except Exception as e:
+                print(e)
+                pass
+        
+        df = pd.concat(crop_annotations)
+        df.label = "Bird"
+        
+        train_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
+        train_annotations.to_csv(train_path, index=False)    
+        
+        test_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
+        test_annotations.to_csv(test_path, index=False)
+        client.close(timeout=no_default)
 
     return {"train":train_path, "test":test_path}
 
