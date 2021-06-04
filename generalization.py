@@ -409,6 +409,7 @@ def prepare_monash(generate=True):
     shps = [x for x in shps if not "AQUA" in x]
     
     annotation_list = []
+    matched_tiles = []
     for x in shps:
         components = os.path.basename(x).split("_")
         tif_path = "/orange/ewhite/b.weinstein/Monash/Transect {letter}/Transect {letter} {year}/Transect_{letter}_{year}.tif".format(letter=components[1],year=components[2])
@@ -424,15 +425,16 @@ def prepare_monash(generate=True):
         annotations = shapefile_to_annotations(shapefile=x, rgb=rgb_path)
         annotations["image_path"] = os.path.basename(rgb_path)
         annotation_list.append(annotations)
+        matched_tiles.append(rgb_path)
         
     input_data = pd.concat(annotation_list)
-    input_data.to_csv("/orange/ewhite/b.weinstein/USGS/migbirds/annotations.csv")
+    input_data.to_csv("/orange/ewhite/b.weinstein/Monash/annotations.csv")
     
     def cut(x):
         annotations = preprocess.split_raster(
-            path_to_raster="/orange/ewhite/b.weinstein/USGS/migbirds/migbirds/{}".format(x),
-            annotations_file="/orange/ewhite/b.weinstein/USGS/migbirds/annotations.csv",
-            patch_size=1200,
+            path_to_raster=x,
+            annotations_file="/orange/ewhite/b.weinstein/Monash/annotations.csv",
+            patch_size=1000,
             patch_overlap=0,
             base_dir="/orange/ewhite/b.weinstein/generalization/crops",
             allow_empty=False
@@ -441,7 +443,7 @@ def prepare_monash(generate=True):
         return annotations
     
     crop_annotations = []
-    futures = client.map(cut,input_data.image_path.unique())
+    futures = client.map(cut,matched_tiles)
     for x in futures:
         try:
             crop_annotations.append(x.result())
