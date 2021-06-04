@@ -421,9 +421,8 @@ def prepare_monash(generate=True):
         else:
             print("Cannot find corresponding image to annotations {}".format(x))
             
-            
         annotations = shapefile_to_annotations(shapefile=x, rgb=rgb_path)
-        annotations["image_path"] = rgb_path
+        annotations["image_path"] = os.path.basename(rgb_path)
         annotation_list.append(annotations)
         
     input_data = pd.concat(annotation_list)
