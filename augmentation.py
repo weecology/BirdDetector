@@ -28,16 +28,25 @@ def get_transform(augment):
             A.RandomSizedBBoxSafeCrop(height=600, width=600, erosion_rate=0.5,p=0.75),
             A.Flip(p=0.5),
             A.RandomBrightnessContrast(),
+            MeanSubtract(),
             A.pytorch.ToTensorV2()
         ], bbox_params=A.BboxParams(format='pascal_voc',label_fields=["category_ids"]))
         
     else:
         transform = A.Compose([
+            MeanSubtract(),            
             A.pytorch.ToTensorV2()
         ])
         
     return transform
 
+class MeanSubtract(A.ImageOnlyTransform):
+    def __init__(self, always_apply=True, p=0.5):
+        super().__init__(always_apply, p)
+    
+    def apply(self, image, **params):
+        return image - image.mean()
+    
 
 class RandomBBoxSafeCrop(A.DualTransform):
     """Crop a random part of the input and rescale it to some size without loss of bboxes.

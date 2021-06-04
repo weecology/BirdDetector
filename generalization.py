@@ -460,7 +460,7 @@ def prepare_monash(generate=True):
         
         test_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
         test_annotations.to_csv(test_path, index=False)
-        client.close(timeout=no_default)
+        client.close()
 
     return {"train":train_path, "test":test_path}
 
