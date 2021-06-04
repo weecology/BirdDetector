@@ -28,13 +28,11 @@ def get_transform(augment):
             A.RandomSizedBBoxSafeCrop(height=600, width=600, erosion_rate=0.5,p=0.75),
             A.Flip(p=0.5),
             A.RandomBrightnessContrast(),
-            A.Normalize(),
             A.pytorch.ToTensorV2()
         ], bbox_params=A.BboxParams(format='pascal_voc',label_fields=["category_ids"]))
         
     else:
         transform = A.Compose([
-            A.Normalize(),
             A.pytorch.ToTensorV2()
         ])
         
