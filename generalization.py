@@ -458,7 +458,7 @@ def prepare_monash(generate=True):
         train_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
         train_annotations.to_csv(train_path, index=False)    
         
-        test_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
+        test_annotations = df[df.image_path.str.contains("Transect_A_2020")]
         test_annotations.to_csv(test_path, index=False)
         client.close()
 
@@ -552,7 +552,7 @@ def prepare():
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
     paths["hayes"] = prepare_hayes(generate=False)
     paths["USGS"] = prepare_USGS(generate=False)
-    paths["monash"] = prepare_monash(generate=False)
+    paths["monash"] = prepare_monash(generate=True)
 
     return paths
 
