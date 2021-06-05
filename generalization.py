@@ -114,23 +114,28 @@ def shapefile_to_annotations(shapefile, rgb, savedir=".", box_points=False, conf
     
     return result
 
-def prepare_palmyra(generate=True):
+def prepare_palmyra(generate=True, focal_view = 20):
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/palmyra_test.csv"
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/palmyra_train.csv"      
     if generate:      
+        
         df = shapefile_to_annotations(
             shapefile="/orange/ewhite/everglades/Palmyra/Dudley_projected.shp",
             rgb="/orange/ewhite/everglades/Palmyra/Dudley_projected.tif", box_points=False, confidence_filter=False, buffer_size=0.15)
         df.to_csv("Figures/test_annotations.csv",index=False)
         
+        
         src = rio.open("/orange/ewhite/everglades/Palmyra/Dudley_projected.tif")
+        resolution = src.res[0]
+        
         numpy_image = src.read()
         numpy_image = np.moveaxis(numpy_image,0,2)
         numpy_image = numpy_image[:,:,:3].astype("uint8")
         
+        patch_size = focal_view / resolution
         test_annotations = preprocess.split_raster(numpy_image=numpy_image,
                                                    annotations_file="Figures/test_annotations.csv",
-                                                   patch_size=1300, patch_overlap=0.05, base_dir="/orange/ewhite/b.weinstein/generalization/crops/", image_name="Dudley_projected.tif")
+                                                   patch_size=patch_size, patch_overlap=0.05, base_dir="/orange/ewhite/b.weinstein/generalization/crops/", image_name="Dudley_projected.tif")
         
         test_annotations.to_csv(test_path,index=False)
         
@@ -146,11 +151,12 @@ def prepare_palmyra(generate=True):
         )
     
         df.to_csv("Figures/training_annotations.csv",index=False)
-        
+        resolution = src.res[0]
+        patch_size = focal_view / resolution    
         train_annotations_1 = preprocess.split_raster(
             numpy_image=training_image,
             annotations_file="Figures/training_annotations.csv",
-            patch_size=1300,
+            patch_size=patch_size,
             patch_overlap=0.05,
             base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
             image_name="CooperStrawn_53m_tile_clip_projected.tif",
@@ -162,7 +168,7 @@ def prepare_palmyra(generate=True):
             
     return {"train":train_path, "test":test_path}
 
-def prepare_penguin(generate=True):
+def prepare_penguin(generate=True, focal_view=20):
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/penguins_test.csv"
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/penguins_train.csv"
     
@@ -173,16 +179,24 @@ def prepare_penguin(generate=True):
         df.to_csv("/orange/ewhite/b.weinstein/penguins/test_annotations.csv",index=False)
         
         src = rio.open("/orange/ewhite/b.weinstein/penguins/cape_wallace_survey_8.tif")
+        resolution = src.res[0]
         numpy_image = src.read()
         numpy_image = np.moveaxis(numpy_image,0,2)
         numpy_image = numpy_image[:,:,:3].astype("uint8")
-        
-        test_annotations = preprocess.split_raster(numpy_image=numpy_image, annotations_file="/orange/ewhite/b.weinstein/penguins/test_annotations.csv", patch_size=600, patch_overlap=0.05,
-                                                   base_dir="/orange/ewhite/b.weinstein/generalization/crops", image_name="cape_wallace_survey_8.tif")
+
+        patch_size = focal_view / resolution        
+        test_annotations = preprocess.split_raster(
+            numpy_image=numpy_image,
+            annotations_file="/orange/ewhite/b.weinstein/penguins/test_annotations.csv",
+            patch_size=patch_size,
+            patch_overlap=0.05,
+            base_dir="/orange/ewhite/b.weinstein/generalization/crops",
+            image_name="cape_wallace_survey_8.tif")
         
         test_annotations.to_csv(test_path,index=False)
     
         src = rio.open("/orange/ewhite/b.weinstein/penguins/offshore_rocks_cape_wallace_survey_4.tif")
+        resolution = src.res[0]
         numpy_image = src.read()
         numpy_image = np.moveaxis(numpy_image,0,2)
         training_image = numpy_image[:,:,:3].astype("uint8")
@@ -191,10 +205,12 @@ def prepare_penguin(generate=True):
     
         df.to_csv("/orange/ewhite/b.weinstein/penguins/training_annotations.csv",index=False)
         
+        patch_size = focal_view / resolution  
+        print("Penguin resolution is {resolution} with a focal view of {focal_view} = {patch_size}".format(resolution=resolution, focal_view=focal_view, patch_size=patch_size))
         train_annotations = preprocess.split_raster(
             numpy_image=training_image,
             annotations_file="/orange/ewhite/b.weinstein/penguins/training_annotations.csv",
-            patch_size=600,
+            patch_size=patch_size,
             patch_overlap=0.05,
             base_dir="/orange/ewhite/b.weinstein/generalization/crops",
             image_name="offshore_rocks_cape_wallace_survey_4.tif",
@@ -213,7 +229,7 @@ def prepare_everglades():
     
     return {"train":train_path, "test":test_path}
 
-def prepare_terns(generate=True):
+def prepare_terns(generate=True, focal_view = 20):
     PIL.Image.MAX_IMAGE_PIXELS = 933120000
     
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/tern_test.csv"
@@ -223,10 +239,13 @@ def prepare_terns(generate=True):
                                       rgb="/orange/ewhite/b.weinstein/terns/seabirds_rgb.tif", buffer_size=0.15)
         df.to_csv("/orange/ewhite/b.weinstein/terns/seabirds_rgb.csv")
         
+        src = rio.open("/orange/ewhite/b.weinstein/terns/seabirds_rgb.tif")
+        resolution = src.res[0]
+        patch_size = focal_view/resolution
         annotations = preprocess.split_raster(
             path_to_raster="/orange/ewhite/b.weinstein/terns/seabirds_rgb.tif",
             annotations_file="/orange/ewhite/b.weinstein/terns/seabirds_rgb.csv",
-            patch_size=700,
+            patch_size=patch_size,
             patch_overlap=0,
             base_dir="/orange/ewhite/b.weinstein/generalization/crops",
             image_name="seabirds_rgb.tif",
@@ -280,7 +299,7 @@ def prepare_hayes(generate=True):
     
     return {"train":train_path, "test":test_path}
     
-def prepare_pfeifer(generate=True):
+def prepare_pfeifer(generate=True, focal_view = 20):
     
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/pfeifer_train.csv"
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/pfeifer_test.csv"
@@ -294,10 +313,13 @@ def prepare_pfeifer(generate=True):
                                           rgb="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
             df.to_csv("/orange/ewhite/b.weinstein/pfeifer/{}.csv".format(basename))
             
+            src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
+            resolution = src.res[0]
+            patch_size = focal_view/resolution
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
                 annotations_file="/orange/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
-                patch_size=500,
+                patch_size=patch_size,
                 patch_overlap=0,
                 base_dir="/orange/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
@@ -314,10 +336,14 @@ def prepare_pfeifer(generate=True):
                                           rgb="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
             df.to_csv("/orange/ewhite/b.weinstein/pfeifer/{}.csv".format(basename))
             
+            src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
+            resolution = src.res[0]
+            patch_size = focal_view/resolution
+            
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
                 annotations_file="/orange/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
-                patch_size=500,
+                patch_size=patch_size,
                 patch_overlap=0,
                 base_dir="/orange/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
@@ -398,7 +424,7 @@ def prepare_schedl(generate=True):
         
     return {"test":test_path}
 
-def prepare_monash(generate=True):
+def prepare_monash(generate=True, focal_view=20):
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/Monash_train.csv"
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/Monash_test.csv"
         
@@ -432,10 +458,15 @@ def prepare_monash(generate=True):
         input_data.to_csv("/orange/ewhite/b.weinstein/Monash/annotations.csv")
         
         def cut(x):
+            
+            src = rio.open(x)
+            resolution = src.res[0]
+            patch_size = focal_view/resolution
+            
             annotations = preprocess.split_raster(
                 path_to_raster=x,
                 annotations_file="/orange/ewhite/b.weinstein/Monash/annotations.csv",
-                patch_size=1000,
+                patch_size=patch_size,
                 patch_overlap=0,
                 base_dir="/orange/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
@@ -464,7 +495,7 @@ def prepare_monash(generate=True):
 
     return {"train":train_path, "test":test_path}
 
-def prepare_USGS(generate=True):
+def prepare_USGS(generate=True, focal_view=20):
     
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/USGS_train.csv"
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/USGS_test.csv"
@@ -472,17 +503,21 @@ def prepare_USGS(generate=True):
     if generate:
         
         client = start_cluster.start(cpus=30, mem_size="10GB")
-
         
         input_data = pd.read_csv("/orange/ewhite/b.weinstein/USGS/migbirds/migbirds2020_07_31.csv")
         input_data["image_path"] = input_data.file_basename
         input_data.to_csv("/orange/ewhite/b.weinstein/USGS/migbirds/annotations.csv")
         
         def cut(x):
+            
+            src = rio.open(x)
+            resolution = src.res[0]
+            patch_size = focal_view/resolution
+            
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/USGS/migbirds/migbirds/{}".format(x),
                 annotations_file="/orange/ewhite/b.weinstein/USGS/migbirds/annotations.csv",
-                patch_size=1200,
+                patch_size=patch_size,
                 patch_overlap=0,
                 base_dir="/orange/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
@@ -540,19 +575,19 @@ def view_training(paths,comet_logger, n=10):
                 except Exception as e:
                     print(e)
                     continue
-def prepare():
+def prepare(focal_view):
     paths = {}
     paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
-    paths["penguins"] = prepare_penguin(generate=False)
-    paths["palmyra"] = prepare_palmyra(generate=False)
+    paths["penguins"] = prepare_penguin(generate=False, focal_view = focal_view)
+    paths["palmyra"] = prepare_palmyra(generate=False, focal_view = focal_view)
     paths["pelicans"] = prepare_pelicans(generate=False)
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=False)
-    paths["pfeifer"] = prepare_pfeifer(generate=False)    
+    paths["pfeifer"] = prepare_pfeifer(generate=False, focal_view = focal_view)    
     paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=False)
-    paths["monash"] = prepare_monash(generate=True)
+    paths["USGS"] = prepare_USGS(generate=False, focal_view = focal_view)
+    paths["monash"] = prepare_monash(generate=True, focal_view = focal_view)
 
     return paths
 
@@ -668,10 +703,12 @@ if __name__ =="__main__":
     model = BirdDetector(transforms=get_transform)
     config = model.config
     
-    path_dict = prepare()
+    focal_view = 20
+    path_dict = prepare(focal_view=focal_view)
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                 project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
     
+    comet_logger.experiment.log_parameter("focal_view", focal_view)
     view_training(path_dict, comet_logger=comet_logger)
     ###leave one out
     train_list = ["monash","USGS","terns","palmyra","penguins","pfeifer","hayes"]
