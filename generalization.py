@@ -410,14 +410,12 @@ def prepare_schedl(generate=True):
             df.to_csv("/orange/ewhite/b.weinstein/schedl/{}.csv".format(basename))
             
             src = rio.open("/orange/ewhite/b.weinstein/schedl/{}.JPG".format(basename))
-            resolution = src.res[0]
-            patch_size = int(focal_view/resolution)
-            
+            resolution = src.res[0]            
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/schedl/{}.JPG".format(basename),
                 annotations_file="/orange/ewhite/b.weinstein/schedl/{}.csv".format(basename),
-                patch_size=patch_size,
-                patch_overlap=800,
+                patch_size=800,
+                patch_overlap=0.05,
                 base_dir="/orange/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
             )
