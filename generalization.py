@@ -310,8 +310,8 @@ def prepare_pfeifer(generate=True, focal_view = 20):
                                           rgb="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
             df.to_csv("/orange/ewhite/b.weinstein/pfeifer/{}.csv".format(basename))
             
+            src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))            
             if src.crs: 
-                src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
                 resolution = src.res[0]
                 patch_size = int(focal_view/resolution)-200
             else:
@@ -337,9 +337,13 @@ def prepare_pfeifer(generate=True, focal_view = 20):
                                           rgb="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
             df.to_csv("/orange/ewhite/b.weinstein/pfeifer/{}.csv".format(basename))
             
-            src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
-            resolution = src.res[0]
-            patch_size = int(focal_view/resolution)-200
+            src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))            
+            if src.crs: 
+                resolution = src.res[0]
+                patch_size = int(focal_view/resolution)-200
+            else:
+                patch_size = 500
+                
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
                 annotations_file="/orange/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
