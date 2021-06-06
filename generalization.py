@@ -579,7 +579,7 @@ def prepare(focal_view):
     paths = {}
     paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
-    paths["penguins"] = prepare_penguin(generate=True)
+    paths["penguins"] = prepare_penguin(generate=False)
     paths["palmyra"] = prepare_palmyra(generate=False, focal_view = focal_view)
     paths["pelicans"] = prepare_pelicans(generate=False)
     paths["murres"] = prepare_murres(generate=False)
