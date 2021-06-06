@@ -132,7 +132,7 @@ def prepare_palmyra(generate=True, focal_view = 20):
         numpy_image = np.moveaxis(numpy_image,0,2)
         numpy_image = numpy_image[:,:,:3].astype("uint8")
         
-        patch_size = focal_view / resolution
+        patch_size = int(focal_view / resolution)
         test_annotations = preprocess.split_raster(numpy_image=numpy_image,
                                                    annotations_file="Figures/test_annotations.csv",
                                                    patch_size=patch_size, patch_overlap=0.05, base_dir="/orange/ewhite/b.weinstein/generalization/crops/", image_name="Dudley_projected.tif")
@@ -152,7 +152,7 @@ def prepare_palmyra(generate=True, focal_view = 20):
     
         df.to_csv("Figures/training_annotations.csv",index=False)
         resolution = src.res[0]
-        patch_size = focal_view / resolution    
+        patch_size = int(focal_view / resolution)    
         train_annotations_1 = preprocess.split_raster(
             numpy_image=training_image,
             annotations_file="Figures/training_annotations.csv",
@@ -184,7 +184,7 @@ def prepare_penguin(generate=True, focal_view=20):
         numpy_image = np.moveaxis(numpy_image,0,2)
         numpy_image = numpy_image[:,:,:3].astype("uint8")
 
-        patch_size = focal_view / resolution        
+        patch_size = int(focal_view / resolution)        
         test_annotations = preprocess.split_raster(
             numpy_image=numpy_image,
             annotations_file="/orange/ewhite/b.weinstein/penguins/test_annotations.csv",
@@ -205,7 +205,7 @@ def prepare_penguin(generate=True, focal_view=20):
     
         df.to_csv("/orange/ewhite/b.weinstein/penguins/training_annotations.csv",index=False)
         
-        patch_size = focal_view / resolution  
+        patch_size = int(focal_view / resolution)  
         print("Penguin resolution is {resolution} with a focal view of {focal_view} = {patch_size}".format(resolution=resolution, focal_view=focal_view, patch_size=patch_size))
         train_annotations = preprocess.split_raster(
             numpy_image=training_image,
@@ -241,7 +241,7 @@ def prepare_terns(generate=True, focal_view = 20):
         
         src = rio.open("/orange/ewhite/b.weinstein/terns/seabirds_rgb.tif")
         resolution = src.res[0]
-        patch_size = focal_view/resolution
+        patch_size = int(focal_view/resolution)
         annotations = preprocess.split_raster(
             path_to_raster="/orange/ewhite/b.weinstein/terns/seabirds_rgb.tif",
             annotations_file="/orange/ewhite/b.weinstein/terns/seabirds_rgb.csv",
@@ -315,7 +315,7 @@ def prepare_pfeifer(generate=True, focal_view = 20):
             
             src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
             resolution = src.res[0]
-            patch_size = focal_view/resolution
+            patch_size = int(focal_view/resolution)
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
                 annotations_file="/orange/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
@@ -338,7 +338,7 @@ def prepare_pfeifer(generate=True, focal_view = 20):
             
             src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
             resolution = src.res[0]
-            patch_size = focal_view/resolution
+            patch_size = int(focal_view/resolution)
             
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
@@ -461,7 +461,7 @@ def prepare_monash(generate=True, focal_view=20):
             
             src = rio.open(x)
             resolution = src.res[0]
-            patch_size = focal_view/resolution
+            patch_size = int(focal_view/resolution)
             
             annotations = preprocess.split_raster(
                 path_to_raster=x,
@@ -512,7 +512,7 @@ def prepare_USGS(generate=True, focal_view=20):
             
             src = rio.open(x)
             resolution = src.res[0]
-            patch_size = focal_view/resolution
+            patch_size = int(focal_view/resolution)
             
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/USGS/migbirds/migbirds/{}".format(x),
