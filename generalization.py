@@ -579,15 +579,15 @@ def prepare(focal_view):
     paths = {}
     paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
-    paths["penguins"] = prepare_penguin(generate=False, focal_view = focal_view)
-    paths["palmyra"] = prepare_palmyra(generate=False, focal_view = focal_view)
+    paths["penguins"] = prepare_penguin(generate=True, focal_view = focal_view)
+    paths["palmyra"] = prepare_palmyra(generate=True, focal_view = focal_view)
     paths["pelicans"] = prepare_pelicans(generate=False)
     paths["murres"] = prepare_murres(generate=False)
-    paths["schedl"] = prepare_schedl(generate=False)
-    paths["pfeifer"] = prepare_pfeifer(generate=False, focal_view = focal_view)    
-    paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=False, focal_view = focal_view)
-    paths["monash"] = prepare_monash(generate=True, focal_view = focal_view)
+    paths["schedl"] = prepare_schedl(generate=True)
+    paths["pfeifer"] = prepare_pfeifer(generate=True, focal_view = focal_view)    
+    paths["hayes"] = prepare_hayes(generate=True)
+    paths["USGS"] = prepare_USGS(generate=True, focal_view = focal_view)
+    paths["monash"] = prepare_monash(generate=False, focal_view = focal_view)
 
     return paths
 
