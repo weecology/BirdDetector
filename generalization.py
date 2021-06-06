@@ -313,9 +313,13 @@ def prepare_pfeifer(generate=True, focal_view = 20):
                                           rgb="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
             df.to_csv("/orange/ewhite/b.weinstein/pfeifer/{}.csv".format(basename))
             
-            src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
-            resolution = src.res[0]
-            patch_size = int(focal_view/resolution)
+            if src.crs: 
+                src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
+                resolution = src.res[0]
+                patch_size = int(focal_view/resolution)
+            else:
+                patch_size = 500
+            
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
                 annotations_file="/orange/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
@@ -409,10 +413,14 @@ def prepare_schedl(generate=True):
                                           rgb="/orange/ewhite/b.weinstein/schedl/{}.JPG".format(basename), buffer_size=30)
             df.to_csv("/orange/ewhite/b.weinstein/schedl/{}.csv".format(basename))
             
+            src = rio.open("/orange/ewhite/b.weinstein/schedl/{}.JPG".format(basename))
+            resolution = src.res[0]
+            patch_size = int(focal_view/resolution)
+            
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/schedl/{}.JPG".format(basename),
                 annotations_file="/orange/ewhite/b.weinstein/schedl/{}.csv".format(basename),
-                patch_size=800,
+                patch_size=patch_size,
                 patch_overlap=0,
                 base_dir="/orange/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
@@ -510,14 +518,12 @@ def prepare_USGS(generate=True, focal_view=20):
         
         def cut(x):
             
-            src = rio.open(x)
-            resolution = src.res[0]
-            patch_size = int(focal_view/resolution)
-            
+            path = "/orange/ewhite/b.weinstein/USGS/migbirds/migbirds/{}".format(x)
+                
             annotations = preprocess.split_raster(
-                path_to_raster="/orange/ewhite/b.weinstein/USGS/migbirds/migbirds/{}".format(x),
+                path_to_raster=path,
                 annotations_file="/orange/ewhite/b.weinstein/USGS/migbirds/annotations.csv",
-                patch_size=patch_size,
+                patch_size=1100,
                 patch_overlap=0,
                 base_dir="/orange/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
@@ -579,13 +585,13 @@ def prepare(focal_view):
     paths = {}
     paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
-    paths["penguins"] = prepare_penguin(generate=True, focal_view = focal_view)
-    paths["palmyra"] = prepare_palmyra(generate=True, focal_view = focal_view)
+    paths["penguins"] = prepare_penguin(generate=False, focal_view = focal_view)
+    paths["palmyra"] = prepare_palmyra(generate=False, focal_view = focal_view)
     paths["pelicans"] = prepare_pelicans(generate=False)
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=True)
-    paths["pfeifer"] = prepare_pfeifer(generate=True, focal_view = focal_view)    
-    paths["hayes"] = prepare_hayes(generate=True)
+    paths["pfeifer"] = prepare_pfeifer(generate=False, focal_view = focal_view)    
+    paths["hayes"] = prepare_hayes(generate=False)
     paths["USGS"] = prepare_USGS(generate=True, focal_view = focal_view)
     paths["monash"] = prepare_monash(generate=False, focal_view = focal_view)
 
