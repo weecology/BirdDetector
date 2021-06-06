@@ -619,8 +619,8 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     train_annotations["ymin"] = train_annotations["ymin"] 
     train_annotations["ymax"] = train_annotations["ymax"] - 3
     
-    train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
-    train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
+    train_annotations = train_annotations[~(int(train_annotations.xmin) >= int(train_annotations.xmax))]
+    train_annotations = train_annotations[~(int(train_annotations.ymin) >= int(train_annotations.ymax))]
     
     train_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv")
 

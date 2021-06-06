@@ -85,7 +85,13 @@ class BirdDataset(Dataset):
                 lambda x: self.label_dict[x]).values.astype(int)
     
             #Check for blank tensors
-            augmented = self.transform(image=image, bboxes=targets["boxes"], category_ids=targets["labels"])
+            #Insert some fault tolerance for augmentation
+            try:
+                augmented = self.transform(image=image, bboxes=targets["boxes"], category_ids=targets["labels"])
+            except Exception as e:
+                print("Augmentation for {} failed with {}".format(img_name, e))
+                return self.__getitem__(random.choice(range(self.__len__())))                
+                
             image = augmented["image"]
             
             boxes = np.array(augmented["bboxes"])
