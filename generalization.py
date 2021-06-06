@@ -168,7 +168,7 @@ def prepare_palmyra(generate=True, focal_view = 20):
             
     return {"train":train_path, "test":test_path}
 
-def prepare_penguin(generate=True, focal_view=20):
+def prepare_penguin(generate=True):
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/penguins_test.csv"
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/penguins_train.csv"
     
@@ -184,11 +184,10 @@ def prepare_penguin(generate=True, focal_view=20):
         numpy_image = np.moveaxis(numpy_image,0,2)
         numpy_image = numpy_image[:,:,:3].astype("uint8")
 
-        patch_size = int(focal_view / resolution)        
         test_annotations = preprocess.split_raster(
             numpy_image=numpy_image,
             annotations_file="/orange/ewhite/b.weinstein/penguins/test_annotations.csv",
-            patch_size=patch_size,
+            patch_size=500,
             patch_overlap=0.05,
             base_dir="/orange/ewhite/b.weinstein/generalization/crops",
             image_name="cape_wallace_survey_8.tif")
@@ -205,12 +204,10 @@ def prepare_penguin(generate=True, focal_view=20):
     
         df.to_csv("/orange/ewhite/b.weinstein/penguins/training_annotations.csv",index=False)
         
-        patch_size = int(focal_view / resolution)  
-        print("Penguin resolution is {resolution} with a focal view of {focal_view} = {patch_size}".format(resolution=resolution, focal_view=focal_view, patch_size=patch_size))
         train_annotations = preprocess.split_raster(
             numpy_image=training_image,
             annotations_file="/orange/ewhite/b.weinstein/penguins/training_annotations.csv",
-            patch_size=patch_size,
+            patch_size=500,
             patch_overlap=0.05,
             base_dir="/orange/ewhite/b.weinstein/generalization/crops",
             image_name="offshore_rocks_cape_wallace_survey_4.tif",
@@ -316,7 +313,7 @@ def prepare_pfeifer(generate=True, focal_view = 20):
             if src.crs: 
                 src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
                 resolution = src.res[0]
-                patch_size = int(focal_view/resolution)
+                patch_size = int(focal_view/resolution)-200
             else:
                 patch_size = 500
             
@@ -342,8 +339,7 @@ def prepare_pfeifer(generate=True, focal_view = 20):
             
             src = rio.open("/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
             resolution = src.res[0]
-            patch_size = int(focal_view/resolution)
-            
+            patch_size = int(focal_view/resolution)-200
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
                 annotations_file="/orange/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
@@ -410,7 +406,7 @@ def prepare_schedl(generate=True):
         for x in glob.glob("/orange/ewhite/b.weinstein/schedl/*.shp")[:1]:
             basename = os.path.splitext(os.path.basename(x))[0]
             df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/schedl/{}.shp".format(basename),
-                                          rgb="/orange/ewhite/b.weinstein/schedl/{}.JPG".format(basename), buffer_size=30)
+                                          rgb="/orange/ewhite/b.weinstein/schedl/{}.JPG".format(basename), buffer_size=20)
             df.to_csv("/orange/ewhite/b.weinstein/schedl/{}.csv".format(basename))
             
             src = rio.open("/orange/ewhite/b.weinstein/schedl/{}.JPG".format(basename))
@@ -421,7 +417,7 @@ def prepare_schedl(generate=True):
                 path_to_raster="/orange/ewhite/b.weinstein/schedl/{}.JPG".format(basename),
                 annotations_file="/orange/ewhite/b.weinstein/schedl/{}.csv".format(basename),
                 patch_size=patch_size,
-                patch_overlap=0,
+                patch_overlap=800,
                 base_dir="/orange/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
             )
@@ -585,14 +581,14 @@ def prepare(focal_view):
     paths = {}
     paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
-    paths["penguins"] = prepare_penguin(generate=False, focal_view = focal_view)
+    paths["penguins"] = prepare_penguin(generate=True)
     paths["palmyra"] = prepare_palmyra(generate=False, focal_view = focal_view)
     paths["pelicans"] = prepare_pelicans(generate=False)
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=True)
-    paths["pfeifer"] = prepare_pfeifer(generate=False, focal_view = focal_view)    
+    paths["pfeifer"] = prepare_pfeifer(generate=True, focal_view = focal_view)    
     paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=True, focal_view = focal_view)
+    paths["USGS"] = prepare_USGS(generate=False, focal_view = focal_view)
     paths["monash"] = prepare_monash(generate=False, focal_view = focal_view)
 
     return paths
@@ -620,13 +616,13 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     train_annotations = pd.concat(all_sets)
     
     #A couple illegal boxes, make slightly smaller
-    train_annotations["xmin"] = train_annotations["xmin"] 
-    train_annotations["xmax"] = train_annotations["xmax"] - 3
-    train_annotations["ymin"] = train_annotations["ymin"] 
-    train_annotations["ymax"] = train_annotations["ymax"] - 3
+    train_annotations["xmin"] = int(train_annotations["xmin"])
+    train_annotations["xmax"] = int(train_annotations["xmax"] - 3)
+    train_annotations["ymin"] = int(train_annotations["ymin"])
+    train_annotations["ymax"] = int(train_annotations["ymax"] - 3)
     
-    train_annotations = train_annotations[~(int(train_annotations.xmin) >= int(train_annotations.xmax))]
-    train_annotations = train_annotations[~(int(train_annotations.ymin) >= int(train_annotations.ymax))]
+    train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
+    train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
     
     train_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv")
 
