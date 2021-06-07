@@ -434,7 +434,7 @@ def prepare_monash(generate=True):
         #Remove duplicates
         final_frame = []
         for name, group in input_data.groupby("image_path"):
-            group["geometry"] = [box(group.xmin, group.ymin, group.xmax, group.ymax)]
+            group["geometry"] = group.apply(lambda x: box(x["xmin"], x["ymin"], x["xmax"], x["ymax"]), axis=1)
             gdf = gpd.GeoDataFrame(group)
             overlay = gpd.overlay(gdf, gdf, how="intersection")
             final_frame.append(pd.DataFrame(overlay[["image_path","xmin","ymin","xmax","ymax","label"]]))
