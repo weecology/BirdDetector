@@ -429,9 +429,18 @@ def prepare_monash(generate=True):
             annotation_list.append(annotations)
             matched_tiles.append(rgb_path)
             
-        input_data = gpd.GeoDataFrame(pd.concat(annotation_list))
+        input_data = pd.concat(annotation_list)
         
-        input_data.to_csv("/orange/ewhite/b.weinstein/Monash/annotations.csv")
+        #Remove duplicates
+        final_frame = []
+        for name, group in input_data.groupby("image_path"):
+            group["geometry"] = [box(group.xmin, group.ymin, group.xmax, group.ymax)]
+            gdf = gpd.GeoDataFrame(group)
+            overlay = gpd.overlay(gdf, gdf, how="intersection")
+            final_frame.append(pd.DataFrame(overlay[["image_path","xmin","ymin","xmax","ymax","label"]]))
+            
+        final_frame = pd.concat(final_frame)
+        final_frame.to_csv("/orange/ewhite/b.weinstein/Monash/annotations.csv")
         
         def cut(x):
             annotations = preprocess.split_raster(
@@ -475,7 +484,6 @@ def prepare_USGS(generate=True):
         
         client = start_cluster.start(cpus=30, mem_size="10GB")
 
-        
         input_data = pd.read_csv("/orange/ewhite/b.weinstein/USGS/migbirds/migbirds2020_07_31.csv")
         input_data["image_path"] = input_data.file_basename
         input_data.to_csv("/orange/ewhite/b.weinstein/USGS/migbirds/annotations.csv")
