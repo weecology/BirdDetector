@@ -440,7 +440,7 @@ def prepare_monash(generate=True):
         #Remove duplicates, Rohan said to choose karina over claire
         final_frame = []
         for name, group in input_data.groupby("image_path"):
-            if len(group.annotator.unique()==2):
+            if len(group.annotator.unique())==2:
                 final_frame.append(group[group.annotator == "Karina"])
             else:
                 final_frame.append(group)
@@ -475,7 +475,7 @@ def prepare_monash(generate=True):
         train_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
         train_annotations.to_csv(train_path, index=False)    
         
-        test_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
+        test_annotations = df[df.image_path.str.contains("Transect_A_2020")]
         test_annotations.to_csv(test_path, index=False)
         client.close()
 
