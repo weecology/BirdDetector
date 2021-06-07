@@ -422,6 +422,7 @@ def prepare_monash(generate=True):
                 rgb_path = jpg_path
             else:
                 print("Cannot find corresponding image to annotations {}".format(x))
+                continue
                 
             annotations = shapefile_to_annotations(shapefile=x, rgb=rgb_path)
             annotations["image_path"] = os.path.basename(rgb_path)
