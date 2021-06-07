@@ -130,7 +130,7 @@ def prepare_palmyra(generate=True):
         
         test_annotations = preprocess.split_raster(numpy_image=numpy_image,
                                                    annotations_file="Figures/test_annotations.csv",
-                                                   patch_size=1100, patch_overlap=0.05, base_dir="/orange/ewhite/b.weinstein/generalization/crops/", image_name="Dudley_projected.tif")
+                                                   patch_size=1400, patch_overlap=0.05, base_dir="/orange/ewhite/b.weinstein/generalization/crops/", image_name="Dudley_projected.tif")
         
         test_annotations.to_csv(test_path,index=False)
         
@@ -150,7 +150,7 @@ def prepare_palmyra(generate=True):
         train_annotations_1 = preprocess.split_raster(
             numpy_image=training_image,
             annotations_file="Figures/training_annotations.csv",
-            patch_size=1100,
+            patch_size=1400,
             patch_overlap=0.05,
             base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
             image_name="CooperStrawn_53m_tile_clip_projected.tif",
@@ -642,8 +642,11 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
             except Exception as e:
                 print(e)    
     if save_dir:
-        model.trainer.save_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
-    
+        try:
+            model.trainer.save_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
+        except Exception as e:
+            print(e)        
+            
     #delete model and free up memory
     del model
     torch.cuda.empty_cache()
