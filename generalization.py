@@ -428,7 +428,11 @@ def prepare_monash(generate=True):
             annotation_list.append(annotations)
             matched_tiles.append(rgb_path)
             
-        input_data = pd.concat(annotation_list)
+        input_data = gpd.GeoDataFrame(pd.concat(annotation_list))
+        
+        #I'm seeing many overlapping polygons for the same bird
+        input_data = gpd.overlay(input_data, input_data, how="intersection")
+        
         input_data.to_csv("/orange/ewhite/b.weinstein/Monash/annotations.csv")
         
         def cut(x):
