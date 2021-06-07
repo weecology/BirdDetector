@@ -556,7 +556,7 @@ def prepare():
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
     paths["hayes"] = prepare_hayes(generate=False)
     paths["USGS"] = prepare_USGS(generate=False)
-    paths["monash"] = prepare_monash(generate=False)
+    paths["monash"] = prepare_monash(generate=True)
 
     return paths
 
