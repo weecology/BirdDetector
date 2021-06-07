@@ -426,19 +426,25 @@ def prepare_monash(generate=True):
                 
             annotations = shapefile_to_annotations(shapefile=x, rgb=rgb_path)
             annotations["image_path"] = os.path.basename(rgb_path)
+            
+            if "Claire" in  x:
+                annotations["annotator"] = "Claire"
+            else:
+                annotations["annotator"] = "Karina"
+                
             annotation_list.append(annotations)
             matched_tiles.append(rgb_path)
             
         input_data = pd.concat(annotation_list)
         
-        #Remove duplicates
+        #Remove duplicates, Rohan said to choose karina over claire
         final_frame = []
         for name, group in input_data.groupby("image_path"):
-            group["geometry"] = group.apply(lambda x: box(x["xmin"], x["ymin"], x["xmax"], x["ymax"]), axis=1)
-            gdf = gpd.GeoDataFrame(group)
-            overlay = gpd.overlay(gdf, gdf, how="intersection")
-            final_frame.append(pd.DataFrame(overlay[["image_path","xmin","ymin","xmax","ymax","label"]]))
-            
+            if len(group.annotator.unique()==2):
+                final_frame.append(group[group.annotator == "Karina"])
+            else:
+                final_frame.append(group)
+                
         final_frame = pd.concat(final_frame)
         final_frame.to_csv("/orange/ewhite/b.weinstein/Monash/annotations.csv")
         
