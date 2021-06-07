@@ -554,16 +554,15 @@ def prepare():
     paths = {}
     paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
-    paths["penguins"] = prepare_penguin(generate=True)
-    paths["palmyra"] = prepare_palmyra(generate=True)
+    paths["penguins"] = prepare_penguin(generate=False)
+    paths["palmyra"] = prepare_palmyra(generate=False)
     paths["pelicans"] = prepare_pelicans(generate=False)
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=False)
-    paths["pfeifer"] = prepare_pfeifer(generate=True)    
+    paths["pfeifer"] = prepare_pfeifer(generate=False)    
     paths["hayes"] = prepare_hayes(generate=False)
     paths["USGS"] = prepare_USGS(generate=False)
     paths["monash"] = prepare_monash(generate=False)
-
     return paths
 
 def train(path_dict, config, train_sets = ["penguins","terns","everglades","palmyra"],test_sets=["everglades"], comet_logger=None, save_dir=None):
