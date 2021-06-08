@@ -8,7 +8,7 @@ distributed_backend: ddp
 
 batch_size: 3
 nms_thresh: 0.2
-score_thresh: 0.2
+score_thresh: 0.3
 train:
     csv_file:
     root_dir:
