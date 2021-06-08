@@ -24,6 +24,7 @@ import tempfile
 import torch
 import gc
 from pytorch_lightning.plugins import DDPPlugin
+import subprocess
 
 def split_test_train(annotations, split = 0.9):
     """Split annotation in train and test by image"""
@@ -427,7 +428,7 @@ def prepare_monash(generate=True):
                 print("Cannot find corresponding image to annotations {}".format(x))
                 continue
                 
-            annotations = shapefile_to_annotations(shapefile=x, rgb=rgb_path)
+            annotations = shapefile_to_annotations(shapefile=x, rgb=rgb_path, buffer_size=15)
             annotations["image_path"] = os.path.basename(rgb_path)
             
             if "Claire" in  x:
@@ -474,6 +475,7 @@ def prepare_monash(generate=True):
         
         df = pd.concat(crop_annotations)
         df.label = "Bird"
+        df = df.drop_duplicates()
         
         train_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
         train_annotations.to_csv(train_path, index=False)    
@@ -571,7 +573,7 @@ def prepare():
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
     paths["hayes"] = prepare_hayes(generate=False)
     paths["USGS"] = prepare_USGS(generate=False)
-    paths["monash"] = prepare_monash(generate=False)
+    paths["monash"] = prepare_monash(generate=True)
     return paths
 
 def train(path_dict, config, train_sets = ["penguins","terns","everglades","palmyra"],test_sets=["everglades"], comet_logger=None, save_dir=None):
@@ -692,6 +694,10 @@ if __name__ =="__main__":
     path_dict = prepare()
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                 project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
+    
+    #Log commit
+    comet_logger.experiment.log_parameter("commit hash",subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip())
+
     
     view_training(path_dict, comet_logger=comet_logger)
     ###leave one out
