@@ -18,10 +18,6 @@ sbatch <<EOT
 
 source activate Zooniverse_pytorch
 
-#comet debug
-#export COMET_LOGGING_FILE=comet.log
-#export COMET_LOGGING_FILE_LEVEL=debug
-#NCCL_DEBUG=INFO python generalization.py
 cd ~/BirdDetector/
 git checkout $1
 python generalization.py

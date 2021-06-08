@@ -427,7 +427,7 @@ def prepare_monash(generate=True):
                 print("Cannot find corresponding image to annotations {}".format(x))
                 continue
                 
-            annotations = shapefile_to_annotations(shapefile=x, rgb=rgb_path)
+            annotations = shapefile_to_annotations(shapefile=x, rgb=rgb_path, buffer_size=15)
             annotations["image_path"] = os.path.basename(rgb_path)
             
             if "Claire" in  x:
@@ -474,6 +474,7 @@ def prepare_monash(generate=True):
         
         df = pd.concat(crop_annotations)
         df.label = "Bird"
+        df = df.drop_duplicates()
         
         train_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
         train_annotations.to_csv(train_path, index=False)    
