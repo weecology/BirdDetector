@@ -594,10 +594,10 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     train_annotations = pd.concat(all_sets)
     
     #A couple illegal boxes, make slightly smaller
-    train_annotations["xmin"] = train_annotations["xmin"] 
-    train_annotations["xmax"] = train_annotations["xmax"] - 3
-    train_annotations["ymin"] = train_annotations["ymin"] 
-    train_annotations["ymax"] = train_annotations["ymax"] - 3
+    train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
+    train_annotations["xmax"] = train_annotations["xmax"].astype(float) - 3
+    train_annotations["ymin"] = train_annotations["ymin"].astype(float)
+    train_annotations["ymax"] = train_annotations["ymax"].astype(float) - 3
     
     train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
     train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
