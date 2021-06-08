@@ -19,6 +19,7 @@ sbatch <<EOT
 source activate Zooniverse_pytorch
 
 cd ~/BirdDetector/
+module load git
 git checkout $1
 python generalization.py
 EOT
