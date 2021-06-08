@@ -412,11 +412,14 @@ def prepare_monash(generate=True):
         annotation_list = []
         matched_tiles = []
         for x in shps:
+            same_path = {"{}.shp"}.format(os.path.splitext(x)[0])
             components = os.path.basename(x).split("_")
             tif_path = "/orange/ewhite/b.weinstein/Monash/Transect {letter}/Transect {letter} {year}/Transect_{letter}_{year}.tif".format(letter=components[1],year=components[2])
             jpg_path = "/orange/ewhite/b.weinstein/Monash/Transect {letter}/Transect {letter} {year}/Transect_{letter}_{year}.jpg".format(letter=components[1],year=components[2])
             
-            if os.path.exists(tif_path):
+            if os.path.exists(same_path):
+                rgb_path = same_path
+            elif os.path.exists(tif_path):
                 rgb_path = tif_path
             elif os.path.exists(jpg_path):
                 rgb_path = jpg_path
