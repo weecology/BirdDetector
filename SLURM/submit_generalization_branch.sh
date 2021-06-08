@@ -1,6 +1,8 @@
 #!/bin/bash
+
 # Command line args for commit has and number of gpus
 sbatch <<EOT
+#!/bin/bash
 #SBATCH --job-name=birddetector   # Job name
 #SBATCH --mail-type=END               # Mail events
 #SBATCH --mail-user=benweinstein2010@gmail.com  # Where to send mail
