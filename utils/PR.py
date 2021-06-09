@@ -10,5 +10,5 @@ def precision_recall_curve(model, csv_file, root_dir, iou_threshold=0.25):
         results.append(pd.DataFrame({"precision":[test_results["box_precision"]],"recall":[test_results["box_recall"]]}))
     results = pd.concat(results)
     axes = results.plot("recall","precision",style='.-')
-    return axes
+    return results, axes
     
