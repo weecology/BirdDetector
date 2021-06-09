@@ -134,6 +134,7 @@ if __name__ =="__main__":
         print(e)
         
     model = BirdDetector(transforms=get_transform)
+    model.use_bird_release()
     config = model.config
     
     path_dict = prepare()
