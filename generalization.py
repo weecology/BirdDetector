@@ -83,6 +83,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     model.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))
     comet_logger.experiment.log_parameters(model.config)
     
+    comet_logger.experiment.context_manager(test_sets[0])
     model.trainer.fit(model)
     
     for x in test_sets:
