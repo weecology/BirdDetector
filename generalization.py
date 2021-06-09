@@ -91,11 +91,11 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         pr_data, plot = precision_recall_curve(model, csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
         comet_logger.experiment.log_figure()
         pr_data.to_csv("{}/{}_precision_recall_curve.csv".format(x,savedir))
-        comet_logger.experiment.log_asset("{}/{}_precision_recall_curve.csv".format(x,savedir))
+        comet_logger.experiment.log_asset("{}/{}_precision_recall_curve.csv".format(savedir, x))
         if comet_logger is not None:
             try:
-                test_results["results"].to_csv("{}/{}_iou_dataframe.csv".format(x, savedir))
-                comet_logger.experiment.log_asset("{}/{}_iou_dataframe.csv".format(x, savedir))
+                test_results["results"].to_csv("{}/{}_iou_dataframe.csv".format(savedir, x))
+                comet_logger.experiment.log_asset("{}/{}_iou_dataframe.csv".format(savedir, x))
                 comet_logger.experiment.log_metric("{} Box Recall".format(x),test_results["box_recall"])
                 comet_logger.experiment.log_metric("{} Box Precision".format(x),test_results["box_precision"])
             except Exception as e:
