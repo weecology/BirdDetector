@@ -87,7 +87,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     
     for x in test_sets:
         test_results = model.evaluate(csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=savedir)
-        plot = precision_recall_curve(model, csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=savedir)
+        plot = precision_recall_curve(model, csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
         comet_logger.experiment.log_figure()
         if comet_logger is not None:
             try:
