@@ -90,21 +90,12 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         test_results = model.evaluate(csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=savedir)
         pr_data, plot = precision_recall_curve(model, csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
         comet_logger.experiment.log_figure()
-        pr_data.to_csv("{}/precision_recall_curve.csv".format(savedir))
-        comet_logger.experiment.log_asset("{}/precision_recall_curve.csv".format(savedir))
+        pr_data.to_csv("{}/{}_precision_recall_curve.csv".format(x,savedir))
+        comet_logger.experiment.log_asset("{}/{}_precision_recall_curve.csv".format(x,savedir))
         if comet_logger is not None:
             try:
-                test_results["results"].to_csv("{}/iou_dataframe.csv".format(savedir))
-                comet_logger.experiment.log_asset("{}/iou_dataframe.csv".format(savedir))
-                
-                test_results["class_recall"].to_csv("{}/class_recall.csv".format(savedir))
-                comet_logger.experiment.log_asset("{}/class_recall.csv".format(savedir))
-                
-                for index, row in test_results["class_recall"].iterrows():
-                    comet_logger.experiment.log_metric("{}_Recall".format(row["label"]),row["recall"])
-                    comet_logger.experiment.log_metric("{}_Precision".format(row["label"]),row["precision"])
-                
-                comet_logger.experiment.log_metric("Average Class Recall",test_results["class_recall"].recall.mean())
+                test_results["results"].to_csv("{}/{}_iou_dataframe.csv".format(x, savedir))
+                comet_logger.experiment.log_asset("{}/{}_iou_dataframe.csv".format(x, savedir))
                 comet_logger.experiment.log_metric("{} Box Recall".format(x),test_results["box_recall"])
                 comet_logger.experiment.log_metric("{} Box Precision".format(x),test_results["box_precision"])
             except Exception as e:
