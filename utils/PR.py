@@ -13,6 +13,8 @@ def precision_recall_curve(model, csv_file, root_dir, iou_threshold=0.25):
     for x in np.arange(0.1,0.8,0.1):
         df = test_results["results"] 
         scored_results = df[df.score > x]
+        if scored_results.empty:
+            continue
         true_positive = sum(scored_results["match"])        
         recall = true_positive / scored_results.shape[0]
         precision = true_positive / image_predictions.shape[0]
