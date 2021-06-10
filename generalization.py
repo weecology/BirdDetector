@@ -83,8 +83,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     model.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))
     comet_logger.experiment.log_parameters(model.config)
     
-    with comet_logger.experiment.context_manager(test_sets[0]):
-        model.trainer.fit(model)
+    model.trainer.fit(model)
     
     for x in test_sets:
         test_results = model.evaluate(csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=savedir)
