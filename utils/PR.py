@@ -22,7 +22,7 @@ def precision_recall_curve(model, csv_file, root_dir, iou_threshold=0.25):
     
     results = pd.concat(results)
     results["fscore"] = 2 * ((results["precision"] * results["recall"])/ (results["precision"] + results["recall"]))
-    axes = results.plot(x="recall",y="precision",style='.-', color="threshold")
+    axes = results.plot(x="recall",y="precision",style='.-')
     
     return results, axes
     

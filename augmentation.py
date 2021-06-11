@@ -1,6 +1,7 @@
 #Transform augmentations
 import albumentations as A
 from albumentations import functional as F
+from albumentations import resize
 from albumentations.augmentations.bbox_utils import union_of_bboxes
 import random
 import numpy as np
@@ -25,7 +26,7 @@ def get_transform(augment):
     if augment:
         transform = A.Compose([
             A.PadIfNeeded(1000,1000, border_mode=cv2.BORDER_CONSTANT, value=0),
-            A.RandomSizedBBoxSafeCrop(height=1000,width=1000,erosion_rate=1,p=1),
+            RandomSizedBBoxSafeCrop(height=1000,width=1000,erosion_rate=1,p=1),
             A.Flip(p=0.5),
             A.RandomBrightnessContrast(),
             A.pytorch.ToTensorV2()
@@ -46,9 +47,11 @@ class MeanSubtract(A.ImageOnlyTransform):
         return image - image.mean()
     
 
-class RandomBBoxSafeCrop(A.DualTransform):
+class RandomSizedBBoxSafeCrop(A.DualTransform):
     """Crop a random part of the input and rescale it to some size without loss of bboxes.
     Args:
+        height (int): height after crop and resize.
+        width (int): width after crop and resize.
         erosion_rate (float): erosion rate applied on input image height before crop.
         interpolation (OpenCV flag): flag that is used to specify the interpolation algorithm. Should be one of:
             cv2.INTER_NEAREST, cv2.INTER_LINEAR, cv2.INTER_CUBIC, cv2.INTER_AREA, cv2.INTER_LANCZOS4.
@@ -60,14 +63,16 @@ class RandomBBoxSafeCrop(A.DualTransform):
         uint8, float32
     """
 
-    def __init__(self, erosion_rate=0.0, interpolation=cv2.INTER_LINEAR, always_apply=False, p=1.0):
-        super(RandomBBoxSafeCrop, self).__init__(always_apply, p)
+    def __init__(self, height, width, erosion_rate=0.0, interpolation=cv2.INTER_LINEAR, always_apply=False, p=1.0):
+        super(RandomSizedBBoxSafeCrop, self).__init__(always_apply, p)
+        self.height = height
+        self.width = width
         self.interpolation = interpolation
         self.erosion_rate = erosion_rate
 
     def apply(self, img, crop_height=0, crop_width=0, h_start=0, w_start=0, interpolation=cv2.INTER_LINEAR, **params):
         crop = F.random_crop(img, crop_height, crop_width, h_start, w_start)
-        return crop
+        return resize(crop, self.height, self.width, interpolation)
 
     def get_params_dependent_on_targets(self, params):
         img_h, img_w = params["image"].shape[:2]
@@ -87,6 +92,7 @@ class RandomBBoxSafeCrop(A.DualTransform):
         # find bigger region
         left_expand = random.random()
         right_expand = random.random()
+        
         bx, by = x * left_expand,  y * left_expand
         bx2, by2 = x2 + (1 - x2) * right_expand, y2 + (1 - y2) * right_expand
         bw, bh = bx2 - bx, by2 - by

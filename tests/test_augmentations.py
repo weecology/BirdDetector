@@ -31,7 +31,7 @@ def test_get_transform():
     m.trainer.fit(m)
 
 def test_RandomBBoxSafeCrop():
-    z = augmentation.RandomBBoxSafeCrop()
+    z = augmentation.RandomSizedBBoxSafeCrop(height=1000,width=1000)
     image = np.array(Image.open("/Users/benweinstein/Downloads/46544951.png"))
     df = pd.read_csv("/Users/benweinstein/Downloads/everglades_train.csv")
     df = df[df.image_path == '46544951.png']
@@ -51,7 +51,7 @@ def test_RandomBBoxSafeCrop():
             
         assert passes
     
-    plt.show()
+    #plt.show()
     print("end")
         
 def test_dataset(tmpdir):
