@@ -89,8 +89,8 @@ class RandomSizedBBoxSafeCrop(A.DualTransform):
         #random sample of proportion of rows
         if len(params["bboxes"]) > 3:
             n_boxes = len(params["bboxes"])
-            selected_index = np.random.choice(range(n_boxes), size=int(n_boxes/3))
-            params["bboxes"] = params["bboxes"][selected_index,:]
+            selected_index = np.random.choice(range(n_boxes), size=int(n_boxes/3)+1)
+            params["bboxes"]  = [params["bboxes"][x] for x in selected_index]
         
         x, y, x2, y2 = union_of_bboxes(
             width=img_w, height=img_h, bboxes=params["bboxes"], erosion_rate=self.erosion_rate
