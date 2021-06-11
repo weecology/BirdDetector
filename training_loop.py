@@ -79,7 +79,7 @@ def training(proportion,pretrained=True, comet_logger=None, config=None):
     comet_logger.experiment.log_parameter("training_annotations",train_annotations.shape[0])
         
     if pretrained:
-        model = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/generalization/20210531_231758/terns_palmyra_penguins_pfeifer_everglades.pl")
+        model = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/generalization/20210611_094302/monash_terns_palmyra_penguins_pfeifer_hayes_everglades_USGS.pl")
         model.label_dict = {"Bird":0}
         
     else:
