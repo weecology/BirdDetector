@@ -87,9 +87,9 @@ class RandomSizedBBoxSafeCrop(A.DualTransform):
             }
         # get union of all bboxes
         #random sample of proportion of rows
-        if len(params["bboxes"]) > 3:
+        if len(params["bboxes"]) > 10:
             n_boxes = len(params["bboxes"])
-            selected_index = np.random.choice(range(n_boxes), size=int(n_boxes/3)+1)
+            selected_index = np.random.choice(range(n_boxes), size=int(n_boxes/10)+3)
             params["bboxes"]  = [params["bboxes"][x] for x in selected_index]
         
         x, y, x2, y2 = union_of_bboxes(
