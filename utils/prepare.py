@@ -523,5 +523,5 @@ def prepare():
     paths["hayes"] = prepare_hayes(generate=False)
     paths["USGS"] = prepare_USGS(generate=False)
     paths["monash"] = prepare_monash(generate=False)
-    paths["mckellar"] = prepare_mckellar(generate=True)
+    paths["mckellar"] = prepare_mckellar(generate=False)
     return paths
