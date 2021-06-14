@@ -138,7 +138,7 @@ if __name__ =="__main__":
     view_training(path_dict, comet_logger=comet_logger)
 
     ###leave one out
-    train_list = ["monash","USGS","hayes","palmyra","terns","penguins","pfeifer"]
+    train_list = ["mckellar","monash","USGS","hayes","terns","penguins","pfeifer"]
     results = []
     for x in train_list:
         train_sets = [y for y in train_list if not y==x]
