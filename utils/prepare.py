@@ -432,6 +432,55 @@ def prepare_USGS(generate=True):
     
     return {"train":train_path, "test":test_path}
 
+def prepare_mckellar(generate=True):
+    train_path = "/orange/ewhite/b.weinstein/generalization/crops/mckellar_train.csv"
+    test_path = "/orange/ewhite/b.weinstein/generalization/crops/mckellar_test.csv"
+    
+    train_annotations = []
+    test_annotations = []
+    if generate:   
+        for x in glob.glob("/orange/ewhite/b.weinstein/mckellar/*.shp")[:1]:
+            basename = os.path.splitext(os.path.basename(x))[0]
+            df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/mckellar/{}.shp".format(basename),
+                                          rgb="/orange/ewhite/b.weinstein/mckellar/{}.tif".format(basename))
+            df.to_csv("/orange/ewhite/b.weinstein/mckellar/{}.csv".format(basename))
+            
+            annotations = preprocess.split_raster(
+                path_to_raster="/orange/ewhite/b.weinstein/mckellar/{}.tif".format(basename),
+                annotations_file="/orange/ewhite/b.weinstein/mckellar/{}.csv".format(basename),
+                patch_size=700,
+                patch_overlap=0,
+                base_dir="/orange/ewhite/b.weinstein/generalization/crops",
+                allow_empty=False
+            )
+            
+            test_annotations.append(annotations)
+        test_annotations = pd.concat(test_annotations)
+        test_annotations.to_csv(test_path, index=False)
+            
+        for x in glob.glob("/orange/ewhite/b.weinstein/mckellar/*.shp")[1:]:
+            print(x)
+            basename = os.path.splitext(os.path.basename(x))[0]
+            df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/mckellar/{}.shp".format(basename),
+                                          rgb="/orange/ewhite/b.weinstein/mckellar/{}.tif".format(basename))
+            df.to_csv("/orange/ewhite/b.weinstein/mckellar/{}.csv".format(basename))
+            
+            annotations = preprocess.split_raster(
+                path_to_raster="/orange/ewhite/b.weinstein/mckellar/{}.tif".format(basename),
+                annotations_file="/orange/ewhite/b.weinstein/mckellar/{}.csv".format(basename),
+                patch_size=700,
+                patch_overlap=0,
+                base_dir="/orange/ewhite/b.weinstein/generalization/crops",
+                allow_empty=False
+            )
+            
+            train_annotations.append(annotations)
+        
+        train_annotations = pd.concat(train_annotations)
+        train_annotations.to_csv(train_path, index=False)
+        
+    return {"train":train_path, "test":test_path}
+
 def view_training(paths,comet_logger, n=10):
     """For each site, grab three images and view annotations
     Args:
@@ -474,4 +523,5 @@ def prepare():
     paths["hayes"] = prepare_hayes(generate=False)
     paths["USGS"] = prepare_USGS(generate=False)
     paths["monash"] = prepare_monash(generate=False)
+    path["mckellar"] = prepare_mckellar(generate=True)
     return paths

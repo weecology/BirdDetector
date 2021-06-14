@@ -82,6 +82,19 @@ def training(proportion,pretrained=True, comet_logger=None, config=None):
         model = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/generalization/20210611_094302/monash_terns_palmyra_penguins_pfeifer_hayes_everglades_USGS.pl")
         model.label_dict = {"Bird":0}
         
+        #zero shot recall
+        test_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/palmyra_test.csv", root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
+        
+        if comet_logger is not None:
+            try:
+                test_results["results"].to_csv("{}/iou_dataframe.csv".format(model_savedir))
+                comet_logger.experiment.log_asset("{}/iou_dataframe.csv".format(model_savedir))
+                
+                comet_logger.experiment.log_metric("Zero shot recall",test_results["box_recall"])
+                comet_logger.experiment.log_metric("Zero shot precision",test_results["box_precision"])
+            except Exception as e:
+                print(e)
+                        
     else:
         model = main.deepforest(label_dict={"Bird":0})
     try:
