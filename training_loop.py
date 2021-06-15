@@ -65,7 +65,9 @@ def training(proportion,pretrained=True, comet_logger=None, config=None):
     comet_logger.experiment.log_parameter("pretrained", pretrained)
     
     comet_logger.experiment.add_tag("Palmyra")
-    train_annotations = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/palmyra_finetune.csv")
+    finetune_annotations = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/palmyra_finetune.csv")
+    train_annotations = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/palmyra_train.csv")
+    train_annotations = pd.concat([finetune_annotations, train_annotations])
     crops = train_annotations.image_path.unique()    
     
     if not proportion == 0:
