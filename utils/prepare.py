@@ -497,7 +497,7 @@ def prepare_seabirdwatch(generate):
             basename = os.path.splitext(os.path.basename(name))[0]
             group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
             df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
-                                          rgb="/orange/ewhite/b.weinstein/seabirdwatch/{}.tif".format(basename))
+                                          rgb="/orange/ewhite/b.weinstein/seabirdwatch/Annotated GS images/{}.JPG".format(basename))
             train_annotations.append(df)
         
         train_annotations = pd.concat(train_annotations)
@@ -507,7 +507,7 @@ def prepare_seabirdwatch(generate):
             basename = os.path.splitext(os.path.basename(name))[0]
             group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
             df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
-                                          rgb="/orange/ewhite/b.weinstein/seabirdwatch/{}.tif".format(basename))
+                                          rgb="/orange/ewhite/b.weinstein/seabirdwatch/Annotated GS images/{}.JPG".format(basename))
             test_annotations.append(df)
         
         test_annotations = pd.concat(test_annotations)
