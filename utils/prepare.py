@@ -481,6 +481,26 @@ def prepare_mckellar(generate=True):
         
     return {"train":train_path, "test":test_path}
 
+def prepare_seabirdwatch(generate):
+    train_path = "/orange/ewhite/b.weinstein/generalization/crops/seabirdwatch_train.csv"
+    test_path = "/orange/ewhite/b.weinstein/generalization/crops/seabirdwatch_test.csv"
+    
+    gdf = gpd.read_file("/orange/ewhite/b.weinstein/seabirdwatch/annotations.shp")
+    
+    train = gdf[gdf.colonyname == "KIPPa"]
+    
+    if generate:   
+        for x in glob.glob("/orange/ewhite/b.weinstein/mckellar/*.shp")[:1]:
+            basename = os.path.splitext(os.path.basename(x))[0]
+            df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/mckellar/{}.shp".format(basename),
+                                          rgb="/orange/ewhite/b.weinstein/mckellar/{}.tif".format(basename))
+            df.to_csv("/orange/ewhite/b.weinstein/mckellar/{}.csv".format(basename))
+         
+        
+        train_annotations.to_csv(train_path, index=False)
+        
+    return {"train":train_path, "test":test_path}
+
 def view_training(paths,comet_logger, n=10):
     """For each site, grab three images and view annotations
     Args:
