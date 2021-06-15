@@ -6,6 +6,7 @@ from PIL import ImageFile
 from pytorch_lightning.loggers import CometLogger
 from deepforest.model import create_model
 from deepforest import main
+from deepforest.dataset import get_transform as deepforest_transform
 from datetime import datetime
 
 from utils.PR import precision_recall_curve
@@ -104,6 +105,17 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
             model.trainer.save_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
         except Exception as e:
             print(e)        
+    
+    #Fine tuning
+    model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0])
+    model.transforms = deepforest_transform
+    model.trainer.fit(model)
+    
+    test_results = model.evaluate(csv_file=path_dict[0]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
+    if comet_logger is not None:
+        try:
+            comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(x),test_results["box_recall"])
+            comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(x),test_results["box_precision"])
             
     #delete model and free up memory
     del model
