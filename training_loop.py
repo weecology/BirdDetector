@@ -195,4 +195,4 @@ def run(generate=False, pretrained=True):
     
 if __name__ == "__main__":   
     run(pretrained=False, generate=False)
-    #run(pretrained=True, generate=False)
+    run(pretrained=True, generate=False)
