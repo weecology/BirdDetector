@@ -487,17 +487,33 @@ def prepare_seabirdwatch(generate):
     
     gdf = gpd.read_file("/orange/ewhite/b.weinstein/seabirdwatch/annotations.shp")
     
-    train = gdf[gdf.colonyname == "KIPPa"]
+    test_gdf = gdf[gdf.colonyname == "KIPPa"]
+    train_gdf = gdf[~(gdf.colonyname == "KIPPa")]
     
+    train_annotations = []
+    test_annotations = []
     if generate:   
-        for x in glob.glob("/orange/ewhite/b.weinstein/mckellar/*.shp")[:1]:
-            basename = os.path.splitext(os.path.basename(x))[0]
-            df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/mckellar/{}.shp".format(basename),
-                                          rgb="/orange/ewhite/b.weinstein/mckellar/{}.tif".format(basename))
-            df.to_csv("/orange/ewhite/b.weinstein/mckellar/{}.csv".format(basename))
-         
+        for name, group in train_gdf.groupby("image_path"):
+            basename = os.path.splitext(os.path.basename(name))[0]
+            group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
+            df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
+                                          rgb="/orange/ewhite/b.weinstein/seabirdwatch/{}.tif".format(basename))
+            train_annotations.append(df)
         
-        train_annotations.to_csv(train_path, index=False)
+        train_annotations = pd.concat(train_annotations)
+        train_annotations.to_csv(train_path)
+         
+        for name, group in test_gdf.groupby.image_path():
+            basename = os.path.splitext(os.path.basename(name))[0]
+            group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
+            df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
+                                          rgb="/orange/ewhite/b.weinstein/seabirdwatch/{}.tif".format(basename))
+            test_annotations.append(df)
+        
+        test_annotations = pd.concat(test_annotations)
+        test_annotations.to_csv(test_path)
+        
+        test_annotations.to_csv(train_path, index=False)
         
     return {"train":train_path, "test":test_path}
 
@@ -544,4 +560,6 @@ def prepare():
     paths["USGS"] = prepare_USGS(generate=False)
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
+    paths["seabirdwatch"] = prepare_seabirdwatch(generate=True)
+    
     return paths
