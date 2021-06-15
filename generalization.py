@@ -116,7 +116,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
             continue
         new_annotations = fine_tune[fine_tune.image_path==selected_image]
         selected_annotations.append(new_annotations)
-        count += new_annotations.shape[[0]]
+        count += new_annotations.shape[0]
     selected_annotations = pd.concat(selected_annotations)
     selected_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_finetune.csv".format(test_sets[0]))
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_finetune.csv".format(test_sets[0])
