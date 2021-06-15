@@ -111,7 +111,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     model.transforms = deepforest_transform
     model.trainer.fit(model)
     
-    test_results = model.evaluate(csv_file=path_dict[0]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
+    test_results = model.evaluate(csv_file=path_dict[test_sets[0]]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
     if comet_logger is not None:
         comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(x),test_results["box_recall"])
         comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(x),test_results["box_precision"])
@@ -146,7 +146,7 @@ if __name__ =="__main__":
     
     #Log commit
     comet_logger.experiment.log_parameter("commit hash",subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip())
-    view_training(path_dict, comet_logger=comet_logger)
+    #view_training(path_dict, comet_logger=comet_logger)
 
     ###leave one out
     train_list = ["mckellar","monash","USGS","hayes","terns","penguins","pfeifer"]
