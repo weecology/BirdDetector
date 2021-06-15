@@ -560,6 +560,6 @@ def prepare():
     paths["USGS"] = prepare_USGS(generate=False)
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
-    paths["seabirdwatch"] = prepare_seabirdwatch(generate=True)
+    paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
     
     return paths
