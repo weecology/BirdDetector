@@ -113,10 +113,9 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     
     test_results = model.evaluate(csv_file=path_dict[0]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
     if comet_logger is not None:
-        try:
-            comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(x),test_results["box_recall"])
-            comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(x),test_results["box_precision"])
-            
+        comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(x),test_results["box_recall"])
+        comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(x),test_results["box_precision"])
+        
     #delete model and free up memory
     del model
     torch.cuda.empty_cache()
