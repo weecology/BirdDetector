@@ -300,8 +300,8 @@ def prepare_schedl(generate=True):
     return {"test":test_path}
 
 def prepare_monash(generate=True):
-    train_path = "/orange/ewhite/b.weinstein/generalization/crops/Monash_train.csv"
-    test_path = "/orange/ewhite/b.weinstein/generalization/crops/Monash_test.csv"
+    train_path = "/orange/ewhite/b.weinstein/generalization/crops/monash_train.csv"
+    test_path = "/orange/ewhite/b.weinstein/generalization/crops/monash_test.csv"
         
     if generate:
         client = start_cluster.start(cpus=30, mem_size="10GB")
