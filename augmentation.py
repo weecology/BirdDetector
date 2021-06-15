@@ -1,6 +1,7 @@
 #Transform augmentations
 import albumentations as A
 from albumentations import functional as F
+from albumentations.augmentations.crops.functional import random_crop, bbox_random_crop
 from albumentations import resize
 from albumentations.augmentations.bbox_utils import union_of_bboxes
 import random
@@ -71,7 +72,7 @@ class RandomSizedBBoxSafeCrop(A.DualTransform):
         self.erosion_rate = erosion_rate
 
     def apply(self, img, crop_height=0, crop_width=0, h_start=0, w_start=0, interpolation=cv2.INTER_LINEAR, **params):
-        crop = F.random_crop(img, crop_height, crop_width, h_start, w_start)
+        crop = random_crop(img, crop_height, crop_width, h_start, w_start)
         return resize(crop, self.height, self.width, interpolation)
 
     def get_params_dependent_on_targets(self, params):
@@ -109,7 +110,7 @@ class RandomSizedBBoxSafeCrop(A.DualTransform):
         return {"h_start": h_start, "w_start": w_start, "crop_height": crop_height, "crop_width": crop_width}
 
     def apply_to_bbox(self, bbox, crop_height=0, crop_width=0, h_start=0, w_start=0, rows=0, cols=0, **params):
-        return F.bbox_random_crop(bbox, crop_height, crop_width, h_start, w_start, rows, cols)
+        return bbox_random_crop(bbox, crop_height, crop_width, h_start, w_start, rows, cols)
 
     @property
     def targets_as_params(self):
