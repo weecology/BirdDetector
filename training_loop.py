@@ -192,5 +192,5 @@ def run(generate=False, pretrained=True):
     result_df.to_csv("Figures/Palmyra_results_pretrained_{}.csv".format(pretrained))
     
 if __name__ == "__main__":   
-    #run(pretrained=False, generate=True)
-    run(pretrained=True, generate=False)
+    run(pretrained=False, generate=False)
+    #run(pretrained=True, generate=False)
