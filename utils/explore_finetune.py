@@ -2,7 +2,7 @@
 import comet_ml
 from pytorch_lightning.loggers import CometLogger
 from deepforest import main
-from utils import prepare
+import prepare
 
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                             project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
