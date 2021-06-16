@@ -6,8 +6,9 @@ from deepforest import main
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                             project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
 
-comet_logger.add_tag("fine tune")
+comet_logger.experiment.add_tag("fine tune")
 model = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/generalization/20210616_101934/mckellar_USGS_hayes_terns_penguins_pfeifer_palmyra_everglades.pl")
+model.label_dict = {"Bird": 0}
 model.create_trainer(logger=comet_logger)
 model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/monash_train.csv"
 model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/monash_test.csv"
