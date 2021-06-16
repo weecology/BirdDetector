@@ -155,6 +155,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     #selected_annotations = pd.concat(selected_annotations)
     #selected_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_finetune.csv".format(test_sets[0]))
     model = main.deepforest.load_from_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
+    model.label_dict = {"Bird": 0}
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0])
     model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(test_sets[0])
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
