@@ -502,7 +502,7 @@ def prepare_seabirdwatch(generate):
         train_annotations = pd.concat(train_annotations)
         train_annotations.to_csv(train_path)
          
-        for name, group in test_gdf.groupby.image_path():
+        for name, group in test_gdf.groupby("image_path"):
             try:  
                 basename = os.path.splitext(os.path.basename(name))[0]
                 group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
