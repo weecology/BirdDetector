@@ -104,22 +104,22 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
             print(e)        
     
     #Fine tuning, up to 100 birds from train
-    fine_tune = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
-    selected_annotations = []
-    count = 0
-    available = fine_tune.image_path.unique()
-    random.shuffle(available)
-    while count < 1000:
-        try:
-            selected_image = available.pop()
-        except:
-            break
-        new_annotations = fine_tune[fine_tune.image_path==selected_image]
-        selected_annotations.append(new_annotations)
-        count += new_annotations.shape[0]
-    selected_annotations = pd.concat(selected_annotations)
-    selected_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_finetune.csv".format(test_sets[0]))
-    model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_finetune.csv".format(test_sets[0])
+    #fine_tune = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
+    #selected_annotations = []
+    #count = 0
+    #available = fine_tune.image_path.unique()
+    #random.shuffle(available)
+    #while count < 1000:
+        #try:
+            #selected_image = available.pop()
+        #except:
+            #break
+        #new_annotations = fine_tune[fine_tune.image_path==selected_image]
+        #selected_annotations.append(new_annotations)
+        #count += new_annotations.shape[0]
+    #selected_annotations = pd.concat(selected_annotations)
+    #selected_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_finetune.csv".format(test_sets[0]))
+    model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0])
     model.transforms = deepforest_transform
     model.trainer.fit(model)
     
