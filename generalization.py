@@ -161,7 +161,7 @@ if __name__ =="__main__":
     view_training(path_dict, comet_logger=comet_logger)
 
     ###leave one out
-    train_list = ["mckellar","monash","USGS","hayes","terns","penguins","pfeifer"]
+    train_list = ["mckellar","monash","USGS","hayes","terns","penguins","pfeifer","palmyra"]
     results = []
     for x in train_list:
         train_sets = [y for y in train_list if not y==x]
@@ -180,14 +180,10 @@ if __name__ =="__main__":
     comet_logger.experiment.log_metric(name="Mean LOO Precision", value=results.precision.mean())
     
     #Joint model for fine-tuning
-    train_sets = ["monash","terns","penguins","pfeifer","hayes","everglades","USGS","mckellar"]
+    train_sets = ["monash","terns","penguins","pfeifer","hayes","everglades","USGS","mckellar","palmyra"]
     test_sets = ["palmyra"]
     recall, precision = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
-    #Don't log validation scores till the end of project
-    
-    #Final model to upload
-    train_sets = ["monash","terns","penguins","pfeifer","hayes","everglades","USGS","palmyra","mckellar"]
-    test_sets = ["murres","pelicans"]
+
     #log images
     with comet_logger.experiment.context_manager("validation"):
         images = glob.glob("{}/*.png".format(savedir))
