@@ -1,9 +1,6 @@
 #Prepare all training sets
-import cv2
-from model import BirdDetector
 import glob
 from deepforest import preprocess
-from deepforest import visualize
 from augmentation import get_transform
 from utils import start_cluster
 from utils.preprocess import *
@@ -517,35 +514,6 @@ def prepare_seabirdwatch(generate):
         
     return {"train":train_path, "test":test_path}
 
-def view_training(paths,comet_logger, n=10):
-    """For each site, grab three images and view annotations
-    Args:
-        n: number of images to load
-    """
-    m = BirdDetector(transforms=get_transform)
-    
-    with comet_logger.experiment.context_manager("view_training"):
-        for site in paths:
-            for split in ["train","test"]:
-                if split == "train":
-                    augment = True
-                else:
-                    augment = False
-                try:
-                    x = paths[site][split]
-                    ds = m.load_dataset(csv_file=x, root_dir=os.path.dirname(x), shuffle=True, augment=augment)
-                    for i in np.arange(10):
-                        batch = next(iter(ds))
-                        image_path, image, targets = batch
-                        df = visualize.format_boxes(targets[0], scores=False)
-                        image = np.moveaxis(image[0].numpy(),0,2)[:,:,::-1] * 255
-                        image = visualize.plot_predictions(image, df)
-                        with tempfile.TemporaryDirectory() as tmpdirname:
-                            cv2.imwrite("{}/{}".format(tmpdirname, image_path[0]),image )
-                            comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]),image_scale=0.25)                
-                except Exception as e:
-                    print(e)
-                    continue
 def prepare():
     paths = {}
     paths["terns"] = prepare_terns(generate=False)
