@@ -106,14 +106,14 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     #Fine tuning, up to 100 birds from train
     fine_tune = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
     selected_annotations = []
-    selected_images = []
     count = 0
-    while count < 100:
-        available = fine_tune.image_path.unique()
-        random.shuffle(available)
-        selected_image = available[0]
-        if selected_image in selected_images:
-            continue
+    available = fine_tune.image_path.unique()
+    random.shuffle(available)
+    while count < 1000:
+        try:
+            selected_image = available.pop()
+        except:
+            break
         new_annotations = fine_tune[fine_tune.image_path==selected_image]
         selected_annotations.append(new_annotations)
         count += new_annotations.shape[0]
