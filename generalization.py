@@ -8,19 +8,53 @@ from deepforest.model import create_model
 from deepforest import main
 from deepforest.dataset import get_transform as deepforest_transform
 from datetime import datetime
+from deepforest import visualize
 
 from utils.PR import precision_recall_curve
 from utils.preprocess import *
 from utils.prepare import *
 
 import os
+import numpy as np
+import cv2
 import random
+from model import BirdDetector
 import pandas as pd
 import torch
 import gc
 from pytorch_lightning.plugins import DDPPlugin
 import subprocess
 
+def view_training(paths,comet_logger, n=10):
+    """For each site, grab three images and view annotations
+    Args:
+        n: number of images to load
+    """
+    m = BirdDetector(transforms=get_transform)
+    
+    with comet_logger.experiment.context_manager("view_training"):
+        for site in paths:
+            for split in ["train","test"]:
+                if split == "train":
+                    augment = True
+                else:
+                    augment = False
+                try:
+                    x = paths[site][split]
+                    ds = m.load_dataset(csv_file=x, root_dir=os.path.dirname(x), shuffle=True, augment=augment)
+                    for i in np.arange(10):
+                        batch = next(iter(ds))
+                        image_path, image, targets = batch
+                        df = visualize.format_boxes(targets[0], scores=False)
+                        image = np.moveaxis(image[0].numpy(),0,2)[:,:,::-1] * 255
+                        image = visualize.plot_predictions(image, df)
+                        with tempfile.TemporaryDirectory() as tmpdirname:
+                            cv2.imwrite("{}/{}".format(tmpdirname, image_path[0]),image )
+                            comet_logger.experiment.log_image("{}/{}".format(tmpdirname, image_path[0]),image_scale=0.25)                
+                except Exception as e:
+                    print(e)
+                    continue
+                
 def train(path_dict, config, train_sets = ["penguins","terns","everglades","palmyra"],test_sets=["everglades"], comet_logger=None, save_dir=None):
         
     comet_logger.experiment.log_parameter("timestamp",timestamp)
