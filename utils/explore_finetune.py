@@ -19,10 +19,10 @@ test_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalizatio
 print("Zero shot Recall is {}".format(test_results["box_recall"]))
 print("Zero shot Precision is {}".format(test_results["box_precision"]))
 
-
 model.trainer.fit(model)
 
-test_results = model.evaluate(csv_file=path_dict["monash"]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
+test_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/monash_test.csv",
+                              root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
 
 print("Fine tune Recall is {}".format(test_results["box_recall"]))
 print("Fine tune Precision is {}".format(test_results["box_precision"]))
