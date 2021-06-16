@@ -1,6 +1,7 @@
 #Prepare all training sets
 import comet_ml
 from model import BirdDetector
+from augmentation import get_transform
 import glob
 from PIL import ImageFile
 from pytorch_lightning.loggers import CometLogger
