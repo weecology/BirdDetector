@@ -490,21 +490,27 @@ def prepare_seabirdwatch(generate):
     test_annotations = []
     if generate:   
         for name, group in train_gdf.groupby("image_path"):
-            basename = os.path.splitext(os.path.basename(name))[0]
-            group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
-            df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
+            try:
+                basename = os.path.splitext(os.path.basename(name))[0]
+                group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
+                df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
                                           rgb="/orange/ewhite/b.weinstein/seabirdwatch/images/{}.JPG".format(basename))
-            train_annotations.append(df)
+                train_annotations.append(df)
+            except Exception as e:
+                print("{} failed with {}".format(name, e))
         
         train_annotations = pd.concat(train_annotations)
         train_annotations.to_csv(train_path)
          
         for name, group in test_gdf.groupby.image_path():
-            basename = os.path.splitext(os.path.basename(name))[0]
-            group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
-            df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
-                                          rgb="/orange/ewhite/b.weinstein/seabirdwatch/images/{}.JPG".format(basename))
-            test_annotations.append(df)
+            try:  
+                basename = os.path.splitext(os.path.basename(name))[0]
+                group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
+                df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
+                                              rgb="/orange/ewhite/b.weinstein/seabirdwatch/images/{}.JPG".format(basename))
+                test_annotations.append(df)
+            except Exception as e:
+                print("{} failed with {}".format(name, e))
         
         test_annotations = pd.concat(test_annotations)
         test_annotations.to_csv(test_path)
