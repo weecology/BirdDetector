@@ -23,7 +23,7 @@ import cv2
     #return transform
 
 def get_transform(augment):
-    """Albumentations transformation of bounding boxs"""
+    """Custom albumentations transformation of bounding boxs"""
     if augment:
         transform = A.Compose([
             A.PadIfNeeded(1000,1000, border_mode=cv2.BORDER_CONSTANT, value=0),

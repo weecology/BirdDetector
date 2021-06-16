@@ -79,7 +79,6 @@ class BirdDataset(Dataset):
             targets["boxes"] = image_annotations[["xmin", "ymin", "xmax",
                                                   "ymax"]].values.astype(float)
             
-            
             # Labels need to be encoded
             targets["labels"] = image_annotations.label.apply(
                 lambda x: self.label_dict[x]).values.astype(int)
@@ -99,10 +98,6 @@ class BirdDataset(Dataset):
             labels = np.array(augmented["category_ids"]) 
             labels = torch.from_numpy(labels)
             targets = {"boxes":boxes,"labels":labels}   
-            
-            #debug, manually remove a blank tensor
-            if self.image_names[idx] == "46544951_2.png":
-                targets["boxes"] = torch.empty(0,4)
                 
             #Check for blank tensors, if blank shuffle to new position
             all_empty = all([len(x) == 0 for x in targets["boxes"]])

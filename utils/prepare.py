@@ -515,7 +515,7 @@ def prepare_seabirdwatch(generate):
         test_annotations = pd.concat(test_annotations)
         test_annotations.to_csv(test_path)
         
-        test_annotations.to_csv(train_path, index=False)
+        test_annotations.to_csv(test_path, index=False)
         
     return {"train":train_path, "test":test_path}
 

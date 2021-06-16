@@ -154,14 +154,18 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         #count += new_annotations.shape[0]
     #selected_annotations = pd.concat(selected_annotations)
     #selected_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_finetune.csv".format(test_sets[0]))
+    model = main.deepforest.load_from_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0])
-    model.transforms = deepforest_transform
+    model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(test_sets[0])
+    model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
+    model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
+    
     model.trainer.fit(model)
     
-    test_results = model.evaluate(csv_file=path_dict[test_sets[0]]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
+    finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(test_sets[0]), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
     if comet_logger is not None:
-        comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(x),test_results["box_recall"])
-        comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(x),test_results["box_precision"])
+        comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(x),finetune_results["box_recall"])
+        comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(x),finetune_results["box_precision"])
         
     #delete model and free up memory
     del model
