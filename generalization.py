@@ -181,7 +181,7 @@ if __name__ =="__main__":
     ImageFile.LOAD_TRUNCATED_IMAGES = True
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    save_dir="/orange/ewhite/b.weinstein/generalization/"
+    save_dir="/orange/ewhite/b.weinstein/generalization"
     savedir = "{}/{}".format(save_dir,timestamp)  
     
     try:
