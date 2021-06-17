@@ -133,11 +133,8 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
             except Exception as e:
                 print(e)    
     if save_dir:
-        try:
-            model.trainer.save_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
-        except Exception as e:
-            print(e)        
-    
+        model.trainer.save_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
+     
     #Fine tuning, up to 100 birds from train
     #fine_tune = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
     #selected_annotations = []
@@ -167,10 +164,6 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     if comet_logger is not None:
         comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(x),finetune_results["box_recall"])
         comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(x),finetune_results["box_precision"])
-        
-    #delete model and free up memory
-    del model
-    torch.cuda.empty_cache()
     
     #The last position in the loop is the LOO score
     return test_results["box_recall"], test_results["box_precision"]
