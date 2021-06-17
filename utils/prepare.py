@@ -551,7 +551,7 @@ def prepare_neill(generate):
         for name in train_shps:
             try:  
                 basename = os.path.splitext(os.path.basename(name))[0]
-                df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/parsed/{}.shp".format(basename),
+                df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/neill/parsed/{}.shp".format(basename),
                                               rgb="/orange/ewhite/b.weinstein/neill/parsed/{}.JPG".format(basename))
                 test_annotations.append(df)
             except Exception as e:
