@@ -497,7 +497,7 @@ def prepare_seabirdwatch(generate):
                 basename = os.path.splitext(os.path.basename(name))[0]
                 group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
                 df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
-                                          rgb="/orange/ewhite/b.weinstein/seabirdwatch/images/{}.JPG".format(basename))
+                                          rgb="/orange/ewhite/b.weinstein/seabirdwatch/images/{}.JPG".format(basename), buffer_size=25)
                 train_annotations.append(df)
             except Exception as e:
                 print("{} failed with {}".format(name, e))
@@ -510,7 +510,7 @@ def prepare_seabirdwatch(generate):
                 basename = os.path.splitext(os.path.basename(name))[0]
                 group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
                 df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
-                                              rgb="/orange/ewhite/b.weinstein/seabirdwatch/images/{}.JPG".format(basename))
+                                              rgb="/orange/ewhite/b.weinstein/seabirdwatch/images/{}.JPG".format(basename), buffer_size=25)
                 test_annotations.append(df)
             except Exception as e:
                 print("{} failed with {}".format(name, e))
@@ -531,36 +531,24 @@ def prepare_neill(generate):
         
         #Hold one year out
         test_shps = [x for x in shps if "2017" in x]
-        train_shps = [x for x in shps if "2017" in x]
+        train_shps = [x for x in shps if not "2017" in x]
         
         train_annotations = []
         test_annotations = []
         
-        for name in test_shps:
-            try:
-                basename = os.path.splitext(os.path.basename(name))[0]
-                df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/neill/parsed/{}.shp".format(basename),
-                                          rgb="/orange/ewhite/b.weinstein/neill/parsed/{}.JPG".format(basename))
-                train_annotations.append(df)
-            except Exception as e:
-                print("{} failed with {}".format(name, e))
+        for x in train_shps:
+            annotations = gpd.read_file(x)
+            train_annotations.append(annotations[["image_path","xmin","ymin","xmax","ymax","label"]])
         
         train_annotations = pd.concat(train_annotations)
         train_annotations.to_csv(train_path)
          
-        for name in train_shps:
-            try:  
-                basename = os.path.splitext(os.path.basename(name))[0]
-                df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/neill/parsed/{}.shp".format(basename),
-                                              rgb="/orange/ewhite/b.weinstein/neill/parsed/{}.JPG".format(basename))
-                test_annotations.append(df)
-            except Exception as e:
-                print("{} failed with {}".format(name, e))
-        
+        for x in test_shps:
+            annotations = gpd.read_file(x)
+            test_annotations.append(annotations[["image_path","xmin","ymin","xmax","ymax","label"]])
+            
         test_annotations = pd.concat(test_annotations)
         test_annotations.to_csv(test_path)
-        
-        test_annotations.to_csv(test_path, index=False)
         
     return {"train":train_path, "test":test_path}
 
@@ -578,7 +566,7 @@ def prepare():
     paths["USGS"] = prepare_USGS(generate=False)
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
-    paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
-    paths["neill"] = prepare_neill(generate=False)
+    paths["seabirdwatch"] = prepare_seabirdwatch(generate=True)
+    paths["neill"] = prepare_neill(generate=True)
     
     return paths
