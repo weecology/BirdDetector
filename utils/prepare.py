@@ -538,14 +538,20 @@ def prepare_neill(generate):
         
         for x in train_shps:
             annotations = gpd.read_file(x)
-            train_annotations.append(annotations[["image_path","xmin","ymin","xmax","ymax","label"]])
+            df = annotations.geometry.bounds
+            df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
+            df["label"] = "Bird"
+            train_annotations.append(df)
         
         train_annotations = pd.concat(train_annotations)
         train_annotations.to_csv(train_path)
          
         for x in test_shps:
             annotations = gpd.read_file(x)
-            test_annotations.append(annotations[["image_path","xmin","ymin","xmax","ymax","label"]])
+            df = annotations.geometry.bounds
+            df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
+            df["label"] = "Bird"
+            test_annotations.append(df)
             
         test_annotations = pd.concat(test_annotations)
         test_annotations.to_csv(test_path)
@@ -566,7 +572,7 @@ def prepare():
     paths["USGS"] = prepare_USGS(generate=False)
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
-    paths["seabirdwatch"] = prepare_seabirdwatch(generate=True)
+    paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
     paths["neill"] = prepare_neill(generate=True)
     
     return paths
