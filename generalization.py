@@ -132,8 +132,10 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
                 comet_logger.experiment.log_metric("{} Box Precision".format(x),test_results["box_precision"])
             except Exception as e:
                 print(e)    
-    model.trainer.save_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
-     
+
+    if save_dir:
+        model_path = "{}/{}.pt".format(save_dir,"_".join(train_sets))
+        torch.save(model.model.state_dict(),model_path)
     
     #Fine tuning, up to 100 birds from train
     #fine_tune = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
@@ -151,8 +153,8 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         #count += new_annotations.shape[0]
     #selected_annotations = pd.concat(selected_annotations)
     #selected_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_finetune.csv".format(test_sets[0]))
-    model = main.deepforest.load_from_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
-    model.label_dict = {"Bird": 0}
+    model = main.deepforest(label_dict = {"Bird": 0})
+    model.model.load_state_dict(torch.load(model_path))
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0])
     model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(test_sets[0])
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
