@@ -526,19 +526,17 @@ def prepare_neill(generate):
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/neill_train.csv"
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/neill_test.csv"
     
-    gdf = gpd.read_file("/orange/ewhite/b.weinstein/neill/parsed/annotations.shp")
-    
-    images = gdf.image_path.unique()
-    random.shuffle(images)
-    training_images = images[:int(len(images) * 0.8)]
-    
-    train_gdf = gdf[gdf.image_path.isin(training_images)]
-    test_gdf = gdf[~(gdf.image_path.isin(training_images))]
-    
-    train_annotations = []
-    test_annotations = []
     if generate:   
-        for name, group in train_gdf.groupby("image_path"):
+        shps = glob.glob("/orange/ewhite/b.weinstein/neill/parsed/*.shp")
+        
+        #Hold one year out
+        test_shps = [x for x in shps if "2017" in x]
+        train_shps = [x for x in shps if "2017" in x]
+        
+        train_annotations = []
+        test_annotations = []
+        
+        for name in test_shps:
             try:
                 basename = os.path.splitext(os.path.basename(name))[0]
                 df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/neill/parsed/{}.shp".format(basename),
@@ -550,10 +548,9 @@ def prepare_neill(generate):
         train_annotations = pd.concat(train_annotations)
         train_annotations.to_csv(train_path)
          
-        for name, group in test_gdf.groupby("image_path"):
+        for name in train_shps:
             try:  
                 basename = os.path.splitext(os.path.basename(name))[0]
-                group.to_file("/orange/ewhite/b.weinstein/neill/{}.shp".format(basename))
                 df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/parsed/{}.shp".format(basename),
                                               rgb="/orange/ewhite/b.weinstein/neill/parsed/{}.JPG".format(basename))
                 test_annotations.append(df)
