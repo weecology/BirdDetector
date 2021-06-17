@@ -2,7 +2,7 @@
 import os
 import glob
 
-files = glob.glob("**/*.JPG",recursive=True)
+files = glob.glob("/orange/ewhite/b.weinstein/neill/**/*.JPG",recursive=True)
 for x in files:
     full_path = os.path.abspath(x)
     dirname = os.path.dirname(full_path)
