@@ -484,41 +484,35 @@ def prepare_seabirdwatch(generate):
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/seabirdwatch_train.csv"
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/seabirdwatch_test.csv"
     
-    gdf = gpd.read_file("/orange/ewhite/b.weinstein/seabirdwatch/annotations.shp")
-    
-    test_gdf = gdf[gdf.colonyname == "KIPPa"]
-    train_gdf = gdf[~(gdf.colonyname == "KIPPa")]
-    
-    train_annotations = []
-    test_annotations = []
     if generate:   
-        for name, group in train_gdf.groupby("image_path"):
-            try:
-                basename = os.path.splitext(os.path.basename(name))[0]
-                group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
-                df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
-                                          rgb="/orange/ewhite/b.weinstein/seabirdwatch/images/{}.JPG".format(basename), buffer_size=25)
-                train_annotations.append(df)
-            except Exception as e:
-                print("{} failed with {}".format(name, e))
+        shps = glob.glob("/orange/ewhite/b.weinstein/seabirdwatch/parsed/*.shp")
+        
+        #Hold one year out
+        test_shps = [x for x in shps if "KIPPa" in x]
+        train_shps = [x for x in shps if not "KIPPa" in x]
+        
+        train_annotations = []
+        test_annotations = []
+        
+        for x in train_shps:
+            annotations = gpd.read_file(x)
+            df = annotations.geometry.bounds
+            df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
+            df["label"] = "Bird"
+            train_annotations.append(df)
         
         train_annotations = pd.concat(train_annotations)
         train_annotations.to_csv(train_path)
          
-        for name, group in test_gdf.groupby("image_path"):
-            try:  
-                basename = os.path.splitext(os.path.basename(name))[0]
-                group.to_file("/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename))
-                df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/seabirdwatch/{}.shp".format(basename),
-                                              rgb="/orange/ewhite/b.weinstein/seabirdwatch/images/{}.JPG".format(basename), buffer_size=25)
-                test_annotations.append(df)
-            except Exception as e:
-                print("{} failed with {}".format(name, e))
-        
+        for x in test_shps:
+            annotations = gpd.read_file(x)
+            df = annotations.geometry.bounds
+            df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
+            df["label"] = "Bird"
+            test_annotations.append(df)
+            
         test_annotations = pd.concat(test_annotations)
         test_annotations.to_csv(test_path)
-        
-        test_annotations.to_csv(test_path, index=False)
         
     return {"train":train_path, "test":test_path}
 
@@ -573,6 +567,6 @@ def prepare():
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
     paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
-    paths["neill"] = prepare_neill(generate=True)
+    paths["neill"] = prepare_neill(generate=False)
     
     return paths
