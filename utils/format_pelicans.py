@@ -60,13 +60,13 @@ def run():
         year = get_year(x)
         image_name, annotations = parse(x)
         image_path = find_image(image_name, year)
-        image_basename = os.path.splitext(image_path)[0]
+        image_basename = os.path.basename(os.path.splitext(image_path)[0])
         
         #run if image exists
         if image_path: 
             gdf = create_geodataframe(annotations)
             gdf["image_path"] = "{}_{}.JPG".format(image_basename, year)
-            shp_path = "/orange/ewhite/b.weinstein/neill/parsed/{}.shp".format(os.basename(image_path))
+            shp_path = "/orange/ewhite/b.weinstein/neill/parsed/{}.shp".format(os.path.basename(image_path))
             image_rename = "/orange/ewhite/b.weinstein/neill/parsed/{}_{}.JPG".format(image_basename, year)
             shutil.copy2(image_path, image_rename)
             gdf.to_file(shp_path)
