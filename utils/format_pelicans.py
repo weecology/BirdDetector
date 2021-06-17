@@ -14,10 +14,10 @@ def create_geodataframe(annotations):
     return gdf
 
 def find_files():
-    return glob.glob("/orange/ewhite/b.weinstein/generalization/neill/**/*.xml",recursive=True)
+    return glob.glob("/orange/ewhite/b.weinstein/neill/**/*.xml",recursive=True)
 
 def find_image(name, year):
-    image_pool = glob.glob("/orange/ewhite/b.weinstein/generalization/neill/**/*.JPG",recursive=True)
+    image_pool = glob.glob("/orange/ewhite/b.weinstein/neill/**/*.JPG",recursive=True)
     matching = [x for x in image_pool if name in x]
     matched = [x for x in matching if year in x]
     
