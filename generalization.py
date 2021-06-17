@@ -132,8 +132,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
                 comet_logger.experiment.log_metric("{} Box Precision".format(x),test_results["box_precision"])
             except Exception as e:
                 print(e)    
-    if save_dir:
-        model.trainer.save_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
+    model.trainer.save_checkpoint("{}/{}.pl".format(save_dir,"_".join(train_sets)))
      
     
     #Fine tuning, up to 100 birds from train
