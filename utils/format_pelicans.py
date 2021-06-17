@@ -34,9 +34,14 @@ def parse(x):
     
     x = []
     y = []
-    for annotation in doc["CellCounter_Marker_File"]["Marker_Data"]["Marker_Type"][6]["Marker"]:
-        x.append(annotation["MarkerX"])
-        y.append(annotation["MarkerY"])
+    for annotation in doc["CellCounter_Marker_File"]["Marker_Data"]["Marker_Type"]:
+        try:
+            objects = annotation["Marker"]
+            for Bird in objects:   
+                x.append(Bird["MarkerX"])
+                y.append(Bird["MarkerY"])
+        except:
+            pass
     
     annotations = pd.DataFrame({"x":x,"y":y})
     annotations["label"] = "Bird"
@@ -53,15 +58,16 @@ def run():
     for x in files:
         #Load image and save file foldder info on year
         year = get_year(x)
-        image_basename = os.path.splitext(image_path)[0]
         image_name, annotations = parse(x)
         image_path = find_image(image_name, year)
+        image_basename = os.path.splitext(image_path)[0]
+        
         
         #run if image exists
         if image_path: 
             gdf = create_geodataframe(annotations)
             gdf["image_path"] = "{}_{}.JPG".format(image_basename, year)
-            shp_path = "/orange/ewhite/b.weinstein/generalization/neill/parsed/{}.shp".format(os.basename(image_path))
-            image_rename = "/orange/ewhite/b.weinstein/generalization/neill/parsed/{}_{}.JPG".format(image_basename, year)
+            shp_path = "/orange/ewhite/b.weinstein/neill/parsed/{}.shp".format(os.basename(image_path))
+            image_rename = "/orange/ewhite/b.weinstein/neill/parsed/{}_{}.JPG".format(image_basename, year)
             shutil.copy2(image_path, image_rename)
             gdf.to_file(shp_path)
