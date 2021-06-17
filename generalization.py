@@ -160,7 +160,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(test_sets[0])
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
     model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
-    
+    model.create_trainer(logger=comet_logger)
     model.trainer.fit(model)
     
     finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(test_sets[0]), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
