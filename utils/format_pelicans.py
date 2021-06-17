@@ -25,7 +25,7 @@ def find_image(name, year):
         print("Cannot find image for {} {}".format(name, year))
         return None
         
-    return matched
+    return matched[0]
     
 def parse(x):
     with open(x) as fd:
@@ -62,7 +62,6 @@ def run():
         image_path = find_image(image_name, year)
         image_basename = os.path.splitext(image_path)[0]
         
-        
         #run if image exists
         if image_path: 
             gdf = create_geodataframe(annotations)
@@ -71,3 +70,6 @@ def run():
             image_rename = "/orange/ewhite/b.weinstein/neill/parsed/{}_{}.JPG".format(image_basename, year)
             shutil.copy2(image_path, image_rename)
             gdf.to_file(shp_path)
+            
+if __name__ == "__main__":
+    run()
