@@ -21,7 +21,7 @@ def find_image(name, year):
     matching = [x for x in image_pool if name in x]
     matched = [x for x in matching if year in x]
     
-    if len(matched) == 0:
+    if not len(matched) == 1:
         print("Cannot find image for {} {}".format(name, year))
         return None
         
@@ -60,10 +60,10 @@ def run():
         year = get_year(x)
         image_name, annotations = parse(x)
         image_path = find_image(image_name, year)
-        image_basename = os.path.basename(os.path.splitext(image_path)[0])
         
         #run if image exists
         if image_path: 
+            image_basename = os.path.basename(os.path.splitext(image_path)[0])            
             gdf = create_geodataframe(annotations)
             gdf["image_path"] = "{}_{}.JPG".format(image_basename, year)
             shp_path = "/orange/ewhite/b.weinstein/neill/parsed/{}.shp".format(os.path.basename(image_path))
