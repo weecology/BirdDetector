@@ -114,8 +114,8 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
 
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv"
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops"    
-    #model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
-    #model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops"
+    model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
+    model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops"
         
     model.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))
     comet_logger.experiment.log_parameters(model.config)
