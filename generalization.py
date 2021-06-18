@@ -157,10 +157,23 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         #count += new_annotations.shape[0]
     #selected_annotations = pd.concat(selected_annotations)
     #selected_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_finetune.csv".format(test_sets[0]))
+    
+    #A couple illegal boxes, make slightly smaller
+    train_annotations = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv")
+    train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
+    train_annotations["xmax"] = train_annotations["xmax"].astype(float) - 3
+    train_annotations["ymin"] = train_annotations["ymin"].astype(float)
+    train_annotations["ymax"] = train_annotations["ymax"].astype(float) - 3
+    
+    train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
+    train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
+    
+    train_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv")    
+    
     model = main.deepforest(label_dict = {"Bird": 0})
     model.model.load_state_dict(torch.load(model_path))
-    model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0])
-    model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(test_sets[0])
+    model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv"
+    model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
     model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
     model.create_trainer(logger=comet_logger)
