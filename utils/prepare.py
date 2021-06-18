@@ -514,6 +514,17 @@ def prepare_seabirdwatch(generate):
             train_annotations.append(df)
         
         train_annotations = pd.concat(train_annotations)
+        
+        for name, group in train_annotations.groupby("image_path"):
+            img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
+            height = img.shape[0]
+            width = img.shape[1]
+            if any(group.xmax > width):
+                print(name)
+                train_annotations.loc[train_annotations.image_path == name, "xmax"] = width -1 
+            if any(group.ymax > height):
+                print(name)
+                train_annotations.loc[train_annotations.image_path == name, "ymax"] = height -1         
         train_annotations.to_csv(train_path)
          
         for x in test_shps:
@@ -527,6 +538,17 @@ def prepare_seabirdwatch(generate):
             test_annotations.append(df)
             
         test_annotations = pd.concat(test_annotations)
+        for name, group in test_annotations.groupby("image_path"):
+            img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
+            height = img.shape[0]
+            width = img.shape[1]
+            if any(group.xmax > width):
+                print(name)
+                test_annotations.loc[test_annotations.image_path == name, "xmax"] = width -1 
+            if any(group.ymax > height):
+                print(name)
+                test_annotations.loc[test_annotations.image_path == name, "ymax"] = height -1 
+                
         test_annotations.to_csv(test_path)
         
     return {"train":train_path, "test":test_path}
