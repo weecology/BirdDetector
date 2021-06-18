@@ -73,6 +73,20 @@ def run():
             shutil.copy2(image_path, image_rename)
             gdf.to_file(shp_path)
  
+def check_shape():
+    df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/neill_train.csv")
+    for name, group in df.groupby("image_path"):
+        img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
+        height = img.shape[0]
+        width = img.shape[1]
+        if any(group.xmax > width):
+            print(name)
+            df.loc[df.image_path == name, "xmax"] = width -1 
+        elif any(group.ymax > height):
+            print(name)
+            df.loc[df.image_path == name, "ymax"] = height -1 
+    #df.to_csv("/orange/ewhite/b.weinstein/generalization/crops/neill_train.csv")
             
 if __name__ == "__main__":
     run()
+    check_shape()

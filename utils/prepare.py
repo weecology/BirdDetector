@@ -564,7 +564,8 @@ def prepare_neill(generate):
             if any(group.xmax > width):
                 print(name)
                 train_annotations.loc[train_annotations.image_path == name, "xmax"] = width -1 
-            elif any(group.ymax > height):
+            if any(group.ymax > height):
+                print(name)
                 train_annotations.loc[train_annotations.image_path == name, "ymax"] = height -1 
         train_annotations.to_csv(train_path)
         
@@ -586,7 +587,8 @@ def prepare_neill(generate):
             if any(group.xmax > width):
                 print(name)
                 test_annotations.loc[test_annotations.image_path == name, "xmax"] = width -1 
-            elif any(group.ymax > height):
+            if any(group.ymax > height):
+                print(name)
                 test_annotations.loc[test_annotations.image_path == name, "ymax"] = height -1 
                 
         test_annotations.to_csv(test_path)
