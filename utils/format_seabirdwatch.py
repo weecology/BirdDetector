@@ -16,6 +16,7 @@ for x in files:
     df["label"] = "Bird"    
     for name, group in df.groupby("image_path"):   
         if os.path.exists("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name)):   
+            group = group.copy(deep=True)
             group["geometry"] =[geometry.Point(x,y) for x,y in zip(df.cluster_x.astype(float), df.cluster_y.astype(float))]
             gdf = gpd.GeoDataFrame(group)    
             gdf["geometry"] = [geometry.box(left, bottom, right, top) for left, bottom, right, top in gdf.geometry.buffer(20).bounds.values]                            
