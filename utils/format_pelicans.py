@@ -66,7 +66,7 @@ def run():
             image_basename = os.path.basename(os.path.splitext(image_path)[0])            
             gdf = create_geodataframe(annotations)
             gdf["image_path"] = "{}_{}.JPG".format(image_basename, year)
-            gdf["geometry"] = [geometry.box(left, bottom, right, top) for left, bottom, right, top in gdf.geometry.buffer(20).bounds.values]            
+            gdf["geometry"] = [geometry.box(left, bottom, right, top) for left, bottom, right, top in gdf.geometry.buffer(30).bounds.values]            
             shp_path = "/orange/ewhite/b.weinstein/neill/parsed/{}_{}.shp".format(image_basename, year)
             image_rename = "/orange/ewhite/b.weinstein/neill/parsed/{}_{}.JPG".format(image_basename, year)
             shutil.copy2(image_path, image_rename)
