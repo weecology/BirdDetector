@@ -114,7 +114,7 @@ def prepare_everglades():
 def prepare_terns(generate=True):
     PIL.Image.MAX_IMAGE_PIXELS = 933120000
     
-    test_path = "/orange/ewhite/b.weinstein/generalization/crops/tern_test.csv"
+    test_path = "/orange/ewhite/b.weinstein/generalization/crops/terns_test.csv"
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/terns_train.csv"        
     if generate:   
         df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/terns/birds.shp",
