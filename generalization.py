@@ -137,6 +137,10 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         model_path = "{}/{}.pt".format(save_dir,"_".join(train_sets))
         torch.save(model.model.state_dict(),model_path)
     
+    #delete model and free up memory
+    del model
+    torch.cuda.empty_cache()
+        
     #Fine tuning, up to 100 birds from train
     #fine_tune = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
     #selected_annotations = []
@@ -167,9 +171,6 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(x),finetune_results["box_recall"])
         comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(x),finetune_results["box_precision"])
         
-    #delete model and free up memory
-    del model
-    torch.cuda.empty_cache()
     
     #The last position in the loop is the LOO score
     return test_results["box_recall"], test_results["box_precision"]
