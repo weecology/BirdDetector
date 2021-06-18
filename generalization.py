@@ -170,7 +170,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     
     train_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv")    
     
-    model = main.deepforest(label_dict = {"Bird": 0})
+    model = BirdDetector()
     model.model.load_state_dict(torch.load(model_path))
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv"
     model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
