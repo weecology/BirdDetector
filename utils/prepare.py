@@ -499,6 +499,7 @@ def prepare_seabirdwatch(generate):
             df = annotations.geometry.bounds
             df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
             df["label"] = "Bird"
+            df["image_path"] = "{}.JPG".format(os.path.splitext(os.path.basename(x))[0])            
             train_annotations.append(df)
         
         train_annotations = pd.concat(train_annotations)
@@ -509,6 +510,7 @@ def prepare_seabirdwatch(generate):
             df = annotations.geometry.bounds
             df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
             df["label"] = "Bird"
+            df["image_path"] = "{}.JPG".format(os.path.splitext(os.path.basename(x))[0])            
             test_annotations.append(df)
             
         test_annotations = pd.concat(test_annotations)
@@ -535,6 +537,7 @@ def prepare_neill(generate):
             df = annotations.geometry.bounds
             df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
             df["label"] = "Bird"
+            df["image_path"] = "{}.JPG".format(os.path.splitext(os.path.basename(x))[0])            
             train_annotations.append(df)
         
         train_annotations = pd.concat(train_annotations)
@@ -545,6 +548,7 @@ def prepare_neill(generate):
             df = annotations.geometry.bounds
             df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
             df["label"] = "Bird"
+            df["image_path"] = "{}.JPG".format(os.path.splitext(os.path.basename(x))[0])
             test_annotations.append(df)
             
         test_annotations = pd.concat(test_annotations)
@@ -566,7 +570,7 @@ def prepare():
     paths["USGS"] = prepare_USGS(generate=False)
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
-    paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
-    paths["neill"] = prepare_neill(generate=False)
+    paths["seabirdwatch"] = prepare_seabirdwatch(generate=True)
+    paths["neill"] = prepare_neill(generate=True)
     
     return paths
