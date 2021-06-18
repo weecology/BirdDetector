@@ -206,7 +206,7 @@ if __name__ =="__main__":
     for x in train_list:
         train_sets = [y for y in train_list if not y==x]
         train_sets.append("everglades")
-        train_sets.append("murres")
+        #train_sets.append("murres")
         test_sets = [x]
         recall, precision = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
         result = pd.DataFrame({"test_sets":[x],"recall":[recall],"precision":[precision]})
