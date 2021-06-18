@@ -441,7 +441,7 @@ def prepare_mckellar(generate=True):
         for x in glob.glob("/orange/ewhite/b.weinstein/mckellar/*.shp")[:1]:
             basename = os.path.splitext(os.path.basename(x))[0]
             df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/mckellar/{}.shp".format(basename),
-                                          rgb="/orange/ewhite/b.weinstein/mckellar/{}.tif".format(basename))
+                                          rgb="/orange/ewhite/b.weinstein/mckellar/{}.tif".format(basename), buffer_size=0.15)
             df.to_csv("/orange/ewhite/b.weinstein/mckellar/{}.csv".format(basename))
             
             annotations = preprocess.split_raster(
@@ -461,7 +461,7 @@ def prepare_mckellar(generate=True):
             print(x)
             basename = os.path.splitext(os.path.basename(x))[0]
             df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/mckellar/{}.shp".format(basename),
-                                          rgb="/orange/ewhite/b.weinstein/mckellar/{}.tif".format(basename))
+                                          rgb="/orange/ewhite/b.weinstein/mckellar/{}.tif".format(basename), buffer_size=0.15)
             df.to_csv("/orange/ewhite/b.weinstein/mckellar/{}.csv".format(basename))
             
             annotations = preprocess.split_raster(
@@ -499,6 +499,9 @@ def prepare_seabirdwatch(generate):
             df = annotations.geometry.bounds
             df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
             df["label"] = "Bird"
+            df = df[~(df.xmin >= df.xmax)]
+            df = df[~(df.ymin >= df.ymax)]
+            
             df["image_path"] = "{}.JPG".format(os.path.splitext(os.path.basename(x))[0])            
             train_annotations.append(df)
         
@@ -510,6 +513,8 @@ def prepare_seabirdwatch(generate):
             df = annotations.geometry.bounds
             df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
             df["label"] = "Bird"
+            df = df[~(df.xmin >= df.xmax)]
+            df = df[~(df.ymin >= df.ymax)]            
             df["image_path"] = "{}.JPG".format(os.path.splitext(os.path.basename(x))[0])            
             test_annotations.append(df)
             
@@ -537,6 +542,8 @@ def prepare_neill(generate):
             df = annotations.geometry.bounds
             df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
             df["label"] = "Bird"
+            df = df[~(df.xmin >= df.xmax)]
+            df = df[~(df.ymin >= df.ymax)]            
             df["image_path"] = "{}.JPG".format(os.path.splitext(os.path.basename(x))[0])            
             train_annotations.append(df)
         
@@ -548,6 +555,8 @@ def prepare_neill(generate):
             df = annotations.geometry.bounds
             df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
             df["label"] = "Bird"
+            df = df[~(df.xmin >= df.xmax)]
+            df = df[~(df.ymin >= df.ymax)]            
             df["image_path"] = "{}.JPG".format(os.path.splitext(os.path.basename(x))[0])
             test_annotations.append(df)
             
