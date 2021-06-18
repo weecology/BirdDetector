@@ -161,9 +161,9 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     #A couple illegal boxes, make slightly smaller
     train_annotations = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
     train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
-    train_annotations["xmax"] = train_annotations["xmax"].astype(float) - 3
+    train_annotations["xmax"] = train_annotations["xmax"].astype(float)
     train_annotations["ymin"] = train_annotations["ymin"].astype(float)
-    train_annotations["ymax"] = train_annotations["ymax"].astype(float) - 3
+    train_annotations["ymax"] = train_annotations["ymax"].astype(float)
     
     train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
     train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
