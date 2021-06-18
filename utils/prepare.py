@@ -229,7 +229,7 @@ def prepare_pfeifer(generate=True):
     return {"train":train_path, "test":test_path}
         
 def prepare_murres(generate=True):
-    train_path = "/orange/ewhite/b.weinstein/generalization/crops/murres_test.csv"
+    train_path = "/orange/ewhite/b.weinstein/generalization/crops/murres_train.csv"
     if generate:   
         df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/murres/DJI_0019.shp",
                                       rgb="/orange/ewhite/b.weinstein/murres/DJI_0019.JPG", buffer_size=25)
