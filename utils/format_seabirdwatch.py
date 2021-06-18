@@ -17,7 +17,6 @@ for x in files:
     for name, group in df.groupby("image_path"):   
         df["geometry"] =[geometry.Point(x,y) for x,y in zip(df.cluster_x.astype(float), df.cluster_y.astype(float))]
         gdf = gpd.GeoDataFrame(df)    
-        gdf["geometry"] = [geometry.box(left, bottom, right, top) for left, bottom, right, top in gdf.geometry.buffer(20).bounds.values]   
         image_basename = os.path.splitext(gdf.image_path.unique()[0])[0]
         gdf.to_file("{}/{}.shp".format("/orange/ewhite/b.weinstein/seabirdwatch/parsed",image_basename))
         
