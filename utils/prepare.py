@@ -420,6 +420,7 @@ def prepare_USGS(generate=True):
         df = pd.concat(crop_annotations)
         df.label = "Bird"
         df = df[~(df.xmin >= df.xmax)]
+        df = df[~(df.ymin >= df.ymax)]
         
         train_images = df.image_path.sample(frac=0.85)
         train_annotations = df[df.image_path.isin(train_images)]
