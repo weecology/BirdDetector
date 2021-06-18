@@ -11,6 +11,7 @@ import numpy as np
 import os
 import PIL
 import tempfile
+import cv2
 
 def prepare_palmyra(generate=True):
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/palmyra_test.csv"
@@ -555,8 +556,18 @@ def prepare_neill(generate):
             train_annotations.append(df)
         
         train_annotations = pd.concat(train_annotations)
+        
+        for name, group in train_annotations.groupby("image_path"):
+            img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
+            height = img.shape[0]
+            width = img.shape[1]
+            if any(group.xmax > width):
+                print(name)
+                train_annotations.loc[train_annotations.image_path == name, "xmax"] = width -1 
+            elif any(group.ymax > height):
+                train_annotations.loc[train_annotations.image_path == name, "ymax"] = height -1 
         train_annotations.to_csv(train_path)
-         
+        
         for x in test_shps:
             annotations = gpd.read_file(x)
             df = annotations.geometry.bounds
@@ -566,8 +577,18 @@ def prepare_neill(generate):
             df = df[~(df.ymin >= df.ymax)]            
             df["image_path"] = "{}.JPG".format(os.path.splitext(os.path.basename(x))[0])
             test_annotations.append(df)
-            
-        test_annotations = pd.concat(test_annotations)
+        
+        test_annotations = pd.concat(test_annotations)        
+        for name, group in test_annotations.groupby("image_path"):
+            img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
+            height = img.shape[0]
+            width = img.shape[1]
+            if any(group.xmax > width):
+                print(name)
+                test_annotations.loc[test_annotations.image_path == name, "xmax"] = width -1 
+            elif any(group.ymax > height):
+                test_annotations.loc[test_annotations.image_path == name, "ymax"] = height -1 
+                
         test_annotations.to_csv(test_path)
         
     return {"train":train_path, "test":test_path}

@@ -6,6 +6,7 @@ import shutil
 import xmltodict
 from shapely import geometry
 import geopandas as gpd
+import cv2
 
 def create_geodataframe(annotations):
     annotations["geometry"] =[geometry.Point(x,y) for x,y in zip(annotations.x.astype(float), annotations.y.astype(float))]
@@ -71,6 +72,7 @@ def run():
             image_rename = "/orange/ewhite/b.weinstein/neill/parsed/{}_{}.JPG".format(image_basename, year)
             shutil.copy2(image_path, image_rename)
             gdf.to_file(shp_path)
+ 
             
 if __name__ == "__main__":
     run()
