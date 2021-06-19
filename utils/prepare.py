@@ -167,7 +167,7 @@ def prepare_hayes(generate=True):
         train_annotations = pd.concat([hayes_albatross_train, hayes_albatross_test, hayes_penguin_train, hayes_penguin_test, hayes_penguin_val])
         train_annotations.label = "Bird"
         
-        
+        train_annotations = check_shape(train_annotations)
         train_images = train_annotations.image_path.sample(n=500)
         train_annotations = train_annotations[train_annotations.image_path.isin(train_images)]
         train_annotations.to_csv(train_path, index=False)
@@ -175,6 +175,7 @@ def prepare_hayes(generate=True):
         hayes_albatross_val.label="Bird"
         hayes_albatross_val_images = hayes_albatross_val.image_path.sample(n=100)
         hayes_albatross_val = hayes_albatross_val[hayes_albatross_val.image_path.isin(hayes_albatross_val_images)]
+        hayes_albatross_val = check_shape(hayes_albatross_val)                
         hayes_albatross_val.to_csv(test_path, index=False)
     
     return {"train":train_path, "test":test_path}
@@ -424,17 +425,7 @@ def prepare_USGS(generate=True):
         df = df[~(df.ymin >= df.ymax)]
         
         #pad the edges by a few pixels
-        for name, group in df.groupby("image_path"):
-            img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
-            height = img.shape[0]
-            width = img.shape[1]
-            if any(group.xmax > width):
-                print(name)
-                df.loc[df.image_path == name, "xmax"] = width -1 
-            if any(group.ymax > height):
-                print(name)
-                df.loc[df.image_path == name, "ymax"] = height -1
-                
+        df = check_shape(df)
                 
         train_images = df.image_path.sample(frac=0.85)
         train_annotations = df[df.image_path.isin(train_images)]
@@ -522,16 +513,7 @@ def prepare_seabirdwatch(generate):
         
         train_annotations = pd.concat(train_annotations)
         
-        for name, group in train_annotations.groupby("image_path"):
-            img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
-            height = img.shape[0]
-            width = img.shape[1]
-            if any(group.xmax > width):
-                print(name)
-                train_annotations.loc[train_annotations.image_path == name, "xmax"] = width -1 
-            if any(group.ymax > height):
-                print(name)
-                train_annotations.loc[train_annotations.image_path == name, "ymax"] = height -1         
+        train_annotations = check_shape(train_annotations)
         train_annotations.to_csv(train_path)
          
         for x in test_shps:
@@ -545,17 +527,7 @@ def prepare_seabirdwatch(generate):
             test_annotations.append(df)
             
         test_annotations = pd.concat(test_annotations)
-        for name, group in test_annotations.groupby("image_path"):
-            img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
-            height = img.shape[0]
-            width = img.shape[1]
-            if any(group.xmax > width):
-                print(name)
-                test_annotations.loc[test_annotations.image_path == name, "xmax"] = width -1 
-            if any(group.ymax > height):
-                print(name)
-                test_annotations.loc[test_annotations.image_path == name, "ymax"] = height -1 
-                
+        test_annotations = check_shape(test_annotations)
         test_annotations.to_csv(test_path)
         
     return {"train":train_path, "test":test_path}
@@ -585,17 +557,7 @@ def prepare_neill(generate):
             train_annotations.append(df)
         
         train_annotations = pd.concat(train_annotations)
-        
-        for name, group in train_annotations.groupby("image_path"):
-            img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
-            height = img.shape[0]
-            width = img.shape[1]
-            if any(group.xmax > width):
-                print(name)
-                train_annotations.loc[train_annotations.image_path == name, "xmax"] = width -1 
-            if any(group.ymax > height):
-                print(name)
-                train_annotations.loc[train_annotations.image_path == name, "ymax"] = height -1 
+        train_annotations = check_shape(train_annotations)
         train_annotations.to_csv(train_path)
         
         for x in test_shps:
@@ -609,17 +571,7 @@ def prepare_neill(generate):
             test_annotations.append(df)
         
         test_annotations = pd.concat(test_annotations)        
-        for name, group in test_annotations.groupby("image_path"):
-            img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
-            height = img.shape[0]
-            width = img.shape[1]
-            if any(group.xmax > width):
-                print(name)
-                test_annotations.loc[test_annotations.image_path == name, "xmax"] = width -1 
-            if any(group.ymax > height):
-                print(name)
-                test_annotations.loc[test_annotations.image_path == name, "ymax"] = height -1 
-                
+        test_annotations = check_shape(test_annotations)
         test_annotations.to_csv(test_path)
         
     return {"train":train_path, "test":test_path}
@@ -634,11 +586,11 @@ def prepare():
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
-    paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=False)
+    paths["hayes"] = prepare_hayes(generate=True)
+    paths["USGS"] = prepare_USGS(generate=True)
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
-    paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
-    paths["neill"] = prepare_neill(generate=False)
+    paths["seabirdwatch"] = prepare_seabirdwatch(generate=True)
+    paths["neill"] = prepare_neill(generate=True)
     
     return paths

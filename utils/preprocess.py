@@ -4,6 +4,8 @@ import numpy as np
 import os
 from shapely.geometry import Point, box
 import geopandas as gpd
+import cv2
+import pandas as pd
 
 def split_test_train(annotations, split = 0.9):
     """Split annotation in train and test by image"""
@@ -92,3 +94,19 @@ def shapefile_to_annotations(shapefile, rgb, savedir=".", box_points=False, conf
     result = result[~(result.ymin == result.ymax)]
     
     return result
+
+def check_shape(df):
+    """Make sure no annotations fall off edges of crops
+    Args:
+        df: a pandas dataframe with image_path, xmax, ymax
+    """
+    updated_data = []
+    for name, group in df.groupby("image_path"):
+        img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
+        height = img.shape[0]
+        width = img.shape[1]
+        group["xmax"] = group.xmax.apply(lambda x: x if x < width else width)
+        group["ymax"] = group.ymax.apply(lambda y: y if y < height else height)
+        updated_data.append(group)
+        
+    df = pd.concat(updated_data)    
