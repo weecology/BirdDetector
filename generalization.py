@@ -137,10 +137,6 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         model_path = "{}/{}.pt".format(save_dir,"_".join(train_sets))
         torch.save(model.model.state_dict(),model_path)
     
-    #delete model and free up memory
-    del model
-    torch.cuda.empty_cache()
-        
     #Fine tuning, up to 100 birds from train
     #fine_tune = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
     #selected_annotations = []
@@ -169,10 +165,8 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
     
     train_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv")    
-    
-    model = BirdDetector()
-    model.config = config
-    model.model.load_state_dict(torch.load(model_path))
+
+    model.transforms = deepforest_transform
     model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv"
     model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"

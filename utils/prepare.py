@@ -424,11 +424,18 @@ def prepare_USGS(generate=True):
         df = df[~(df.ymin >= df.ymax)]
         
         #pad the edges by a few pixels
-        df["xmax"] = df.xmax.apply(lambda x: x - 3 if x == 1200 else x)
-        df["ymax"] = df.ymax.apply(lambda x: x - 3 if x == 1200 else x)
-        df["xmin"] = df.xmin.apply(lambda x: x + 3 if x == 0 else x)
-        df["ymin"] = df.ymin.apply(lambda x: x + 3 if x == 0 else x)
-        
+        for name, group in df.groupby("image_path"):
+            img = cv2.imread("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name))
+            height = img.shape[0]
+            width = img.shape[1]
+            if any(group.xmax > width):
+                print(name)
+                df.loc[df.image_path == name, "xmax"] = width -1 
+            if any(group.ymax > height):
+                print(name)
+                df.loc[df.image_path == name, "ymax"] = height -1
+                
+                
         train_images = df.image_path.sample(frac=0.85)
         train_annotations = df[df.image_path.isin(train_images)]
         train_annotations.to_csv(train_path, index=False)    
