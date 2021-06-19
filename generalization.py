@@ -229,7 +229,7 @@ if __name__ =="__main__":
     comet_logger.experiment.log_metric(name="Mean LOO Precision", value=results.precision.mean())
     
     #Joint model for fine-tuning
-    train_sets = ["neill","monash","terns","penguins","pfeifer","hayes","everglades","USGS","mckellar","palmyra"]
+    train_sets = ["seabirdwatch","neill","monash","terns","penguins","pfeifer","hayes","everglades","USGS","mckellar","palmyra"]
     test_sets = ["palmyra"]
     recall, precision = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
 
