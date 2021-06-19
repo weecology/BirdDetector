@@ -117,7 +117,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
     model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops"
         
-    model.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))
+    model.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False), num_sanity_val_steps=0)
     comet_logger.experiment.log_parameters(model.config)
     
     model.trainer.fit(model)
@@ -171,7 +171,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
     model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
-    model.create_trainer(logger=comet_logger)
+    model.create_trainer(logger=comet_logger, num_sanity_val_steps=0)
     model.trainer.fit(model)
     
     finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(test_sets[0]), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
