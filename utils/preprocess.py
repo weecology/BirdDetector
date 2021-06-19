@@ -110,3 +110,5 @@ def check_shape(df):
         updated_data.append(group)
         
     df = pd.concat(updated_data)    
+    
+    return df
