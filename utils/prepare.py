@@ -586,11 +586,11 @@ def prepare():
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
-    paths["hayes"] = prepare_hayes(generate=True)
-    paths["USGS"] = prepare_USGS(generate=True)
+    paths["hayes"] = prepare_hayes(generate=False)
+    paths["USGS"] = prepare_USGS(generate=False)
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
-    paths["seabirdwatch"] = prepare_seabirdwatch(generate=True)
-    paths["neill"] = prepare_neill(generate=True)
+    paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
+    paths["neill"] = prepare_neill(generate=False)
     
     return paths
