@@ -16,6 +16,8 @@ sbatch <<EOT
 #SBATCH --partition=gpu
 #SBATCH --gpus=$2
 
+ulimit -c 0
+
 source activate Zooniverse_pytorch
 
 cd ~/BirdDetector/

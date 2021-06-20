@@ -171,7 +171,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
     model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
-    model.create_trainer(logger=comet_logger, num_sanity_val_steps=0)
+    model.create_trainer(logger=comet_logger)
     model.trainer.fit(model)
     
     finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(test_sets[0]), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
@@ -181,7 +181,8 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         
     
     #The last position in the loop is the LOO score
-    return test_results["box_recall"], test_results["box_precision"]
+    result_frame = pd.DataFrame({"test_set":[test_sets[0], test_sets[0]],"Recall":[test_results["box_recall"], finetune_results["box_recall"]], "Precision":[test_results["box_recall"],finetune_results["box_recall"]],"Model":["Zero Shot","Fine Tune"]})
+    return result_frame
 
 if __name__ =="__main__":
     #save original config during loop
@@ -216,8 +217,7 @@ if __name__ =="__main__":
         train_sets.append("everglades")
         #train_sets.append("murres")
         test_sets = [x]
-        recall, precision = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
-        result = pd.DataFrame({"test_sets":[x],"recall":[recall],"precision":[precision]})
+        result = train(path_dict=path_dict, config=config, train_sets=train_sets, test_sets=test_sets, comet_logger=comet_logger, save_dir=savedir)
         results.append(result)
         torch.cuda.empty_cache()
         gc.collect()        
