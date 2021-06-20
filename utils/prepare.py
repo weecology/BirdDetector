@@ -537,6 +537,7 @@ def prepare_neill(generate):
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/neill_test.csv"
     
     if generate:   
+        client = start_cluster.start(cpus=30)
         shps = glob.glob("/orange/ewhite/b.weinstein/neill/parsed/*.shp")
         
         #Hold one year out
@@ -560,15 +561,24 @@ def prepare_neill(generate):
         train_annotations = check_shape(train_annotations)
         train_annotations.to_csv("/orange/ewhite/b.weinstein/neill/train_images.csv")
         
+        def cut(x):
+            result = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/neill/train_images.csv",
+                                                path_to_raster="/orange/ewhite/b.weinstein/generalization/crops/{}".format(x),
+                                                base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
+                                                allow_empty=False,
+                                                patch_size=700)
+            return result
+
         #Split into crops
         crop_annotations = []
-        for x in train_annotations.image_path.unique():
-            crop_annotation = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/neill/train_images.csv",
-                                    path_to_raster="/orange/ewhite/b.weinstein/generalization/crops/{}".format(x),
-                                    base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
-                                    allow_empty=False,
-                                    patch_size=700)
-            crop_annotations.append(crop_annotation)
+        futures = client.map(cut, train_annotations.image_path.unique())
+        for x in futures:
+            try:
+                crop_annotations.append(x.result())
+            except Exception as e:
+                print(e)
+                pass
+                        
         crop_annotations = pd.concat(crop_annotations)
         crop_annotations.to_csv(train_path)
 
@@ -587,14 +597,24 @@ def prepare_neill(generate):
         test_annotations.to_csv("/orange/ewhite/b.weinstein/neill/test_images.csv")
         
         #Too large for GPU memory, cut into pieces
+        def cut(x):
+            result = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/neill/test_images.csv",
+                                                path_to_raster="/orange/ewhite/b.weinstein/generalization/crops/{}".format(x),
+                                                base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
+                                                allow_empty=False,
+                                                patch_size=700)
+            return result
+
+        #Split into crops
         crop_annotations = []
-        for x in test_annotations.image_path.unique():
-            crop_annotation = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/neill/test_images.csv",
-                                    path_to_raster="/orange/ewhite/b.weinstein/generalization/crops/{}".format(x),
-                                    base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
-                                    allow_empty=False,
-                                    patch_size=700)
-            crop_annotations.append(crop_annotation)
+        futures = client.map(cut, test_annotations.image_path.unique())
+        for x in futures:
+            try:
+                crop_annotations.append(x.result())
+            except Exception as e:
+                print(e)
+                pass
+                                
         crop_annotations = pd.concat(crop_annotations)
         crop_annotations.to_csv(test_path)
         

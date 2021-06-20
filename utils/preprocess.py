@@ -107,6 +107,11 @@ def check_shape(df):
         width = img.shape[1]
         group["xmax"] = group.xmax.apply(lambda x: x if x < width else width)
         group["ymax"] = group.ymax.apply(lambda y: y if y < height else height)
+        
+        #Throw out annotations if they begin off edge
+        group = group[~(group.xmin > width)]
+        group = group[~(group.ymin > height)]
+        
         updated_data.append(group)
         
     df = pd.concat(updated_data)    
