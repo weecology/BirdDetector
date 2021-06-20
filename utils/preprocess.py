@@ -111,7 +111,8 @@ def check_shape(df):
         #Throw out annotations if they begin off edge
         group = group[~(group.xmin > width)]
         group = group[~(group.ymin > height)]
-        
+        group = group[group.xmin > 0]
+        group = group[group.ymin > 0]
         updated_data.append(group)
         
     df = pd.concat(updated_data)    
