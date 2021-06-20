@@ -224,9 +224,19 @@ if __name__ =="__main__":
     
     results = pd.concat(results)
     results.to_csv("Figures/generalization.csv")
+    
+    mean_zero_shot_recall = results[results.model == "Zero Shot"].recall.mean()
+    mean_zero_shot_precision = results[results.model == "Zero Shot"].precision.mean()
+    
+    mean_fine_tune_recall = results[results.model == "Zero Shot"].recall.mean()
+    mean_fine_tune_precision = results[results.model == "Zero Shot"].precision.mean()
+    
     comet_logger.experiment.log_asset(file_data="Figures/generalization.csv", file_name="results.csv")
-    comet_logger.experiment.log_metric(name="Mean LOO Recall", value=results.recall.mean())
-    comet_logger.experiment.log_metric(name="Mean LOO Precision", value=results.precision.mean())
+    comet_logger.experiment.log_metric(name="Mean LOO Recall", value=mean_zero_shot_recall)
+    comet_logger.experiment.log_metric(name="Mean LOO Precision", value=mean_zero_shot_precision)
+    
+    comet_logger.experiment.log_metric(name="Mean Fine Tune Recall", value=mean_fine_tune_recall)
+    comet_logger.experiment.log_metric(name="Mean Fine Tune Precision", value=mean_fine_tune_precision)
     
     #Joint model for fine-tuning
     train_sets = ["neill","monash","terns","penguins","pfeifer","hayes","everglades","USGS","mckellar","palmyra"]
