@@ -558,8 +558,20 @@ def prepare_neill(generate):
         
         train_annotations = pd.concat(train_annotations)
         train_annotations = check_shape(train_annotations)
-        train_annotations.to_csv(train_path)
+        train_annotations.to_csv("/orange/ewhite/b.weinstein/neill/train_images.csv")
         
+        #Split into crops
+        crop_annotations = []
+        for x in train_annotations.image_path.unique():
+            crop_annotation = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/neill/train_images.csv",
+                                    path_to_raster="/orange/ewhite/b.weinstein/generalization/crops/{}".format(x),
+                                    base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
+                                    allow_empty=False,
+                                    patch_size=700)
+            crop_annotations.append(crop_annotation)
+        crop_annotations = pd.concat(crop_annotations)
+        crop_annotations.to_csv(train_path)
+
         for x in test_shps:
             annotations = gpd.read_file(x)
             df = annotations.geometry.bounds
@@ -572,7 +584,19 @@ def prepare_neill(generate):
         
         test_annotations = pd.concat(test_annotations)        
         test_annotations = check_shape(test_annotations)
-        test_annotations.to_csv(test_path)
+        test_annotations.to_csv("/orange/ewhite/b.weinstein/neill/test_images.csv")
+        
+        #Too large for GPU memory, cut into pieces
+        crop_annotations = []
+        for x in test_annotations.image_path.unique():
+            crop_annotation = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/neill/test_images.csv",
+                                    path_to_raster="/orange/ewhite/b.weinstein/generalization/crops/{}".format(x),
+                                    base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
+                                    allow_empty=False,
+                                    patch_size=700)
+            crop_annotations.append(crop_annotation)
+        crop_annotations = pd.concat(crop_annotations)
+        crop_annotations.to_csv(test_path)
         
     return {"train":train_path, "test":test_path}
 
