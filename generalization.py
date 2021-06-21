@@ -22,6 +22,7 @@ import pandas as pd
 import torch
 import gc
 import subprocess
+from time import sleep
 
 def view_training(paths,comet_logger, n=10):
     """For each site, grab three images and view annotations
@@ -227,6 +228,7 @@ if __name__ =="__main__":
     if existing_dir is None:   
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         savedir="/orange/ewhite/b.weinstein/generalization"
+        sleep(random.randint(0,30))
         savedir = "{}/{}".format(savedir,timestamp)              
         os.mkdir(savedir)
     else:
