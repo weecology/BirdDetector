@@ -12,9 +12,10 @@ https://colab.research.google.com/drive/1e9_pZM0n_v3MkZpSjVRjm55-LuCE2IYE?usp=sh
 
 ## Environment
 
+In a clean conda env.
+
 ```
-conda env create --f=environment.yml
-conda activate BirdDetector
+pip install deepforest
 ```
 
 ## Data
