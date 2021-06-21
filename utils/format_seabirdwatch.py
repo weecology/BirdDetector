@@ -16,7 +16,7 @@ for name, group in df.groupby("image_path"):
     if os.path.exists("/orange/ewhite/b.weinstein/generalization/crops/{}".format(name)):   
         group["geometry"] =[geometry.Point(x,y) for x,y in zip(group.cluster_x.astype(float), group.cluster_y.astype(float))]
         gdf = gpd.GeoDataFrame(group)    
-        gdf["geometry"] = [geometry.box(left, bottom, right, top) for left, bottom, right, top in gdf.geometry.buffer(20).bounds.values]                            
+        gdf["geometry"] = [geometry.box(left, bottom, right, top) for left, bottom, right, top in gdf.geometry.buffer(10).bounds.values]                            
         image_basename = os.path.splitext(gdf.image_path.unique()[0])[0]
         gdf.to_file("{}/{}.shp".format("/orange/ewhite/b.weinstein/seabirdwatch/parsed",image_basename))
         

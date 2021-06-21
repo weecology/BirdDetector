@@ -1,0 +1,12 @@
+name: BirdDetector
+channels: 
+  - defaults
+dependencies:
+  - pytest
+  - pip
+  - dask
+  - distributed
+  - pip:
+    - deepforest
+
+
