@@ -205,7 +205,7 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
     comet_logger.experiment.add_tag("Generalization")
     
     results = []
-    zero_shot_results = zero_shot(train_sets=train_sets, test_sets=test_sets, config=config, comet_logger=comet_logger, save_dir=savedir)
+    zero_shot_results = zero_shot(train_sets=train_sets, test_sets=test_sets, config=config, comet_logger=comet_logger, savedir=savedir)
     results.append(zero_shot_results)
     if run_fine_tune:
         finetune_results = fine_tune(dataset=test_sets[0], comet_logger=comet_logger, config=config, savedir=savedir)
