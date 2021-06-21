@@ -132,14 +132,14 @@ def zero_shot(train_sets, test_sets, comet_logger, savedir, config):
     #update backbone weights with new Retinanet head
     model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
     model.config = config
-    model_path = "{}/{}.pt".format(save_dir,"_".join(train_sets))
+    model_path = "{}/{}.pt".format(savedir,"_".join(train_sets))
     
     if os.path.exists(model_path):
         print("loading {}".format(model_path))
         model.model.load_state_dict(torch.load(model_path))
     else:
         model = fit(model, train_annotations)
-        if save_dir:
+        if savedir:
             torch.save(model.model.state_dict(),model_path)                
         
     for x in test_sets:
@@ -165,7 +165,7 @@ def fine_tune(dataset, comet_logger, savedir, config):
         model.model.load_state_dict(torch.load(model_path))
     else:
         model = fit(model, train_annotations)
-        if save_dir:
+        if savedir:
             torch.save(model.model.state_dict(),model_path)           
     finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
     if comet_logger is not None:
@@ -188,7 +188,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
             df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
             train_annotations = select(df)
             model = fit(model, train_annotations)
-            if save_dir:
+            if savedir:
                 torch.save(model.model.state_dict(),model_path)               
         finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
         if comet_logger is not None:
@@ -199,7 +199,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
     
     return min_annotation_results
 
-def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyra"],test_sets=["everglades"], comet_logger=None, save_dir=None, run_fine_tune=True, run_mini=True):
+def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyra"],test_sets=["everglades"], comet_logger=None, savedir=None, run_fine_tune=True, run_mini=True):
     #Log experiment
     comet_logger.experiment.log_parameter("train_set",train_sets)
     comet_logger.experiment.log_parameter("test_set",test_sets)
@@ -223,17 +223,12 @@ if __name__ =="__main__":
     #save original config during loop
     #comet_logger=None
     ImageFile.LOAD_TRUNCATED_IMAGES = True
-    
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    save_dir="/orange/ewhite/b.weinstein/generalization"
-    savedir = "{}/{}".format(save_dir,timestamp)  
     existing_dir = None
-    
-    if not existing_dir is None:   
-        try:
-            os.mkdir(savedir)
-        except Exception as e:
-            print(e)
+    if existing_dir is None:   
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        savedir="/orange/ewhite/b.weinstein/generalization"
+        savedir = "{}/{}".format(savedir,timestamp)              
+        os.mkdir(savedir)
     else:
         savedir = existing_dir
         
@@ -262,7 +257,7 @@ if __name__ =="__main__":
                      train_sets=train_sets,
                      test_sets=test_sets,
                      comet_logger=comet_logger,
-                     save_dir=save_dir)
+                     savedir=savedir)
         results.append(result)
         torch.cuda.empty_cache()
         gc.collect()        
@@ -291,7 +286,7 @@ if __name__ =="__main__":
                             train_sets=train_sets,
                             test_sets=test_sets,
                             comet_logger=comet_logger,
-                            save_dir=savedir)
+                            savedir=savedir)
 
     #log images
     with comet_logger.experiment.context_manager("validation"):
