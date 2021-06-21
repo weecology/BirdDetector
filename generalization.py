@@ -134,12 +134,12 @@ def zero_shot(train_sets, test_sets, comet_logger, savedir, config):
     model.config = config
     model_path = "{}/{}.pt".format(save_dir,"_".join(train_sets))
     
-    if not os.path.exists(model_path):
+    if os.path.exists(model_path):
+        model.load_state_dict(torch.load(model_path))
+    else:
         model = fit(model, train_annotations)
         if save_dir:
             torch.save(model.model.state_dict(),model_path)                
-    else:
-        model.load_state_dict(torch.load(model_path))
         
     for x in test_sets:
         test_results = model.evaluate(csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=savedir)
@@ -228,7 +228,7 @@ if __name__ =="__main__":
     savedir = "{}/{}".format(save_dir,timestamp)  
     existing_dir = None
     
-    if not existing_dir:   
+    if not existing_dir is None:   
         try:
             os.mkdir(savedir)
         except Exception as e:
