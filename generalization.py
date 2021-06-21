@@ -281,7 +281,7 @@ if __name__ =="__main__":
     #Joint model for fine-tuning
     train_sets = ["seabirdwatch","neill","monash","terns","penguins","pfeifer","hayes","everglades","USGS","mckellar","palmyra"]
     test_sets = ["palmyra"]
-    recall, precision = run(path_dict=path_dict,
+    result = run(path_dict=path_dict,
                             config=config,
                             train_sets=train_sets,
                             test_sets=test_sets,
