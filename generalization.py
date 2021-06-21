@@ -90,7 +90,7 @@ def select(df):
     
     return train_annotations
 
-def zero_shot(train_sets, test_sets, comet_logger, savedir):
+def zero_shot(train_sets, test_sets, comet_logger, savedir, config):
     all_sets = []
     print("Train sets: {}".format(train_sets))
     for x in train_sets:
