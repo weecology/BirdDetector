@@ -228,7 +228,7 @@ if __name__ =="__main__":
     savedir = "{}/{}".format(save_dir,timestamp)  
     existing_dir = None
     
-    if not existing_dir:   
+    if not existing_dir is None:   
         try:
             os.mkdir(savedir)
         except Exception as e:
