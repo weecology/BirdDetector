@@ -144,7 +144,7 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
             fine_tune = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
             selected_annotations = []
             count = 0
-            available = fine_tune.image_path.unique()
+            available = list(fine_tune.image_path.unique())
             random.shuffle(available)
             while count < 1000:
                 try:
