@@ -163,7 +163,7 @@ def fine_tune(dataset, comet_logger, savedir, config):
     if os.path.exists(model_path):
         model.model.load_state_dict(torch.load(model_path))
     else:
-        model = fit(train_annotations)
+        model = fit(model, train_annotations)
         if save_dir:
             torch.save(model.model.state_dict(),model_path)           
     finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
