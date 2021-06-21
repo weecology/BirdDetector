@@ -247,7 +247,7 @@ if __name__ =="__main__":
     comet_logger.experiment.log_parameter("commit hash",subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip())
     comet_logger.experiment.log_parameter("timestamp",timestamp)
     
-    view_training(path_dict, comet_logger=comet_logger)
+    #view_training(path_dict, comet_logger=comet_logger)
 
     ###leave one out
     train_list = ["seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","palmyra","mckellar","monash"]
