@@ -266,11 +266,11 @@ if __name__ =="__main__":
     results = pd.concat(results)
     results.to_csv("Figures/generalization.csv")
     
-    mean_zero_shot_recall = results[results.Model == "Zero Shot"].recall.mean()
-    mean_zero_shot_precision = results[results.Model == "Zero Shot"].precision.mean()
+    mean_zero_shot_recall = results[results.Model == "Zero Shot"].Recall.mean()
+    mean_zero_shot_precision = results[results.Model == "Zero Shot"].Precision.mean()
     
-    mean_fine_tune_recall = results[results.Model == "Fine Tune"].recall.mean()
-    mean_fine_tune_precision = results[results.Model == "Fine Tune"].precision.mean()
+    mean_fine_tune_recall = results[results.Model == "Fine Tune"].Recall.mean()
+    mean_fine_tune_precision = results[results.Model == "Fine Tune"].Precision.mean()
     
     comet_logger.experiment.log_asset(file_data="Figures/generalization.csv", file_name="results.csv")
     comet_logger.experiment.log_metric(name="Mean LOO Recall", value=mean_zero_shot_recall)
