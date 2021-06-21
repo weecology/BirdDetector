@@ -53,7 +53,7 @@ def view_training(paths,comet_logger, n=10):
                     print(e)
                     continue
 
-def fit(model, train_annotations):
+def fit(model, train_annotations, comet_logger):
     train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
     train_annotations["xmax"] = train_annotations["xmax"].astype(float)
     train_annotations["ymin"] = train_annotations["ymin"].astype(float)
@@ -138,7 +138,7 @@ def zero_shot(train_sets, test_sets, comet_logger, savedir, config):
         print("loading {}".format(model_path))
         model.model.load_state_dict(torch.load(model_path))
     else:
-        model = fit(model, train_annotations)
+        model = fit(model, train_annotations, comet_logger)
         if savedir:
             torch.save(model.model.state_dict(),model_path)                
         
@@ -164,7 +164,7 @@ def fine_tune(dataset, comet_logger, savedir, config):
     if os.path.exists(model_path):
         model.model.load_state_dict(torch.load(model_path))
     else:
-        model = fit(model, train_annotations)
+        model = fit(model, train_annotations, comet_logger)
         if savedir:
             torch.save(model.model.state_dict(),model_path)           
     finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
@@ -187,7 +187,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
         else: 
             df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
             train_annotations = select(df)
-            model = fit(model, train_annotations)
+            model = fit(model, train_annotations, comet_logger)
             if savedir:
                 torch.save(model.model.state_dict(),model_path)               
         finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
