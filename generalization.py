@@ -137,22 +137,48 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
         model_path = "{}/{}.pt".format(save_dir,"_".join(train_sets))
         torch.save(model.model.state_dict(),model_path)
     
-    #Fine tuning, up to 100 birds from train
-    #fine_tune = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
-    #selected_annotations = []
-    #count = 0
-    #available = fine_tune.image_path.unique()
-    #random.shuffle(available)
-    #while count < 1000:
-        #try:
-            #selected_image = available.pop()
-        #except:
-            #break
-        #new_annotations = fine_tune[fine_tune.image_path==selected_image]
-        #selected_annotations.append(new_annotations)
-        #count += new_annotations.shape[0]
-    #selected_annotations = pd.concat(selected_annotations)
-    #selected_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_finetune.csv".format(test_sets[0]))
+        #Fine tuning, up to 1000 birds from train
+        min_annotation_results = []
+        for i in range(5):
+            print(i)
+            fine_tune = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
+            selected_annotations = []
+            count = 0
+            available = fine_tune.image_path.unique()
+            random.shuffle(available)
+            while count < 1000:
+                try:
+                    selected_image = available.pop()
+                except:
+                    break
+                new_annotations = fine_tune[fine_tune.image_path==selected_image]
+                selected_annotations.append(new_annotations)
+                count += new_annotations.shape[0]
+            train_annotations = pd.concat(selected_annotations)
+            train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
+            train_annotations["xmax"] = train_annotations["xmax"].astype(float)
+            train_annotations["ymin"] = train_annotations["ymin"].astype(float)
+            train_annotations["ymax"] = train_annotations["ymax"].astype(float)
+            
+            train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
+            train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
+            
+            train_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv")    
+        
+            model.transforms = deepforest_transform
+            model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv"
+            model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
+            model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
+            model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
+            model.create_trainer(logger=comet_logger)
+            model.trainer.fit(model)
+            
+            finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(test_sets[0]), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
+            if comet_logger is not None:
+                comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Recall - Iteration {}".format(test_sets[0], i),finetune_results["box_recall"])
+                comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Precision".format(test_sets[0], i),finetune_results["box_precision"])
+            min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":test_sets[0],"Iteration":[i],"Model":["Min Annotation"]}))
+    min_annotation_results = pd.concat(min_annotation_results)
     
     train_annotations = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
     train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
@@ -175,12 +201,13 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     
     finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(test_sets[0]), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
     if comet_logger is not None:
-        comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(x),finetune_results["box_recall"])
-        comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(x),finetune_results["box_precision"])
+        comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(test_sets[0]),finetune_results["box_recall"])
+        comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(test_sets[0]),finetune_results["box_precision"])
         
     
     #The last position in the loop is the LOO score
     result_frame = pd.DataFrame({"test_set":[test_sets[0], test_sets[0]],"Recall":[test_results["box_recall"], finetune_results["box_recall"]], "Precision":[test_results["box_recall"],finetune_results["box_recall"]],"Model":["Zero Shot","Fine Tune"]})
+    result_frame = pd.concat([result_frame, min_annotation_results])
     return result_frame
 
 if __name__ =="__main__":
