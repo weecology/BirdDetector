@@ -135,7 +135,8 @@ def zero_shot(train_sets, test_sets, comet_logger, savedir, config):
     model_path = "{}/{}.pt".format(save_dir,"_".join(train_sets))
     
     if os.path.exists(model_path):
-        model.load_state_dict(torch.load(model_path))
+        print("loading {}".format(model_path))
+        model.model.load_state_dict(torch.load(model_path))
     else:
         model = fit(model, train_annotations)
         if save_dir:
