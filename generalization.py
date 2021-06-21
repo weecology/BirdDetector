@@ -154,7 +154,6 @@ def train(path_dict, config, train_sets = ["penguins","terns","everglades","palm
     #selected_annotations = pd.concat(selected_annotations)
     #selected_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_finetune.csv".format(test_sets[0]))
     
-    #A couple illegal boxes, make slightly smaller
     train_annotations = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(test_sets[0]))
     train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
     train_annotations["xmax"] = train_annotations["xmax"].astype(float)
@@ -192,7 +191,7 @@ if __name__ =="__main__":
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     save_dir="/orange/ewhite/b.weinstein/generalization"
     savedir = "{}/{}".format(save_dir,timestamp)  
-    
+    existing_dir = None
     try:
         os.mkdir(savedir)
     except Exception as e:
