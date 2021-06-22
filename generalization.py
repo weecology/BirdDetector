@@ -69,7 +69,7 @@ def fit(model, train_annotations, comet_logger):
     model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
     model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
-    model.create_trainer(logger=comet_logger)
+    model.create_trainer(logger=comet_logger, num_sanity_val_steps=0)
     model.trainer.fit(model)
     
     return model
@@ -240,30 +240,33 @@ if __name__ =="__main__":
     path_dict = prepare()
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                 project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
-    
     #Log commit
     comet_logger.experiment.log_parameter("commit hash",subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip())
     comet_logger.experiment.log_parameter("timestamp",timestamp)
-    
+    comet_logger.experiment.log_parameter(model.config)
     view_training(path_dict, comet_logger=comet_logger)
 
-    ###leave one out
+    #Train Models
     train_list = ["seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","palmyra","mckellar","monash"]
     results = []
     for x in train_list:
         train_sets = [y for y in train_list if not y==x]
         train_sets.append("everglades")
         test_sets = [x]
-        result = run(path_dict=path_dict,
-                     config=config,
-                     train_sets=train_sets,
-                     test_sets=test_sets,
-                     comet_logger=comet_logger,
-                     savedir=savedir)
-        results.append(result)
-        torch.cuda.empty_cache()
-        gc.collect()        
-    
+        try:
+            result = run(path_dict=path_dict,
+                         config=config,
+                         train_sets=train_sets,
+                         test_sets=test_sets,
+                         comet_logger=comet_logger,
+                         savedir=savedir)
+            results.append(result)
+            torch.cuda.empty_cache()
+            gc.collect()
+        except Exception as e:
+            print("{} failed with {}".format(train_sets, e))
+            continue
+        
     results = pd.concat(results)
     results.to_csv("Figures/generalization.csv")
     
