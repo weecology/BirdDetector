@@ -155,6 +155,10 @@ def zero_shot(train_sets, test_sets, comet_logger, savedir, config):
                 print(e)    
         result_frame = pd.DataFrame({"test_set":[test_sets[0]],"Recall":[test_results["box_recall"]], "Precision":[test_results["box_recall"]],"Model":["FZero Shot"]})
     
+    del model
+    torch.cuda.empty_cache()
+    gc.collect()  
+    
     return result_frame
 
 def fine_tune(dataset, comet_logger, savedir, config):
@@ -173,6 +177,10 @@ def fine_tune(dataset, comet_logger, savedir, config):
         comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(dataset),finetune_results["box_recall"])
         comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(dataset),finetune_results["box_precision"])
         result_frame = pd.DataFrame({"test_set":[dataset],"Recall":[finetune_results["box_recall"]], "Precision":[finetune_results["box_recall"]],"Model":["Fine Tune"]})
+    
+    del model
+    torch.cuda.empty_cache()
+    gc.collect()
         
     return result_frame
 
@@ -196,6 +204,10 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
             comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
             comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Precision".format(dataset, i),finetune_results["box_precision"])
         min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":test_sets[0],"Iteration":[i],"Model":["Min Annotation"]}))
+        del model
+        torch.cuda.empty_cache()
+        gc.collect()
+        
     min_annotation_results = pd.concat(min_annotation_results)
     
     return min_annotation_results
@@ -208,12 +220,15 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
     
     results = []
     zero_shot_results = zero_shot(train_sets=train_sets, test_sets=test_sets, config=config, comet_logger=comet_logger, savedir=savedir)
+    gc.collect()      
     results.append(zero_shot_results)
     if run_fine_tune:
         finetune_results = fine_tune(dataset=test_sets[0], comet_logger=comet_logger, config=config, savedir=savedir)
+        gc.collect()          
         results.append(finetune_results)
     if run_mini:
         mini_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger)
+        gc.collect()          
         results.append(mini_results)
 
     result_frame = pd.concat(results)
