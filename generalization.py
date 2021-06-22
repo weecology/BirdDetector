@@ -69,7 +69,7 @@ def fit(model, train_annotations, comet_logger):
     model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
     model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
-    model.create_trainer(logger=comet_logger)
+    model.create_trainer(logger=comet_logger, num_sanity_val_steps=0)
     model.trainer.fit(model)
     
     return model
@@ -155,6 +155,10 @@ def zero_shot(train_sets, test_sets, comet_logger, savedir, config):
                 print(e)    
         result_frame = pd.DataFrame({"test_set":[test_sets[0]],"Recall":[test_results["box_recall"]], "Precision":[test_results["box_recall"]],"Model":["FZero Shot"]})
     
+    del model
+    torch.cuda.empty_cache()
+    gc.collect()  
+    
     return result_frame
 
 def fine_tune(dataset, comet_logger, savedir, config):
@@ -173,6 +177,10 @@ def fine_tune(dataset, comet_logger, savedir, config):
         comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(dataset),finetune_results["box_recall"])
         comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(dataset),finetune_results["box_precision"])
         result_frame = pd.DataFrame({"test_set":[dataset],"Recall":[finetune_results["box_recall"]], "Precision":[finetune_results["box_recall"]],"Model":["Fine Tune"]})
+    
+    del model
+    torch.cuda.empty_cache()
+    gc.collect()
         
     return result_frame
 
@@ -196,6 +204,10 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
             comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
             comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Precision".format(dataset, i),finetune_results["box_precision"])
         min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":test_sets[0],"Iteration":[i],"Model":["Min Annotation"]}))
+        del model
+        torch.cuda.empty_cache()
+        gc.collect()
+        
     min_annotation_results = pd.concat(min_annotation_results)
     
     return min_annotation_results
@@ -208,12 +220,15 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
     
     results = []
     zero_shot_results = zero_shot(train_sets=train_sets, test_sets=test_sets, config=config, comet_logger=comet_logger, savedir=savedir)
+    gc.collect()      
     results.append(zero_shot_results)
     if run_fine_tune:
         finetune_results = fine_tune(dataset=test_sets[0], comet_logger=comet_logger, config=config, savedir=savedir)
+        gc.collect()          
         results.append(finetune_results)
     if run_mini:
         mini_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger)
+        gc.collect()          
         results.append(mini_results)
 
     result_frame = pd.concat(results)
@@ -240,30 +255,34 @@ if __name__ =="__main__":
     path_dict = prepare()
     comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                                 project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
-    
     #Log commit
     comet_logger.experiment.log_parameter("commit hash",subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip())
     comet_logger.experiment.log_parameter("timestamp",timestamp)
-    
+    comet_logger.experiment.log_parameter(model.config)
     #view_training(path_dict, comet_logger=comet_logger)
 
-    ###leave one out
+
+    #Train Models
     train_list = ["seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","palmyra","mckellar","monash"]
     results = []
     for x in train_list:
         train_sets = [y for y in train_list if not y==x]
         train_sets.append("everglades")
         test_sets = [x]
-        result = run(path_dict=path_dict,
-                     config=config,
-                     train_sets=train_sets,
-                     test_sets=test_sets,
-                     comet_logger=comet_logger,
-                     savedir=savedir)
-        results.append(result)
-        torch.cuda.empty_cache()
-        gc.collect()        
-    
+        try:
+            result = run(path_dict=path_dict,
+                         config=config,
+                         train_sets=train_sets,
+                         test_sets=test_sets,
+                         comet_logger=comet_logger,
+                         savedir=savedir)
+            results.append(result)
+            torch.cuda.empty_cache()
+            gc.collect()
+        except Exception as e:
+            print("{} failed with {}".format(train_sets, e))
+            continue
+        
     results = pd.concat(results)
     results.to_csv("Figures/generalization.csv")
     
