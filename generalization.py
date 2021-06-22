@@ -258,7 +258,7 @@ if __name__ =="__main__":
     #Log commit
     comet_logger.experiment.log_parameter("commit hash",subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip())
     comet_logger.experiment.log_parameter("timestamp",timestamp)
-    comet_logger.experiment.log_parameter(model.config)
+    comet_logger.experiment.log_parameters(model.config)
     view_training(path_dict, comet_logger=comet_logger)
 
     #Train Models
