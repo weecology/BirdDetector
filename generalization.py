@@ -239,6 +239,9 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
 if __name__ =="__main__":
     #save original config during loop
     #comet_logger=None
+    comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
+                                project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
+    
     ImageFile.LOAD_TRUNCATED_IMAGES = True
     existing_dir = '20210622_185244'
     savedir="/orange/ewhite/b.weinstein/generalization"    
@@ -255,8 +258,7 @@ if __name__ =="__main__":
     config = model.config
     
     path_dict = prepare()
-    comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
-                                project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
+
     #Log commit
     comet_logger.experiment.log_parameter("commit hash",subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip())
     comet_logger.experiment.log_parameters(model.config)
