@@ -247,6 +247,7 @@ if __name__ =="__main__":
         sleep(random.randint(0,30))
         savedir = "{}/{}".format(savedir,timestamp)              
         os.mkdir(savedir)
+        comet_logger.experiment.log_parameter("timestamp",timestamp)        
     else:
         savedir = existing_dir
         
@@ -258,7 +259,6 @@ if __name__ =="__main__":
                                 project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
     #Log commit
     comet_logger.experiment.log_parameter("commit hash",subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip())
-    comet_logger.experiment.log_parameter("timestamp",timestamp)
     comet_logger.experiment.log_parameters(model.config)
     #view_training(path_dict, comet_logger=comet_logger)
 
