@@ -3,6 +3,7 @@ import comet_ml
 from pytorch_lightning.loggers import CometLogger
 from deepforest import main
 import pandas as pd
+import random
 
 def select(df):
     selected_annotations = []
