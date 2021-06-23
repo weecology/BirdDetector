@@ -241,15 +241,15 @@ if __name__ =="__main__":
     #comet_logger=None
     ImageFile.LOAD_TRUNCATED_IMAGES = True
     existing_dir = '20210622_185244'
+    savedir="/orange/ewhite/b.weinstein/generalization"    
     if existing_dir is None:   
+        sleep(random.randint(0,20))        
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        savedir="/orange/ewhite/b.weinstein/generalization"
-        sleep(random.randint(0,30))
-        savedir = "{}/{}".format(savedir,timestamp)              
         os.mkdir(savedir)
         comet_logger.experiment.log_parameter("timestamp",timestamp)        
     else:
-        savedir = existing_dir
+        savedir = "{}/{}".format(savedir,existing_dir)                      
+        comet_logger.experiment.log_parameter("timestamp",existing_dir)        
         
     model = BirdDetector(transforms=get_transform)
     config = model.config
