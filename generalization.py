@@ -283,6 +283,8 @@ if __name__ =="__main__":
             gc.collect()
         except Exception as e:
             print("{} failed with {}".format(train_sets, e))
+            torch.cuda.empty_cache()
+            gc.collect()              
             continue
         
     results = pd.concat(results)

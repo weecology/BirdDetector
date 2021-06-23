@@ -2,8 +2,24 @@
 import comet_ml
 from pytorch_lightning.loggers import CometLogger
 from deepforest import main
-from generalization import select
 import pandas as pd
+
+def select(df):
+    selected_annotations = []
+    count = 0
+    available = list(df.image_path.unique())
+    random.shuffle(available)
+    while count < 1000:
+        try:
+            selected_image = available.pop()
+        except:
+            break
+        new_annotations = df[df.image_path==selected_image]
+        selected_annotations.append(new_annotations)
+        count += new_annotations.shape[0]
+    train_annotations = pd.concat(selected_annotations)
+    
+    return train_annotations
 
 comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
                             project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
