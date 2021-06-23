@@ -240,7 +240,7 @@ if __name__ =="__main__":
     #save original config during loop
     #comet_logger=None
     ImageFile.LOAD_TRUNCATED_IMAGES = True
-    existing_dir = None
+    existing_dir = '20210622_185244'
     if existing_dir is None:   
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         savedir="/orange/ewhite/b.weinstein/generalization"
@@ -248,7 +248,7 @@ if __name__ =="__main__":
         savedir = "{}/{}".format(savedir,timestamp)              
         os.mkdir(savedir)
     else:
-        savedir = '20210622_185244'
+        savedir = existing_dir
         
     model = BirdDetector(transforms=get_transform)
     config = model.config
