@@ -191,6 +191,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
         model_path = "{}/{}_mini_{}".format(savedir, dataset,i)
         model = BirdDetector(transforms = deepforest_transform)   
         model.config = config
+        model.config["train"]["lr"] = 0.0001
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
         else: 
@@ -247,7 +248,7 @@ if __name__ =="__main__":
         savedir = "{}/{}".format(savedir,timestamp)              
         os.mkdir(savedir)
     else:
-        savedir = existing_dir
+        savedir = '20210622_185244'
         
     model = BirdDetector(transforms=get_transform)
     config = model.config
