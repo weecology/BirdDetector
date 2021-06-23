@@ -133,7 +133,7 @@ def zero_shot(train_sets, test_sets, comet_logger, savedir, config):
     #update backbone weights with new Retinanet head
     model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
     model.config = config
-    model_path = "{}/{}.pt".format(savedir,"_".join(train_sets))
+    model_path = "{}/{}_zeroshot.pt".format(savedir,"_".join(test_sets[0]))
     
     if os.path.exists(model_path):
         print("loading {}".format(model_path))
@@ -166,6 +166,9 @@ def fine_tune(dataset, comet_logger, savedir, config):
     model_path = "{}/{}_finetune.pt".format(savedir, dataset)
     model = BirdDetector(transforms = deepforest_transform)   
     model.config = config
+    weights = "{}/{}_zeroshot.pt".format(savedir,"_".join(dataset))
+    model.model.load_state_dict(torch.load(weights))
+    
     if os.path.exists(model_path):
         model.model.load_state_dict(torch.load(model_path))
     else:
@@ -191,7 +194,9 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
         model_path = "{}/{}_mini_{}".format(savedir, dataset,i)
         model = BirdDetector(transforms = deepforest_transform)   
         model.config = config
-        model.config["train"]["lr"] = 0.0001
+        weights = "{}/{}_zeroshot.pt".format(savedir,"_".join(dataset))
+        model.model.load_state_dict(torch.load(weights))
+        
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
         else: 
