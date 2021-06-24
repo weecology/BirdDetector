@@ -286,6 +286,8 @@ if __name__ =="__main__":
                      test_sets=test_sets,
                      comet_logger=comet_logger,
                      savedir=savedir)
+        futures.append(future)
+    
     for x in distributed.as_completed(futures):
         try:
             result = x.result()
@@ -294,7 +296,7 @@ if __name__ =="__main__":
             results.to_csv("Figures/generalization.csv")
         except Exception as e:
             print(e)
-    
+        
     mean_zero_shot_recall = results[results.Model == "Zero Shot"].Recall.mean()
     mean_zero_shot_precision = results[results.Model == "Zero Shot"].Precision.mean()
     
