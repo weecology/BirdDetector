@@ -91,7 +91,7 @@ def select(df):
     
     return train_annotations
 
-def zero_shot(train_sets, test_sets, comet_logger, savedir, config):
+def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
     all_sets = []
     print("Train sets: {}".format(train_sets))
     for x in train_sets:
@@ -225,7 +225,7 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
     comet_logger.experiment.add_tag("Generalization")
     
     results = []
-    zero_shot_results = zero_shot(train_sets=train_sets, test_sets=test_sets, config=config, comet_logger=comet_logger, savedir=savedir)
+    zero_shot_results = zero_shot(path_dict=path_dict, train_sets=train_sets, test_sets=test_sets, config=config, comet_logger=comet_logger, savedir=savedir)
     gc.collect()      
     results.append(zero_shot_results)
     if run_fine_tune:
