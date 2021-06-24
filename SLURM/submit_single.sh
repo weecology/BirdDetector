@@ -23,6 +23,6 @@ source activate Zooniverse_pytorch
 cd ~/BirdDetector/
 module load git
 git checkout $1
-python single__run.py $3
+python single_run.py $3
 EOT
 
