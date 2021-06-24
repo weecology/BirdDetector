@@ -8,7 +8,7 @@ savedir = "/orange/ewhite/b.weinstein/generalization/snapshots/"
 
 model = BirdDetector(transforms=get_transform)
 config = model.config
-
+config["gpus"] = 6
 path_dict = prepare()
 
 #Log commit
