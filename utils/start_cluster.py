@@ -35,12 +35,12 @@ def start_tunnel():
     sys.stdout.flush()
 
 
-def start(cpus=0, gpus=0, mem_size="10GB"):
+def start(cpu_nodes=0, gpu_nodes=0, gpu_per_node=1, mem_size="10GB"):
     #################
     # Setup dask cluster
     #################
 
-    if cpus > 0:
+    if cpu_nodes > 0:
         #job args
         extra_args = [
             "--error=/orange/idtrees-collab/logs/dask-worker-%j.err", "--account=ewhite",
@@ -60,13 +60,13 @@ def start(cpus=0, gpus=0, mem_size="10GB"):
         print(cluster.job_script())
         cluster.scale(cpus)
 
-    if gpus:
+    if gpu_nodes > 0:
         #job args
         extra_args = [
             "--error=/orange/idtrees-collab/logs/dask-worker-%j.err", "--account=ewhite",
             "--output=/orange/idtrees-collab/logs/dask-worker-%j.out", "--partition=gpu",
-            "--gpus=1",
-            "--cpus-per-task=2",
+            "--gpus={}".format(gpu_per_node),
+            "--cpus-per-task=5",
             "--nodes=1"
         ]
 
@@ -78,7 +78,7 @@ def start(cpus=0, gpus=0, mem_size="10GB"):
                                local_directory="/orange/idtrees-collab/tmp/",
                                death_timeout=300)
 
-        cluster.scale(gpus)
+        cluster.scale(gpu_nodes)
 
     dask_client = Client(cluster)
 

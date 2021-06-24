@@ -23,6 +23,7 @@ import torch
 import gc
 import subprocess
 from time import sleep
+import distributed
 
 def view_training(paths,comet_logger, n=10):
     """For each site, grab three images and view annotations
@@ -208,7 +209,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
         finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
         if comet_logger is not None:
             comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
-            comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Precision".format(dataset, i),finetune_results["box_precision"])
+            comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Precision {}".format(dataset, i),finetune_results["box_precision"])
         min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":test_sets[0],"Iteration":[i],"Model":["Min Annotation"]}))
         del model
         torch.cuda.empty_cache()
@@ -262,6 +263,8 @@ if __name__ =="__main__":
     model = BirdDetector(transforms=get_transform)
     config = model.config
     
+    client = start_cluster.start(gpu_nodes=1, gpu_per_node=config["gpus"])
+
     path_dict = prepare()
 
     #Log commit
@@ -272,28 +275,25 @@ if __name__ =="__main__":
     #Train Models
     train_list = ["seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","palmyra","mckellar","monash"]
     results = []
+    futures = []
     for x in train_list:
         train_sets = [y for y in train_list if not y==x]
         train_sets.append("everglades")
         test_sets = [x]
+        future = client.submit(run, path_dict=path_dict,
+                     config=config,
+                     train_sets=train_sets,
+                     test_sets=test_sets,
+                     comet_logger=comet_logger,
+                     savedir=savedir)
+    for x in distributed.as_completed(futures):
         try:
-            result = run(path_dict=path_dict,
-                         config=config,
-                         train_sets=train_sets,
-                         test_sets=test_sets,
-                         comet_logger=comet_logger,
-                         savedir=savedir)
+            result = x.result()
             results.append(result)
-            torch.cuda.empty_cache()
-            gc.collect()
+            results = pd.concat(results)
+            results.to_csv("Figures/generalization.csv")
         except Exception as e:
-            print("{} failed with {}".format(train_sets, e))
-            torch.cuda.empty_cache()
-            gc.collect()              
-            continue
-        
-    results = pd.concat(results)
-    results.to_csv("Figures/generalization.csv")
+            print(e)
     
     mean_zero_shot_recall = results[results.Model == "Zero Shot"].Recall.mean()
     mean_zero_shot_precision = results[results.Model == "Zero Shot"].Precision.mean()
@@ -309,17 +309,22 @@ if __name__ =="__main__":
     comet_logger.experiment.log_metric(name="Mean Fine Tune Precision", value=mean_fine_tune_precision)
     
     #Joint model for fine-tuning
+    
     train_sets = ["seabirdwatch","neill","monash","terns","penguins","pfeifer","hayes","everglades","USGS","mckellar","palmyra"]
     test_sets = ["palmyra"]
-    result = run(path_dict=path_dict,
+    
+    future = client.submit(run, path_dict=path_dict,
                             config=config,
                             train_sets=train_sets,
                             test_sets=test_sets,
                             comet_logger=comet_logger,
                             savedir=savedir)
+    future.result()
 
     #log images
     with comet_logger.experiment.context_manager("validation"):
         images = glob.glob("{}/*.png".format(savedir))
         for img in images:
             comet_logger.experiment.log_image(img, image_scale=0.25)    
+    
+    client.close()
