@@ -58,7 +58,7 @@ def start(cpu_nodes=0, gpu_nodes=0, gpu_per_node=1, mem_size="10GB"):
             death_timeout=300)
 
         print(cluster.job_script())
-        cluster.scale(cpus)
+        cluster.scale(cpu_nodes)
 
     if gpu_nodes > 0:
         #job args
