@@ -573,6 +573,91 @@ def prepare_seabirdwatch(generate):
         
     return {"train":train_path, "test":test_path}
 
+def prepare_newmexico(generate):
+    train_path = "/orange/ewhite/b.weinstein/generalization/crops/newmexico_train.csv"
+    test_path = "/orange/ewhite/b.weinstein/generalization/crops/newmexico_test.csv"
+    
+    if generate:   
+        client = start_cluster.start(cpus=5)
+        gdf = gpd.read_file("/orange/ewhite/b.weinstein/newmexico/annotations.shp")
+        
+        train_gdf = gdf[~(gdf.image_path == "BDA_18A4_20181107_1.JPG")]
+        test_gdf = gdf[gdf.image_path == "BDA_18A4_20181107_1.JPG"]
+        
+        train_annotations = []
+        test_annotations = []
+        
+        for name, group in train_gdf.groupby("image_path"):
+            df = group.geometry.bounds
+            df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
+            df["label"] = "Bird"
+            df = df[~(df.xmin >= df.xmax)]
+            df = df[~(df.ymin >= df.ymax)]            
+            df["image_path"] = name        
+            train_annotations.append(df)
+        
+        train_annotations = pd.concat(train_annotations)
+        train_annotations = check_shape(train_annotations)
+        train_annotations.to_csv("/orange/ewhite/b.weinstein/newmexico/train_images.csv")
+        
+        def cut(x):
+            result = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/newmexico/train_images.csv",
+                                                path_to_raster="/orange/ewhite/b.weinstein/generalization/crops/{}".format(x),
+                                                base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
+                                                allow_empty=False,
+                                                patch_size=800)
+            return result
+
+        #Split into crops
+        crop_annotations = []
+        futures = client.map(cut, train_annotations.image_path.unique())
+        for x in futures:
+            try:
+                crop_annotations.append(x.result())
+            except Exception as e:
+                print(e)
+                pass
+                        
+        crop_annotations = pd.concat(crop_annotations)
+        crop_annotations.to_csv(train_path)
+
+        for name, group in test_gdf.groupby("image_path"):
+            df = group.geometry.bounds
+            df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
+            df["label"] = "Bird"
+            df = df[~(df.xmin >= df.xmax)]
+            df = df[~(df.ymin >= df.ymax)]            
+            df["image_path"] = name
+            test_annotations.append(df)
+        
+        test_annotations = pd.concat(test_annotations)        
+        test_annotations = check_shape(test_annotations)
+        test_annotations.to_csv("/orange/ewhite/b.weinstein/newmexico/test_images.csv")
+        
+        #Too large for GPU memory, cut into pieces
+        def cut(x):
+            result = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/newmexico/test_images.csv",
+                                                path_to_raster="/orange/ewhite/b.weinstein/generalization/crops/{}".format(x),
+                                                base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
+                                                allow_empty=False,
+                                                patch_size=800)
+            return result
+
+        #Split into crops
+        crop_annotations = []
+        futures = client.map(cut, test_annotations.image_path.unique())
+        for x in futures:
+            try:
+                crop_annotations.append(x.result())
+            except Exception as e:
+                print(e)
+                pass
+                                
+        crop_annotations = pd.concat(crop_annotations)
+        crop_annotations.to_csv(test_path)
+        client.close()
+    return {"train":train_path, "test":test_path}
+        
 def prepare_neill(generate):
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/neill_train.csv"
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/neill_test.csv"
@@ -677,5 +762,6 @@ def prepare():
     paths["mckellar"] = prepare_mckellar(generate=False)
     paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
     paths["neill"] = prepare_neill(generate=False)
+    paths["newmexico"] = prepare_newmexico(generate=False)
     
     return paths
