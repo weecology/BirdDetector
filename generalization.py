@@ -141,7 +141,8 @@ def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
     else:
         model = fit(model, train_annotations, comet_logger)
         if savedir:
-            torch.save(model.model.state_dict(),model_path)                
+            if not model.config["train"]["fast_dev_run"]:
+                torch.save(model.model.state_dict(),model_path)            
         
     for x in test_sets:
         test_results = model.evaluate(csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=savedir)
@@ -174,7 +175,8 @@ def fine_tune(dataset, comet_logger, savedir, config):
     else:
         model = fit(model, train_annotations, comet_logger)
         if savedir:
-            torch.save(model.model.state_dict(),model_path)           
+            if not model.config["train"]["fast_dev_run"]:
+                torch.save(model.model.state_dict(),model_path)            
     finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
     if comet_logger is not None:
         comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(dataset),finetune_results["box_recall"])
@@ -204,11 +206,12 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
             train_annotations = select(df)
             model = fit(model, train_annotations, comet_logger)
             if savedir:
-                torch.save(model.model.state_dict(),model_path)               
+                if not model.config["train"]["fast_dev_run"]:
+                    torch.save(model.model.state_dict(),model_path)
         finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
         if comet_logger is not None:
             comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
-            comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Precision".format(dataset, i),finetune_results["box_precision"])
+            comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Precision - Iteration {}".format(dataset, i),finetune_results["box_precision"])
         min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Iteration":[i],"Model":["Min Annotation"]}))
         del model
         torch.cuda.empty_cache()
