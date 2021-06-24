@@ -1,0 +1,8 @@
+,test_set,Recall,Precision,Model,Iteration
+0,pfeifer,0,0,Zero Shot,
+0,pfeifer,0,0,Fine Tune,
+0,pfeifer,0,0,Min Annotation,0.0
+0,pfeifer,0,0,Min Annotation,1.0
+0,pfeifer,0,0,Min Annotation,2.0
+0,pfeifer,0,0,Min Annotation,3.0
+0,pfeifer,0,0,Min Annotation,4.0
