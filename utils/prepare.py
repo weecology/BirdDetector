@@ -602,7 +602,7 @@ def prepare_newmexico(generate):
         
         def cut(x):
             result = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/newmexico/train_images.csv",
-                                                path_to_raster="/orange/ewhite/b.weinstein/generalization/crops/{}".format(x),
+                                                path_to_raster="/Users/benweinstein/Downloads/ExpertAnnotations/Imagery/{}".format(x),
                                                 base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
                                                 allow_empty=False,
                                                 patch_size=800)
@@ -637,7 +637,7 @@ def prepare_newmexico(generate):
         #Too large for GPU memory, cut into pieces
         def cut(x):
             result = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/newmexico/test_images.csv",
-                                                path_to_raster="/orange/ewhite/b.weinstein/generalization/crops/{}".format(x),
+                                                path_to_raster="/Users/benweinstein/Downloads/ExpertAnnotations/Imagery/{}".format(x),
                                                 base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
                                                 allow_empty=False,
                                                 patch_size=800)
