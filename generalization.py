@@ -209,7 +209,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
         if comet_logger is not None:
             comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
             comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Precision".format(dataset, i),finetune_results["box_precision"])
-        min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":test_sets[0],"Iteration":[i],"Model":["Min Annotation"]}))
+        min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Iteration":[i],"Model":["Min Annotation"]}))
         del model
         torch.cuda.empty_cache()
         gc.collect()
