@@ -597,7 +597,6 @@ def prepare_newmexico(generate):
             train_annotations.append(df)
         
         train_annotations = pd.concat(train_annotations)
-        train_annotations = check_shape(train_annotations)
         train_annotations.to_csv("/orange/ewhite/b.weinstein/newmexico/train_images.csv")
         
         def cut(x):
@@ -631,7 +630,6 @@ def prepare_newmexico(generate):
             test_annotations.append(df)
         
         test_annotations = pd.concat(test_annotations)        
-        test_annotations = check_shape(test_annotations)
         test_annotations.to_csv("/orange/ewhite/b.weinstein/newmexico/test_images.csv")
         
         #Too large for GPU memory, cut into pieces
