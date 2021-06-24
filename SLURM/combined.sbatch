@@ -16,4 +16,5 @@ source activate Zooniverse_pytorch
 
 #comet debug
 cd ~/BirdDetector/
+module load git
 python combined.py
