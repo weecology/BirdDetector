@@ -274,7 +274,7 @@ if __name__ =="__main__":
 
     #Train Models
     train_list = ["seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","palmyra","mckellar","monash"]
-    results = []
+    task_output = []
     futures = []
     for x in train_list:
         train_sets = [y for y in train_list if not y==x]
@@ -291,8 +291,8 @@ if __name__ =="__main__":
     for x in distributed.as_completed(futures):
         try:
             result = x.result()
-            results.append(result)
-            results = pd.concat(results)
+            task_output.append(result)
+            results = pd.concat(task_output)
             results.to_csv("Figures/generalization.csv")
         except Exception as e:
             print(e)
