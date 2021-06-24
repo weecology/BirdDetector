@@ -1,15 +1,8 @@
 ,test_set,Recall,Precision,Model,Iteration
-0,seabirdwatch,0.3160350962570732,0.3160350962570732,FZero Shot,
-0,seabirdwatch,0.8136710317491903,0.8136710317491903,Fine Tune,
-0,seabirdwatch,0.0,0.0,Min Annotation,0.0
-0,seabirdwatch,0.0,0.0,Min Annotation,1.0
-0,seabirdwatch,0.0,0.0,Min Annotation,2.0
-0,seabirdwatch,0.0,0.0,Min Annotation,3.0
-0,seabirdwatch,0.0,0.0,Min Annotation,4.0
-0,neill,0.6262614428325433,0.6262614428325433,FZero Shot,
-0,neill,0.9351723317455622,0.9351723317455622,Fine Tune,
-0,neill,0.0,0.0,Min Annotation,0.0
-0,neill,0.0,0.0,Min Annotation,1.0
-0,neill,0.0,0.0,Min Annotation,2.0
-0,neill,0.0,0.0,Min Annotation,3.0
-0,neill,0.0,0.0,Min Annotation,4.0
+0,palmyra,0,0,FZero Shot,
+0,palmyra,0,0,Fine Tune,
+0,seabirdwatch,0,0,Min Annotation,0.0
+0,seabirdwatch,0,0,Min Annotation,1.0
+0,seabirdwatch,0,0,Min Annotation,2.0
+0,seabirdwatch,0,0,Min Annotation,3.0
+0,seabirdwatch,0,0,Min Annotation,4.0
