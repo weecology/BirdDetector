@@ -153,7 +153,7 @@ def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
                 comet_logger.experiment.log_metric("{} Box Precision".format(x),test_results["box_precision"])
             except Exception as e:
                 print(e)    
-        result_frame = pd.DataFrame({"test_set":[test_sets[0]],"Recall":[test_results["box_recall"]], "Precision":[test_results["box_recall"]],"Model":["FZero Shot"]})
+        result_frame = pd.DataFrame({"test_set":[test_sets[0]],"Recall":[test_results["box_recall"]], "Precision":[test_results["box_recall"]],"Model":["Zero Shot"]})
     
     del model
     torch.cuda.empty_cache()
