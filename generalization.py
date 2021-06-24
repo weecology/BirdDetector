@@ -221,6 +221,8 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
 
 def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyra"],test_sets=["everglades"], comet_logger=None, savedir=None, run_fine_tune=True, run_mini=True):
     #Log experiment
+    os.environ['SLURM_JOB_NAME'] = 'bash'
+    
     comet_logger.experiment.log_parameter("train_set",train_sets)
     comet_logger.experiment.log_parameter("test_set",test_sets)
     comet_logger.experiment.add_tag("Generalization")
