@@ -30,16 +30,16 @@ model = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/general
 model.label_dict = {"Bird": 0}
 model.create_trainer(logger=comet_logger)
 
-df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/seabirdwatch_train.csv")
+df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/newmexico_train.csv")
 selected_df = select(df)
 selected_df.to_csv("/orange/ewhite/b.weinstein/generalization/crops/finetune_example.csv")
 
 model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/finetune_example.csv"
-model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/seabirdwatch_test.csv"
+model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/newmexico_test.csv"
 model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
 model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
 
-test_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/seabirdwatch_test.csv", root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
+test_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/newmexico_test.csv", root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
 
 print("Zero shot Recall is {}".format(test_results["box_recall"]))
 print("Zero shot Precision is {}".format(test_results["box_precision"]))
@@ -47,7 +47,7 @@ print("Zero shot Precision is {}".format(test_results["box_precision"]))
 
 model.trainer.fit(model)
 
-test_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/seabirdwatch_test.csv",
+test_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/newmexico_test.csv",
                               root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
 
 print("Fine tune Recall is {}".format(test_results["box_recall"]))
