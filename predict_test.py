@@ -8,11 +8,11 @@ def run(x):
     path_dict = prepare()
     m = main.deepforest(label_dict={"Bird":0})
     m.model.load_state_dict(torch.load("/orange/ewhite/b.weinstein/generalization/snapshots/{}_finetune.pt"))    
-    boxes = m.predict_file(csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/", savedir="/orange/ewhite/b.weinstein/generalization/snapshots/finetune/") 
+    boxes = m.evaluate(csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/", savedir="/orange/ewhite/b.weinstein/generalization/snapshots/finetune/") 
     m.model.load_state_dict(torch.load("/orange/ewhite/b.weinstein/generalization/snapshots/{}_zeroshot.pt"))
-    boxes = m.predict_file(csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/", savedir="/orange/ewhite/b.weinstein/generalization/snapshots/zeroshot/") 
+    boxes = m.evaluate(csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/", savedir="/orange/ewhite/b.weinstein/generalization/snapshots/zeroshot/") 
     m.model.load_state_dict(torch.load("/orange/ewhite/b.weinstein/generalization/snapshots/{}_mini_1.pt"))
-    boxes = m.predict_file(csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/", savedir="/orange/ewhite/b.weinstein/generalization/snapshots/1000bird/") 
+    boxes = m.evaluate(csv_file=path_dict[x]["test"], root_dir="/orange/ewhite/b.weinstein/generalization/", savedir="/orange/ewhite/b.weinstein/generalization/snapshots/1000bird/") 
 
 if __name__ == "__main__":
     try:
@@ -22,5 +22,6 @@ if __name__ == "__main__":
     except:
         pass
     
+    path_dict = prepare()
     for x in path_dict:
         run(x)
