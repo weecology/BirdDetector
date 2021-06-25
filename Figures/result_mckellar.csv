@@ -1,8 +1,8 @@
 ,test_set,Recall,Precision,Model,Iteration
-0,mckellar,0.0,0.0,Zero Shot,
-0,mckellar,0.0,0.0,Fine Tune,
-0,mckellar,0.0,0.0,Min Annotation,0.0
-0,mckellar,0.0,0.0,Min Annotation,1.0
-0,mckellar,0.0,0.0,Min Annotation,2.0
-0,mckellar,0.7141843971631204,0.1257484906666396,Min Annotation,3.0
-0,mckellar,0.0,0.0,Min Annotation,4.0
+0,mckellar,0.6152482269503545,0.2275219066048575,Zero Shot,
+0,mckellar,0.6400709219858156,0.6649999999999999,Fine Tune,
+0,mckellar,0.6187943262411347,0.610297619047619,Min Annotation,0.0
+0,mckellar,0.7446808510638298,0.5090123456790123,Min Annotation,1.0
+0,mckellar,0.6968085106382979,0.5736434108527131,Min Annotation,2.0
+0,mckellar,0.6081560283687943,0.5979166666666667,Min Annotation,3.0
+0,mckellar,0.6684397163120568,0.4919435215946844,Min Annotation,4.0
