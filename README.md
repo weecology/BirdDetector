@@ -1,6 +1,6 @@
 # BirdDetector
 
-A global bird detector model for the DeepForest-pytorch package.
+A global bird detector model for the deepforest package.
 This repo recreates the analysis for the [manuscript](https://docs.google.com/document/d/15zqYo-3hmOMDLRKiUfkQwx7jesIhz0AypJLa30d8nA8/edit?usp=sharing).
 
 ## Getting Started
