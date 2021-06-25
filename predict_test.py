@@ -24,4 +24,6 @@ if __name__ == "__main__":
     
     path_dict = prepare()
     for x in path_dict:
+        if x == "everglades":
+            continue
         run(x)
