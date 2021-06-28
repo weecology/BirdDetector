@@ -28,7 +28,7 @@ def upload(ACCESS_TOKEN, path):
     """Upload an item to zenodo"""    
     # New API
     filename = os.path.basename(path)
-    bucket_url = "https://zenodo.org/deposit/5033174"
+    bucket_url = "https://zenodo.org/api/files/c86cef3b-ff4c-4a86-ab90-836f420d367a"
     
     # The target URL is a combination of the bucket link with the desired filename
     # seperated by a slash.
