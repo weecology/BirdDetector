@@ -35,17 +35,6 @@ def upload(ACCESS_TOKEN, path):
                       params={'access_token': ACCESS_TOKEN}, data=data, files=files)
     print("request of path {} returns {}".format(path, r.json()))
     
-    
-    with open('path', 'rb') as fp:
-        res = requests.put(
-            bucket_url + '/my-file.zip', 
-            data=fp,
-            # No headers included in the request, since it's a raw byte request
-            params=params,
-        )
-    print(res.json())
-    
-    
 if __name__== "__main__":
     
     #zipped_datasets = []
