@@ -25,14 +25,20 @@ def get_token():
     return token
 
 def upload(ACCESS_TOKEN, path):
-    """Upload an item to zenodo"""
+    """Upload an item to zenodo"""    
+    # New API
+    filename = os.path.basename(path)
+    bucket_url = "https://zenodo.org/deposit/5033174"
     
-     # Get the deposition id from the already created record
-    deposition_id = "5033174"
-    data = {'name': os.path.basename(path)}
-    files = {'file': open(path, 'rb')}
-    r = requests.post('https://zenodo.org/api/deposit/depositions/%s/files' % deposition_id,
-                      params={'access_token': ACCESS_TOKEN}, data=data, files=files)
+    # The target URL is a combination of the bucket link with the desired filename
+    # seperated by a slash.
+    with open(path, "rb") as fp:
+        r = requests.put(
+            "%s/%s" % (bucket_url, filename),
+            data=fp,
+            params={'access_token': ACCESS_TOKEN},
+        )
+    r.json()    
     print("request of path {} returns {}".format(path, r.json()))
     
 if __name__== "__main__":
