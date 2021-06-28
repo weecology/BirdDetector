@@ -13,7 +13,7 @@ def zip_dataset(dataset):
     zipname = "/orange/ewhite/b.weinstein/generalization/zenodo/{}.zip".format(dataset)
     z = zipfile.ZipFile(zipname,'w')
     for x in images_to_upload:
-        z.write(x)
+        z.write("/orange/ewhite/b.weinstein/generalization/crops/{}".format(x))
         z.write("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))
         z.write("/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset))
     z.close()
