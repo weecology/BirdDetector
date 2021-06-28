@@ -10,7 +10,7 @@ def zip_dataset(dataset):
     test = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset))
     df = pd.concat([train, test])
     images_to_upload = df.image_path.unique()
-    zipname = "/orange/ewhite/b.weinstein/generalization/zenodo/{}".format(x)
+    zipname = "/orange/ewhite/b.weinstein/generalization/zenodo/{}.zip".format(dataset)
     z = zipfile.ZipFile(zipname,'w')
     for x in images_to_upload:
         z.write(x)
