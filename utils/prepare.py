@@ -315,7 +315,7 @@ def prepare_pelicans(generate=True):
     return {"test":test_path}
 
 def prepare_schedl(generate=True):
-    test_path = "/orange/ewhite/b.weinstein/generalization/crops/schedl_test.csv"
+    train_path = "/orange/ewhite/b.weinstein/generalization/crops/schedl_train.csv"
     
     test_annotations = []
     if generate:   
@@ -336,9 +336,9 @@ def prepare_schedl(generate=True):
             
             test_annotations.append(annotations)
         test_annotations = pd.concat(test_annotations)
-        test_annotations.to_csv(test_path)
+        test_annotations.to_csv(train_path)
         
-    return {"test":test_path}
+    return {"test":train_path}
 
 def prepare_monash(generate=True):
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/monash_train.csv"
