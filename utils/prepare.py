@@ -280,7 +280,7 @@ def prepare_valle(generate=True):
         df.to_csv("/orange/ewhite/b.weinstein/valle/terns_italy.csv")
         
         annotations = preprocess.split_raster(
-            path_to_raster="/orange/ewhite/b.weinstein/valle/terns_italy.JPG",
+            path_to_raster="/orange/ewhite/b.weinstein/valle/terns_italy.png",
             annotations_file="/orange/ewhite/b.weinstein/valle/terns_italy.csv",
             patch_size=800,
             patch_overlap=0,
