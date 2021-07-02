@@ -8,5 +8,6 @@ dependencies:
   - distributed
   - pip:
     - deepforest
+    - comet_ml
 
 

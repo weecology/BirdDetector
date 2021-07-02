@@ -29,7 +29,7 @@ def prepare_palmyra(generate=True):
         
         test_annotations = preprocess.split_raster(numpy_image=numpy_image,
                                                    annotations_file="Figures/test_annotations.csv",
-                                                   patch_size=1400, patch_overlap=0.05, base_dir="/orange/ewhite/b.weinstein/generalization/crops/", image_name="Dudley_projected.tif")
+                                                   patch_size=1300, patch_overlap=0.05, base_dir="/orange/ewhite/b.weinstein/generalization/crops/", image_name="Dudley_projected.tif")
         
         test_annotations.to_csv(test_path,index=False)
         
@@ -49,14 +49,34 @@ def prepare_palmyra(generate=True):
         train_annotations_1 = preprocess.split_raster(
             numpy_image=training_image,
             annotations_file="Figures/training_annotations.csv",
-            patch_size=1400,
+            patch_size=1300,
             patch_overlap=0.05,
             base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
             image_name="CooperStrawn_53m_tile_clip_projected.tif",
             allow_empty=False
         )
         
-        train_annotations = pd.concat([train_annotations_1])
+        src = rio.open("/orange/ewhite/everglades/Palmyra/CooperEelPond_53M.tif")
+        numpy_image = src.read()
+        numpy_image = np.moveaxis(numpy_image,0,2)
+        training_image = numpy_image[:,:,:3].astype("uint8")
+        
+        df = shapefile_to_annotations(shapefile="/orange/ewhite/everglades/Palmyra/CooperEelPond_53m_annotation.shp", 
+                                      rgb="/orange/ewhite/everglades/Palmyra/CooperEelPond_53M.tif", buffer_size=0.15)
+    
+        df.to_csv("Figures/training_annotations.csv",index=False)        
+        train_annotations2 = preprocess.split_raster(
+            numpy_image=training_image,
+            annotations_file="Figures/training_annotations.csv",
+            patch_size=1300,
+            patch_overlap=0.05,
+            base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
+            image_name="CooperEelPond_53M.tif",
+            allow_empty=False
+        )
+
+        
+        train_annotations = pd.concat([train_annotations_1, train_annotations2])
         train_annotations.to_csv(train_path,index=False)
             
     return {"train":train_path, "test":test_path}
@@ -251,6 +271,28 @@ def prepare_murres(generate=True):
     
     return {"train":train_path}
 
+        
+def prepare_valle(generate=True):
+    train_path = "/orange/ewhite/b.weinstein/generalization/crops/valle_train.csv"
+    if generate:   
+        df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/valle/terns_italy.shp",
+                                      rgb="/orange/ewhite/b.weinstein/murres/terns_italy.png", buffer_size=15)
+        df.to_csv("/orange/ewhite/b.weinstein/valle/terns_italy.csv")
+        
+        annotations = preprocess.split_raster(
+            path_to_raster="/orange/ewhite/b.weinstein/valle/terns_italy.JPG",
+            annotations_file="/orange/ewhite/b.weinstein/valle/terns_italy.csv",
+            patch_size=800,
+            patch_overlap=0,
+            base_dir="/orange/ewhite/b.weinstein/generalization/crops",
+            allow_empty=False
+        )
+        
+        #Test        
+        annotations.to_csv(train_path,index=False)    
+    
+    return {"train":train_path}
+
 def prepare_pelicans(generate=True):
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/pelicans_test.csv"
     if generate:   
@@ -402,7 +444,7 @@ def prepare_USGS(generate=True):
             annotations = preprocess.split_raster(
                 path_to_raster="/orange/ewhite/b.weinstein/USGS/migbirds/migbirds/{}".format(x),
                 annotations_file="/orange/ewhite/b.weinstein/USGS/migbirds/annotations.csv",
-                patch_size=1200,
+                patch_size=1100,
                 patch_overlap=0,
                 base_dir="/orange/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
@@ -655,7 +697,7 @@ def prepare_newmexico(generate):
         crop_annotations.to_csv(test_path)
         client.close()
     return {"train":train_path, "test":test_path}
-        
+
 def prepare_neill(generate):
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/neill_train.csv"
     test_path = "/orange/ewhite/b.weinstein/generalization/crops/neill_test.csv"
@@ -744,22 +786,54 @@ def prepare_neill(generate):
         client.close()
     return {"train":train_path, "test":test_path}
 
+def prepare_cros(generate):
+    train_path = "/orange/ewhite/b.weinstein/generalization/crops/cros_train.csv"
+    
+    if generate:   
+        txts = glob.glob("/orange/ewhite/b.weinstein/cros/*.txt")
+        train_annotations = []
+        for x in txts:
+            df = pd.read_csv(x, delim_whitespace=True, names=["xmin","ymin","width","height"])
+            basename = os.path.splitext(os.path.basename(x))[0]
+            df["image_path"] = "{}.jpg".format(basename)
+            img = cv2.imread("/orange/ewhite/b.weinstein/cros/{}.jpg".format(basename))
+            height, width, channels = img.shape
+            df["xmax"]  = df["xmin"] * width + (df["width"] * width)
+            df["ymax"]  = df["ymin"] * height + (df["height"] * height)
+            df["xmin"]  = df["xmin"] * width 
+            df["ymin"]  = df["ymin"] * height         
+            
+            df.to_csv("/orange/ewhite/b.weinstein/cros/{}.csv".format(basename))
+            cropped_df = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/cros/{}.csv".format(basename),
+                                                                path_to_raster="/orange/ewhite/b.weinstein/cros/{}.jpg".format(basename),
+                                                                base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
+                                                                allow_empty=False,
+                                                                patch_size=700)
+            train_annotations.append(cropped_df)
+            
+        train_annotations = pd.concat(train_annotations)
+        train_annotations.to_csv(train_path)
+        
+    return {"train":train_path}
+        
 def prepare():
     paths = {}
     paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
     paths["penguins"] = prepare_penguin(generate=False)
-    paths["palmyra"] = prepare_palmyra(generate=False)
+    paths["palmyra"] = prepare_palmyra(generate=True)
     paths["neill"] = prepare_pelicans(generate=False)
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
     paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=False)
+    paths["USGS"] = prepare_USGS(generate=True)
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
     paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
     paths["neill"] = prepare_neill(generate=False)
     paths["newmexico"] = prepare_newmexico(generate=False)
+    paths["valle"] = prepare_valle(generate=True)
+    #paths["cros"] = prepare_cros(generate=True)
     
     return paths
