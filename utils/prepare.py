@@ -790,49 +790,29 @@ def prepare_cros(generate):
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/cros_train.csv"
     
     if generate:   
-        client = start_cluster.start(cpus=5)
         txts = glob.glob("/orange/ewhite/b.weinstein/cros/*.txt")
         train_annotations = []
         for x in txts:
             df = pd.read_csv(x, delim_whitespace=True, names=["xmin","ymin","width","height"])
-            df["image_path"] = "{}.jpg".format(os.path.splitext(os.path.basename(x))[0])
-            img = cv2.imread("/orange/ewhite/b.weinstein/cros/{}.jpg".format(os.path.splitext(os.path.basename(x))[0]))
+            basename = os.path.splitext(os.path.basename(x))[0]
+            df["image_path"] = "{}.jpg".format(basename)
+            img = cv2.imread("/orange/ewhite/b.weinstein/cros/{}.jpg".format(basename))
             height, width, channels = img.shape
-            df["xmin"]  = df["xmin"] * width
-            df["ymin"]  = df["ymin"] * height
-        
-        for name, group in train_gdf.groupby("image_path"):
-            df = group.geometry.bounds
-            df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
-            df["label"] = "Bird"
-            df = df[~(df.xmin >= df.xmax)]
-            df = df[~(df.ymin >= df.ymax)]            
-            df["image_path"] = name        
-            train_annotations.append(df)
-        
-            def cut(x):
-                result = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/neill/train_images.csv",
-                                                    path_to_raster="/orange/ewhite/b.weinstein/generalization/crops/{}".format(x),
-                                                    base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
-                                                    allow_empty=False,
-                                                    patch_size=700)
-                return result
+            df["xmax"]  = df["xmin"] * width + (df["width"] * width)
+            df["ymax"]  = df["ymin"] * height + (df["height"] * height)
+            df["xmin"]  = df["xmin"] * width 
+            df["ymin"]  = df["ymin"] * height         
             
-            #Split into crops
-            crop_annotations = []
-            futures = client.map(cut, train_annotations.image_path.unique())
-            for x in futures:
-                try:
-                    crop_annotations.append(x.result())
-                except Exception as e:
-                    print(e)
-                    pass
-                            
-            crop_annotations = pd.concat(crop_annotations)
-            crop_annotations.to_csv(train_path)
-
+            df.to_csv("/orange/ewhite/b.weinstein/cros/{}.csv".format(basename))
+            cropped_df = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/cros/{}.csv".format(basename),
+                                                                path_to_raster="/orange/ewhite/b.weinstein/cros/{}.jpg".format(basename),
+                                                                base_dir="/orange/ewhite/b.weinstein/generalization/crops/",
+                                                                allow_empty=False,
+                                                                patch_size=700)
+            train_annotations.append(cropped_df)
+            
         train_annotations = pd.concat(train_annotations)
-        train_annotations.to_csv("/orange/ewhite/b.weinstein/newmexico/train_images.csv")
+        train_annotations.to_csv(train_path)
         
     return {"train":train_path}
         
