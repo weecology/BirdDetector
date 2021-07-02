@@ -338,7 +338,7 @@ def prepare_schedl(generate=True):
         test_annotations = pd.concat(test_annotations)
         test_annotations.to_csv(train_path)
         
-    return {"test":train_path}
+    return {"train":train_path}
 
 def prepare_monash(generate=True):
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/monash_train.csv"
