@@ -221,7 +221,37 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
     
     return min_annotation_results
 
-def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyra"],test_sets=["everglades"], comet_logger=None, savedir=None, run_fine_tune=True, run_mini=True):
+def mini_random_weights(dataset, comet_logger, config, savedir):
+    #Fine tuning, up to 1000 birds from train
+    min_annotation_results = []
+    for i in range(5):
+        model_path = "{}/{}_random_{}.pt".format(savedir, dataset,i)
+        model = BirdDetector(transforms = deepforest_transform)   
+        model.config = config
+        
+        if os.path.exists(model_path):
+            model.model.load_state_dict(torch.load(model_path))
+        else: 
+            df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
+            train_annotations = select(df)
+            model = fit(model, train_annotations, comet_logger)
+            if savedir:
+                if not model.config["train"]["fast_dev_run"]:
+                    torch.save(model.model.state_dict(),model_path)
+        finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
+        if comet_logger is not None:
+            comet_logger.experiment.log_metric("RandomWeight 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
+            comet_logger.experiment.log_metric("RandomWeight 1000 {} Box Precision - Iteration {}".format(dataset, i),finetune_results["box_precision"])
+        min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Iteration":[i],"Model":["RandomWeight"]}))
+        del model
+        torch.cuda.empty_cache()
+        gc.collect()
+        
+    min_annotation_results = pd.concat(min_annotation_results)
+    
+    return min_annotation_results
+
+def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyra"],test_sets=["everglades"], comet_logger=None, savedir=None, run_fine_tune=True, run_mini=True, run_random=True):
     #Log experiment
     comet_logger.experiment.log_parameter("train_set",train_sets)
     comet_logger.experiment.log_parameter("test_set",test_sets)
@@ -239,7 +269,10 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
         mini_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger)
         gc.collect()          
         results.append(mini_results)
-
+    if run_random:
+        random_results = mini_random_weights(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger)
+        results.append(random_results)
+        
     result_frame = pd.concat(results)
     
     return result_frame
@@ -247,8 +280,7 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
 if __name__ =="__main__":
     #save original config during loop
     #comet_logger=None
-    comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
-                                project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
+    comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
     
     ImageFile.LOAD_TRUNCATED_IMAGES = True
     existing_dir = '20210622_185244'

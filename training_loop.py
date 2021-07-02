@@ -164,8 +164,7 @@ def training(proportion,pretrained=True, comet_logger=None, config=None):
     return formatted_results
 
 def run(generate=False, pretrained=True):
-    comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
-                                project_name="everglades", workspace="bw4sz",auto_output_logging = "simple") 
+    comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple") 
     
     #hold to the original config to make iteration contained
     original_model = main.deepforest(label_dict={"Bird":0})

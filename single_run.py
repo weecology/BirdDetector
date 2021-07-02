@@ -6,8 +6,7 @@ parser = argparse.ArgumentParser(description='single dataset run')
 parser.add_argument("dataset", type=str)
 args = parser.parse_args()
 print("Running {}".format(args.dataset))
-comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
-                            project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
+comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 savedir = "/orange/ewhite/b.weinstein/generalization/snapshots/"
