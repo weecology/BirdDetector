@@ -103,11 +103,14 @@ def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
     for x in train_sets:
         try:
             df = pd.read_csv(path_dict[x]["train"])
-            df_test = pd.read_csv(path_dict[x]["test"])
+            all_sets.append(df)            
         except:
             raise ValueError("No training path supplied for {}".format(x))
-        all_sets.append(df)
-        all_sets.append(df_test)
+        try:
+            df_test = pd.read_csv(path_dict[x]["test"])
+            all_sets.append(df_test)
+        except Exception as e:
+            print("No test set for {}".format(x))
     
     train_annotations = pd.concat(all_sets)
     
