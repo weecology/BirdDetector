@@ -276,7 +276,7 @@ def prepare_valle(generate=True):
     train_path = "/orange/ewhite/b.weinstein/generalization/crops/valle_train.csv"
     if generate:   
         df = shapefile_to_annotations(shapefile="/orange/ewhite/b.weinstein/valle/terns_italy.shp",
-                                      rgb="/orange/ewhite/b.weinstein/vallue/terns_italy.png", buffer_size=15)
+                                      rgb="/orange/ewhite/b.weinstein/valle/terns_italy.png", buffer_size=15)
         df.to_csv("/orange/ewhite/b.weinstein/valle/terns_italy.csv")
         
         annotations = preprocess.split_raster(
