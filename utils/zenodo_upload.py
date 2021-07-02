@@ -43,12 +43,12 @@ def upload(ACCESS_TOKEN, path):
     
 if __name__== "__main__":
     
-    zipped_datasets = []
-    for x in ['mckellar',"seabirdwatch","palmyra","penguins","monash"]:
-        z = zip_dataset(x)
-        zipped_datasets.append(z)
+    #zipped_datasets = []
+    #for x in ['mckellar',"seabirdwatch","palmyra","penguins","monash"]:
+    #    z = zip_dataset(x)
+    #    zipped_datasets.append(z)
     
-    #zipped_datasets = glob.glob("/orange/ewhite/b.weinstein/generalization/zenodo/*.zip")
+    zipped_datasets = glob.glob("/orange/ewhite/b.weinstein/generalization/zenodo/*.zip")
     ACCESS_TOKEN = get_token()    
     for f in zipped_datasets:
         upload(ACCESS_TOKEN, f)
