@@ -25,7 +25,10 @@ def select(df):
 comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
 
 comet_logger.experiment.add_tag("fine tune")
-model = main.deepforest.load_from_checkpoint("/orange/ewhite/b.weinstein/generalization/20210616_101934/mckellar_USGS_hayes_terns_penguins_pfeifer_palmyra_everglades.pl")
+train_df = pd.read_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
+label_dict = {x: index for index, x in enumerate(train_df.label.unique())}    
+pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
+model = BirdDetector(transforms = get_transform)
 model.label_dict = {"Bird": 0}
 model.create_trainer(logger=comet_logger)
 

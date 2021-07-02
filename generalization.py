@@ -55,6 +55,8 @@ def view_training(paths,comet_logger, n=10):
                     continue
 
 def fit(model, train_annotations, comet_logger):
+    #Give it a unique timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
     train_annotations["xmax"] = train_annotations["xmax"].astype(float)
     train_annotations["ymin"] = train_annotations["ymin"].astype(float)
@@ -62,14 +64,14 @@ def fit(model, train_annotations, comet_logger):
     
     train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
     train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
-    
-    train_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv")    
+    comet_logger.log_parameter("Training_data","/orange/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(timestamp))
+    train_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(timestamp))    
 
-    model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv"
-    model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv"
+    model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(timestamp)
+    model.config["validation"]["csv_file"] = None
     model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
-    model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
-    model.create_trainer(logger=comet_logger, num_sanity_val_steps=0)
+    model.config["validation"]["root_dir"] = None
+    model.create_trainer(logger=comet_logger)
     model.trainer.fit(model)
     
     return model
@@ -93,7 +95,7 @@ def select(df):
 
 def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
     try:
-        image_save_dir = "{}/{}_zeroshot".format(savedir, train_sets[0])
+        image_save_dir = "{}/{}_zeroshot".format(savedir, test_sets[0])
         os.mkdir(image_save_dir)
     except Exception as e:
         print(e)
@@ -209,7 +211,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
     min_annotation_results = []
     for i in range(5):
         try:
-            image_save_dir = "{}/{}_mini_{}".format(savedir, dataset, i)
+            image_save_dir = "{}/{}_mini_{}.pt".format(savedir, dataset, i)
             os.mkdir(image_save_dir)
         except Exception as e:
             print(e)
@@ -248,13 +250,20 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
 
     for i in range(5):
         try:
-            image_save_dir = "{}/{}_random_{}".format(savedir, dataset, i)
+            image_save_dir = "{}/{}_random_{}.pt".format(savedir, dataset, i)
             os.mkdir(image_save_dir)
         except Exception as e:
             print(e)
             
         model_path = "{}/{}_random_{}.pt".format(savedir, dataset,i)
-        model = BirdDetector(transforms = deepforest_transform)   
+        #Load DOTA
+        train_df = pd.read_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
+        label_dict = {x: index for index, x in enumerate(train_df.label.unique())}    
+        pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
+        model = BirdDetector(transforms = get_transform)
+        
+        #update backbone weights with new Retinanet head
+        model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
         model.config = config
         
         if os.path.exists(model_path):

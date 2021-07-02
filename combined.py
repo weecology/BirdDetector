@@ -23,12 +23,14 @@ print("Train sets: {}".format(train_sets))
 for x in train_sets:
     try:
         df = pd.read_csv(path_dict[x]["train"])
-        df_test = pd.read_csv(path_dict[x]["test"])
+        all_sets.append(df)            
     except:
         raise ValueError("No training path supplied for {}".format(x))
-    all_sets.append(df)
-    all_sets.append(df_test)
-
+    try:
+        df_test = pd.read_csv(path_dict[x]["test"])
+        all_sets.append(df_test)
+    except Exception as e:
+        print("No test set for {}".format(x))
 train_annotations = pd.concat(all_sets)
 
 #A couple illegal boxes, make slightly smaller
