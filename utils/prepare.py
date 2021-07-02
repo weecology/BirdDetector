@@ -802,7 +802,8 @@ def prepare_cros(generate):
             df["ymax"]  = df["ymin"] * height + (df["height"] * height)
             df["xmin"]  = df["xmin"] * width 
             df["ymin"]  = df["ymin"] * height         
-            
+            df["label"] = "Bird"
+            df = df[["xmin","ymin","xmax","ymax","label","image_path"]]
             df.to_csv("/orange/ewhite/b.weinstein/cros/{}.csv".format(basename))
             cropped_df = preprocess.split_raster(annotations_file="/orange/ewhite/b.weinstein/cros/{}.csv".format(basename),
                                                                 path_to_raster="/orange/ewhite/b.weinstein/cros/{}.jpg".format(basename),
@@ -821,19 +822,19 @@ def prepare():
     paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
     paths["penguins"] = prepare_penguin(generate=False)
-    paths["palmyra"] = prepare_palmyra(generate=True)
+    paths["palmyra"] = prepare_palmyra(generate=False)
     paths["neill"] = prepare_pelicans(generate=False)
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
     paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=True)
+    paths["USGS"] = prepare_USGS(generate=False)
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
     paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
     paths["neill"] = prepare_neill(generate=False)
     paths["newmexico"] = prepare_newmexico(generate=False)
-    paths["valle"] = prepare_valle(generate=True)
+    paths["valle"] = prepare_valle(generate=False)
     #paths["cros"] = prepare_cros(generate=True)
     
     return paths
