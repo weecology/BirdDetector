@@ -76,12 +76,12 @@ def fit(model, train_annotations, comet_logger):
     
     return model
     
-def select(df):
+def select(df, n):
     selected_annotations = []
     count = 0
     available = list(df.image_path.unique())
     random.shuffle(available)
-    while count < 1000:
+    while count < n:
         try:
             selected_image = available.pop()
         except:
@@ -226,7 +226,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
             model.model.load_state_dict(torch.load(model_path))
         else: 
             df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
-            train_annotations = select(df)
+            train_annotations = select(df, 1000)
             model = fit(model, train_annotations, comet_logger)
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
@@ -250,35 +250,35 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
 
     for i in range(5):
         try:
-            image_save_dir = "{}/{}_random_{}.pt".format(savedir, dataset, i)
+            image_save_dir = "{}/{}_random_{}".format(savedir, dataset, i)
             os.mkdir(image_save_dir)
         except Exception as e:
             print(e)
             
-        model_path = "{}/{}_random_{}.pt".format(savedir, dataset,i)
-        #Load DOTA
-        train_df = pd.read_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
-        label_dict = {x: index for index, x in enumerate(train_df.label.unique())}    
-        pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
-        model = BirdDetector(transforms = get_transform)
-        
-        #update backbone weights with new Retinanet head
-        model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
-        model.config = config
-        
+        model_path = "{}/{}_random_{}.pt".format(savedir, dataset,i)        
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
         else: 
-            df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
-            train_annotations = select(df)
+            #Load DOTA
+            train_df = pd.read_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
+            label_dict = {x: index for index, x in enumerate(train_df.label.unique())}    
+            pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
+            model = BirdDetector(transforms = get_transform)
+            
+            #update backbone weights with new Retinanet head
+            model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
+            model.config = config            
+            df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))   
+            n=1000
+            train_annotations = select(df, n)
             model = fit(model, train_annotations, comet_logger)
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
         finetune_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=image_save_dir)
         if comet_logger is not None:
-            comet_logger.experiment.log_metric("RandomWeight 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
-            comet_logger.experiment.log_metric("RandomWeight 1000 {} Box Precision - Iteration {}".format(dataset, i),finetune_results["box_precision"])
+            comet_logger.experiment.log_metric("RandomWeight {} {} Box Recall - Iteration {}".format(n, dataset, i),finetune_results["box_recall"])
+            comet_logger.experiment.log_metric("RandomWeight {} {} Box Precision - Iteration {}".format(n, dataset, i),finetune_results["box_precision"])
         min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Iteration":[i],"Model":["RandomWeight"]}))
         del model
         torch.cuda.empty_cache()
