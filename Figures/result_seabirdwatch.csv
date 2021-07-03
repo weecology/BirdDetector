@@ -1,8 +1,13 @@
 ,test_set,Recall,Precision,Model,Iteration
-0,seabirdwatch,0.8359751702253235,0.7612761115581863,Zero Shot,
-0,seabirdwatch,0.808525709013391,0.8781410645291063,Fine Tune,
-0,seabirdwatch,0.7925523477241503,0.766243304285314,Min Annotation,0.0
-0,seabirdwatch,0.7799764857223209,0.8242777121782675,Min Annotation,1.0
-0,seabirdwatch,0.7887367375371676,0.8376096599182016,Min Annotation,2.0
-0,seabirdwatch,0.8365849099504977,0.7077447742406174,Min Annotation,3.0
-0,seabirdwatch,0.8063182981002712,0.7622535820942568,Min Annotation,4.0
+0,seabirdwatch,0.5322113887653517,0.6855347302042697,Zero Shot,
+0,seabirdwatch,0.7309619914220109,0.832936091822234,Fine Tune,
+0,seabirdwatch,0.6908248780739404,0.6624806322626808,Min Annotation,0.0
+0,seabirdwatch,0.6912561756837088,0.6405994509982285,Min Annotation,1.0
+0,seabirdwatch,0.6787800490782102,0.7090843794028017,Min Annotation,2.0
+0,seabirdwatch,0.6093136847688675,0.7698678531762296,Min Annotation,3.0
+0,seabirdwatch,0.6563025220314683,0.7143804009731233,Min Annotation,4.0
+0,seabirdwatch,0.0,0.0,RandomWeight,0.0
+0,seabirdwatch,0.0,0.0,RandomWeight,1.0
+0,seabirdwatch,0.0,0.0,RandomWeight,2.0
+0,seabirdwatch,0.0,0.0,RandomWeight,3.0
+0,seabirdwatch,0.0,0.0,RandomWeight,4.0
