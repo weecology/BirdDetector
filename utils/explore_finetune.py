@@ -5,12 +5,12 @@ from deepforest import main
 import pandas as pd
 import random
 
-def select(df):
+def select(df, n):
     selected_annotations = []
     count = 0
     available = list(df.image_path.unique())
     random.shuffle(available)
-    while count < 1000:
+    while count < n:
         try:
             selected_image = available.pop()
         except:
@@ -22,14 +22,14 @@ def select(df):
     
     return train_annotations
 
-#comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
-#comet_logger.experiment.add_tag("fine tune")
+comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
+comet_logger.experiment.add_tag("fine tune")
 train_df = pd.read_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
 label_dict = {x: index for index, x in enumerate(train_df.label.unique())}    
 pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
 model = main.deepforest()
 model.label_dict = {"Bird": 0}
-#model.create_trainer(logger=comet_logger)
+model.create_trainer(logger=comet_logger)
 model.create_trainer()
 
 df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/monash_train.csv")
