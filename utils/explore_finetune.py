@@ -33,7 +33,7 @@ model.create_trainer(logger=comet_logger)
 model.create_trainer()
 
 df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/monash_train.csv")
-selected_df = select(df)
+selected_df = select(df, 1000)
 selected_df.to_csv("/orange/ewhite/b.weinstein/generalization/crops/finetune_example.csv")
 
 model.config["train"]["csv_file"] = "/orange/ewhite/b.weinstein/generalization/crops/finetune_example.csv"
