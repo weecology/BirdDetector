@@ -29,8 +29,6 @@ label_dict = {x: index for index, x in enumerate(train_df.label.unique())}
 pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
 model = main.deepforest()
 model.label_dict = {"Bird": 0}
-model.create_trainer(logger=comet_logger)
-model.create_trainer()
 
 df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/monash_train.csv")
 selected_df = select(df, 1000)
@@ -41,6 +39,7 @@ model.config["validation"]["csv_file"] = "/orange/ewhite/b.weinstein/generalizat
 model.config["validation"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
 model.config["train"]["root_dir"] = "/orange/ewhite/b.weinstein/generalization/crops/"
 
+model.create_trainer(logger=comet_logger)
 test_results = model.evaluate(csv_file="/orange/ewhite/b.weinstein/generalization/crops/monash_test.csv", root_dir="/orange/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
 
 print("Original Recall is {}".format(test_results["box_recall"]))
