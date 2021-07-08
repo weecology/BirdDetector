@@ -244,7 +244,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
     
     return min_annotation_results
 
-def mini_random_weights(dataset, comet_logger, config, savedir):
+def mini_random_weights(dataset, comet_logger, config, savedir, n=1000):
     #Fine tuning, up to 1000 birds from train
     min_annotation_results = []
 
@@ -271,8 +271,8 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
             model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
             model.config = config            
         
-        df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))   
-        train_annotations = select(df, 1000)
+        df = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))  
+        train_annotations = select(df, n)
         model = fit(model, train_annotations, comet_logger)
         if savedir:
             if not model.config["train"]["fast_dev_run"]:
