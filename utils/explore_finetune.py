@@ -54,7 +54,7 @@ print("Original Precision is {}".format(test_results["box_precision"]))
 model.trainer.fit(model)
 
 test_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/newmexico_test.csv",
-                              root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
+                              root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=tempdir)
 
 print("Fine tune Recall is {}".format(test_results["box_recall"]))
 print("Fine tune Precision is {}".format(test_results["box_precision"]))
