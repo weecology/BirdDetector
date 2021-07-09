@@ -40,7 +40,7 @@ model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalizatio
 model.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
 model.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
 
-model.create_trainer(logger=comet_logger, DDPPlugin(find_unused_parameters=False))
+model.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))
 test_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/palmyra_test.csv", root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
 
 print("Original Recall is {}".format(test_results["box_recall"]))
