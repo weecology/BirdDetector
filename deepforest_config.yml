@@ -9,7 +9,7 @@ batch_size: 4
 
 #Non-max supression of overlapping predictions
 nms_thresh: 0.2
-score_thresh: 0.2
+score_thresh: 0.05
 
 train:
     csv_file:
