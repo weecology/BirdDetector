@@ -2,8 +2,8 @@
 
 #cpu workers for data loaders
 #Dataloaders
-workers: 8
-gpus: 3
+workers: 10
+gpus: 2
 distributed_backend: ddp
 batch_size: 4
 
@@ -16,10 +16,10 @@ train:
     root_dir:
     
     #Optomizer  initial learning rate
-    lr: 0.001
+    lr: 0.005
 
     #Print loss every n epochs
-    epochs: 10
+    epochs: 50
     #Useful debugging flag in pytorch lightning, set to True to get a single batch of training to test settings.
     fast_dev_run: False
     
