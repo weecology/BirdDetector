@@ -255,6 +255,8 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
         model_path = "{}/{}_random_{}.pt".format(savedir, dataset,i)
         model = BirdDetector(transforms = deepforest_transform)   
         model.config = config
+        model.config["train"]["epochs"] = 15
+        model.config["train"]["lr"] = 0.005
         
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
@@ -269,7 +271,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
         if comet_logger is not None:
             comet_logger.experiment.log_metric("Random Weight 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
             comet_logger.experiment.log_metric("Random Weight 1000 {} Box Precision - Iteration {}".format(dataset, i),finetune_results["box_precision"])
-        min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Iteration":[i],"Model":["RandonWeight"]}))
+        min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Iteration":[i],"Model":["RandomWeight"]}))
         del model
         torch.cuda.empty_cache()
         gc.collect()
