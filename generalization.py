@@ -247,7 +247,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
     min_annotation_results = []
     for i in range(5):
         try:
-            image_save_dir = "{}/{}_random_{}.pt".format(savedir, dataset, i)
+            image_save_dir = "{}/{}_random_{}".format(savedir, dataset, i)
             os.mkdir(image_save_dir)
         except Exception as e:
             print(e)
