@@ -6,8 +6,8 @@
 0,USGS,1.0,0.8678189482209582,Min Annotation,2.0
 0,USGS,1.0,0.8315865039483129,Min Annotation,3.0
 0,USGS,1.0,0.7461952620244079,Min Annotation,4.0
-0,USGS,0.0,0.0,RandonWeight,0.0
-0,USGS,0.0,0.0,RandonWeight,1.0
-0,USGS,0.0,0.0,RandonWeight,2.0
-0,USGS,0.0,0.0,RandonWeight,3.0
-0,USGS,0.0,0.0,RandonWeight,4.0
+0,USGS,0.0,0.0,RandomWeight,0.0
+0,USGS,0.0,0.0,RandomWeight,1.0
+0,USGS,0.8676716917922948,0.586111111111111,RandomWeight,2.0
+0,USGS,0.0,0.0,RandomWeight,3.0
+0,USGS,0.8768844221105527,0.44570004070004077,RandomWeight,4.0
