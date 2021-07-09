@@ -5,6 +5,10 @@ from pytorch_lightning.plugins import DDPPlugin
 from deepforest import main
 import pandas as pd
 import random
+import glob
+import tempfile
+
+tempdir = tempfile.gettempdir()
 
 def select(df, n):
     selected_annotations = []
@@ -41,7 +45,7 @@ model.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalizatio
 model.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
 
 model.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))
-test_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/newmexico_test.csv", root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25)
+test_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/newmexico_test.csv", root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=tempdir)
 
 print("Original Recall is {}".format(test_results["box_recall"]))
 print("Original Precision is {}".format(test_results["box_precision"]))
@@ -54,3 +58,6 @@ test_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/
 
 print("Fine tune Recall is {}".format(test_results["box_recall"]))
 print("Fine tune Precision is {}".format(test_results["box_precision"]))
+
+for x in glob.glob("{}/*.png".format(tempdir)):
+    comet_logger.experiment.log_image(x, image_scale=0.25)
