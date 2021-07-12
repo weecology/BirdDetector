@@ -840,7 +840,7 @@ def prepare_poland(generate):
         
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/poland/train_images.csv",
-                                                path_to_raster="/blue/ewhite/b.weinstein/poland/Imagery/{}".format(x),
+                                                path_to_raster="/blue/ewhite/b.weinstein/poland/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
                                                 allow_empty=False,
                                                 patch_size=800)
