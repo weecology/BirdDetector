@@ -138,9 +138,10 @@ def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
     train_df = pd.read_csv("/blue/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
     label_dict = {x: index for index, x in enumerate(train_df.label.unique())}    
     pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
-    model = BirdDetector(transforms = get_transform)
+    pretrained_DOTA.load_state_dict(torch.load("/orange/ewhite/b.weinstein/AerialDetection/snapshots/20210530_233702/DOTA.pl")["state_dict"])
     
     #update backbone weights with new Retinanet head
+    model = BirdDetector(transforms = get_transform)    
     model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
     model.config = config
     model_path = "{}/{}_zeroshot.pt".format(savedir,test_sets[0])
@@ -252,16 +253,23 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
             os.mkdir(image_save_dir)
         except Exception as e:
             print(e)
-            
-        model_path = "{}/{}_random_{}.pt".format(savedir, dataset,i)
-        model = BirdDetector(transforms = deepforest_transform)   
-        model.config = config
-        model.config["train"]["epochs"] = 15
-        model.config["train"]["lr"] = 0.005
         
+        model_path = "{}/{}_random_{}.pt".format(savedir, dataset,i)        
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
         else: 
+            train_df = pd.read_csv("/blue/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
+            label_dict = {x: index for index, x in enumerate(train_df.label.unique())}    
+            pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
+            pretrained_DOTA.load_state_dict(torch.load("/orange/ewhite/b.weinstein/AerialDetection/snapshots/20210530_233702/DOTA.pl")["state_dict"])
+                    
+            #update backbone weights with new Retinanet head
+            model = BirdDetector(transforms = deepforest_transform)           
+            model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
+            model.config = config
+            model.config["train"]["epochs"] = 15
+            model.config["train"]["lr"] = 0.005
+            
             df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
             train_annotations = select(df, 1000)
             model = fit(model, train_annotations, comet_logger)
