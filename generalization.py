@@ -267,7 +267,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
             model = BirdDetector(transforms = deepforest_transform)           
             model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
             model.config = config
-            model.config["train"]["epochs"] = 15
+            model.config["train"]["epochs"] = 30
             model.config["train"]["lr"] = 0.005
             
             df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
