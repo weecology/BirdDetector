@@ -3,7 +3,7 @@ from generalization import *
 comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-savedir = "/orange/ewhite/b.weinstein/generalization/snapshots/"
+savedir = "/blue/ewhite/b.weinstein/generalization/snapshots/"
 
 model = BirdDetector(transforms=get_transform)
 config = model.config
@@ -41,19 +41,19 @@ train_annotations["ymax"] = train_annotations["ymax"].astype(float) - 3
 
 train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
 train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
-train_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/training_annotations.csv")
+train_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations.csv")
 
 all_val_sets = []
 for x in test_sets:
     df = pd.read_csv(path_dict[x]["test"])
     all_val_sets.append(df)
 test_annotations = pd.concat(all_val_sets)
-test_annotations.to_csv("/orange/ewhite/b.weinstein/generalization/crops/test_annotations.csv")
+test_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops/test_annotations.csv")
 
 comet_logger.experiment.log_parameter("training_images",len(train_annotations.image_path.unique()))
 comet_logger.experiment.log_parameter("training_annotations",train_annotations.shape[0])
 
-train_df = pd.read_csv("/orange/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
+train_df = pd.read_csv("/blue/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
 label_dict = {x: index for index, x in enumerate(train_df.label.unique())}    
 pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
 model = BirdDetector(transforms = get_transform)
@@ -62,4 +62,4 @@ model = BirdDetector(transforms = get_transform)
 model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
 model.config = config
 model = fit(model, train_annotations, comet_logger)
-torch.save(model.model.state_dict(),"/orange/ewhite/b.weinstein/generalization/snapshots/combined.pt")
+torch.save(model.model.state_dict(),"/blue/ewhite/b.weinstein/generalization/snapshots/combined.pt")
