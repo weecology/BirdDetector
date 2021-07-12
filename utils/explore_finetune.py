@@ -40,7 +40,6 @@ pretrained_DOTA.load_state_dict(torch.load("/orange/ewhite/b.weinstein/AerialDet
 #update backbone weights with new Retinanet head
 model = main.deepforest(label_dict={"Bird":0})          
 model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
-model.config = config
 model.config["train"]["epochs"] = 15
 model.config["train"]["lr"] = 0.005
 
