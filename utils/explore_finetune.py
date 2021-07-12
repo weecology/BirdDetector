@@ -7,6 +7,7 @@ import pandas as pd
 import random
 import glob
 import tempfile
+import torch
 
 tempdir = tempfile.gettempdir()
 
