@@ -12,7 +12,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 savedir = "/blue/ewhite/b.weinstein/generalization/{}/".format(timestamp)
-comet_logger.experiment("timestamp",timestamp)
+comet_logger.experiment.log_parameter("timestamp",timestamp)
 
 model = BirdDetector(transforms=get_transform)
 config = model.config
