@@ -211,7 +211,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
     min_annotation_results = []
     for i in range(5):
         try:
-            image_save_dir = "{}/{}_mini_{}.pt".format(savedir, dataset, i)
+            image_save_dir = "{}/{}_mini_{}".format(savedir, dataset, i)
             os.mkdir(image_save_dir)
         except Exception as e:
             print(e)
