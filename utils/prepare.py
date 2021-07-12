@@ -821,24 +821,22 @@ def prepare_poland(generate):
     train_path = "/blue/ewhite/b.weinstein/generalization/crops/poland_train.csv"
     
     if generate:   
+        train_annotations = []        
         client = start_cluster.start(cpus=5)
-        files = glob.glob("/blue/ewhite/b.weinstein/poland/*.shp") 
         for x in files:
-            gdf = gpd.read_file()
-            gdf["image_path"] = "{}.jpg".format(os.path.splitext(os.path.basename(x))[0])
-        train_annotations = []
-        
-        for name, group in train_gdf.groupby("image_path"):
-            df = group.geometry.bounds
+            df = gpd.read_file(x)
+            df["image_path"] = "{}.jpg".format(os.path.splitext(os.path.basename(x))[0])
+            df = df.geometry.bounds
             df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
             df["label"] = "Bird"
             df = df[~(df.xmin >= df.xmax)]
             df = df[~(df.ymin >= df.ymax)]            
-            df["image_path"] = name        
             train_annotations.append(df)
-        
+            
         train_annotations = pd.concat(train_annotations)
         train_annotations.to_csv("/blue/ewhite/b.weinstein/poland/train_images.csv")
+        
+        files = glob.glob("/blue/ewhite/b.weinstein/poland/*.shp") 
         
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/poland/train_images.csv",
@@ -860,6 +858,7 @@ def prepare_poland(generate):
                         
         crop_annotations = pd.concat(crop_annotations)
         crop_annotations.to_csv(train_path)
+        
     return {"train":train_path}
 
 def prepare():
