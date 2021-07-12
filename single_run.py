@@ -9,7 +9,10 @@ print("Running {}".format(args.dataset))
 comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-savedir = "/blue/ewhite/b.weinstein/generalization/snapshots/"
+
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+savedir = "/blue/ewhite/b.weinstein/generalization/{}/".format(timestamp)
+comet_logger.experiment("timestamp",timestamp)
 
 model = BirdDetector(transforms=get_transform)
 config = model.config
