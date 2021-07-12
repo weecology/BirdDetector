@@ -8,6 +8,7 @@ import random
 import glob
 import tempfile
 import torch
+from deepforest.model import create_model
 
 tempdir = tempfile.gettempdir()
 
