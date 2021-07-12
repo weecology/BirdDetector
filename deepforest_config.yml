@@ -3,7 +3,7 @@
 #cpu workers for data loaders
 #Dataloaders
 workers: 5
-gpus: 2
+gpus: 4
 distributed_backend: ddp
 batch_size: 6
 
@@ -19,7 +19,7 @@ train:
     lr: 0.005
 
     #Print loss every n epochs
-    epochs: 30
+    epochs: 10
     #Useful debugging flag in pytorch lightning, set to True to get a single batch of training to test settings.
     fast_dev_run: False
     
