@@ -823,6 +823,7 @@ def prepare_poland(generate):
     if generate:   
         train_annotations = []        
         client = start_cluster.start(cpus=5)
+        files = glob.glob("/blue/ewhite/b.weinstein/poland/*.shp")         
         for x in files:
             df = gpd.read_file(x)
             df["image_path"] = "{}.jpg".format(os.path.splitext(os.path.basename(x))[0])
@@ -836,7 +837,6 @@ def prepare_poland(generate):
         train_annotations = pd.concat(train_annotations)
         train_annotations.to_csv("/blue/ewhite/b.weinstein/poland/train_images.csv")
         
-        files = glob.glob("/blue/ewhite/b.weinstein/poland/*.shp") 
         
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/poland/train_images.csv",
