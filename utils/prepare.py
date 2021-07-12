@@ -825,13 +825,8 @@ def prepare_poland(generate):
         client = start_cluster.start(cpus=5)
         files = glob.glob("/blue/ewhite/b.weinstein/poland/*.shp")         
         for x in files:
-            df = gpd.read_file(x)
-            df = df.geometry.bounds
-            df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
-            df["label"] = "Bird"
-            df = df[~(df.xmin >= df.xmax)]
-            df = df[~(df.ymin >= df.ymax)]   
-            df["image_path"] = "{}.jpg".format(os.path.splitext(os.path.basename(x))[0])            
+            img_name = "{}.jpg".format(os.path.splitext(x)[0])
+            df = shapefile_to_annotations(shapefile=x, rgb=img_name, box_points=False, buffer_size=15)
             train_annotations.append(df)
             
         train_annotations = pd.concat(train_annotations)
