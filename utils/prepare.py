@@ -816,7 +816,52 @@ def prepare_cros(generate):
         train_annotations.to_csv(train_path)
         
     return {"train":train_path}
+
+def prepare_poland(generate):
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops/poland_train.csv"
+    
+    if generate:   
+        client = start_cluster.start(cpus=5)
+        files = glob.glob("/blue/ewhite/b.weinstein/poland/*.shp") 
+        for x in files:
+            gdf = gpd.read_file()
+            gdf["image_path"] = "{}.jpg".format(os.path.splitext(os.path.basename(x))[0])
+        train_annotations = []
         
+        for name, group in train_gdf.groupby("image_path"):
+            df = group.geometry.bounds
+            df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
+            df["label"] = "Bird"
+            df = df[~(df.xmin >= df.xmax)]
+            df = df[~(df.ymin >= df.ymax)]            
+            df["image_path"] = name        
+            train_annotations.append(df)
+        
+        train_annotations = pd.concat(train_annotations)
+        train_annotations.to_csv("/blue/ewhite/b.weinstein/poland/train_images.csv")
+        
+        def cut(x):
+            result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/poland/train_images.csv",
+                                                path_to_raster="/blue/ewhite/b.weinstein/poland/Imagery/{}".format(x),
+                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+                                                allow_empty=False,
+                                                patch_size=800)
+            return result
+
+        #Split into crops
+        crop_annotations = []
+        futures = client.map(cut, train_annotations.image_path.unique())
+        for x in futures:
+            try:
+                crop_annotations.append(x.result())
+            except Exception as e:
+                print(e)
+                pass
+                        
+        crop_annotations = pd.concat(crop_annotations)
+        crop_annotations.to_csv(train_path)
+    return {"train":train_path}
+
 def prepare():
     paths = {}
     paths["terns"] = prepare_terns(generate=False)
@@ -836,5 +881,6 @@ def prepare():
     paths["newmexico"] = prepare_newmexico(generate=False)
     paths["valle"] = prepare_valle(generate=False)
     #paths["cros"] = prepare_cros(generate=True)
+    paths["poland"] = prepare_poland(generate=True)
     
     return paths
