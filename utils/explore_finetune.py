@@ -30,8 +30,17 @@ def select(df, n):
 comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
 comet_logger.experiment.add_tag("fine tune")
 
-model = main.deepforest()
-model.label_dict = {"Bird": 0}
+train_df = pd.read_csv("/blue/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
+label_dict = {x: index for index, x in enumerate(train_df.label.unique())}    
+pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
+pretrained_DOTA.load_state_dict(torch.load("/orange/ewhite/b.weinstein/AerialDetection/snapshots/20210530_233702/DOTA.pl")["state_dict"])
+        
+#update backbone weights with new Retinanet head
+model = main.deepforest(label_dict={"Bird":0})          
+model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
+model.config = config
+model.config["train"]["epochs"] = 15
+model.config["train"]["lr"] = 0.005
 
 df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/hayes_train.csv")
 selected_df = select(df, 1000)
