@@ -826,12 +826,12 @@ def prepare_poland(generate):
         files = glob.glob("/blue/ewhite/b.weinstein/poland/*.shp")         
         for x in files:
             df = gpd.read_file(x)
-            df["image_path"] = "{}.jpg".format(os.path.splitext(os.path.basename(x))[0])
             df = df.geometry.bounds
             df = df.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})    
             df["label"] = "Bird"
             df = df[~(df.xmin >= df.xmax)]
-            df = df[~(df.ymin >= df.ymax)]            
+            df = df[~(df.ymin >= df.ymax)]   
+            df["image_path"] = "{}.jpg".format(os.path.splitext(os.path.basename(x))[0])            
             train_annotations.append(df)
             
         train_annotations = pd.concat(train_annotations)
