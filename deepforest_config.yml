@@ -2,7 +2,7 @@
 
 #cpu workers for data loaders
 #Dataloaders
-workers: 8
+workers: 15
 gpus: 3
 distributed_backend: ddp
 batch_size: 5
@@ -16,7 +16,7 @@ train:
     root_dir:
     
     #Optomizer  initial learning rate
-    lr: 0.005
+    lr: 0.001
 
     #Print loss every n epochs
     epochs: 10
