@@ -16,7 +16,7 @@ comet_logger.experiment.log_parameters(model.config)
 view_training(path_dict, comet_logger=comet_logger)
 
 #Train Models
-train_sets = ["seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","palmyra","mckellar","monash","everglades","murres","schedl","valle"]
+train_sets = ["seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","palmyra","mckellar","monash","everglades","murres","schedl","valle","poland"]
 test_sets =["palmyra"]
 all_sets = []
 print("Train sets: {}".format(train_sets))

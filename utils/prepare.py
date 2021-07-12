@@ -875,6 +875,6 @@ def prepare():
     paths["newmexico"] = prepare_newmexico(generate=False)
     paths["valle"] = prepare_valle(generate=False)
     #paths["cros"] = prepare_cros(generate=True)
-    paths["poland"] = prepare_poland(generate=True)
+    paths["poland"] = prepare_poland(generate=False)
     
     return paths
