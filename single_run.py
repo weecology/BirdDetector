@@ -11,12 +11,12 @@ comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_out
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-savedir = "/blue/ewhite/b.weinstein/generalization/{}/".format(timestamp)
+savedir = "/blue/ewhite/b.weinstein/generalization/snapshots/"
 try:
     os.mkdir(savedir)
 except:
     pass
-comet_logger.experiment.log_parameter("timestamp",timestamp)
+
 
 model = BirdDetector(transforms=get_transform)
 config = model.config
