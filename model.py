@@ -59,7 +59,7 @@ class BirdDataset(Dataset):
         return len(self.image_names)
 
     def __getitem__(self, idx):
-        img_name = os.path.join(self.root_dir, self.image_names[idx])
+        img_name = os.path.join(self.root_dir, str(self.image_names[idx]))
         #read, scale and set to float
         image = np.array(Image.open(img_name).convert("RGB"))/255
         image = image.astype("float32")
