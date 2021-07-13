@@ -465,7 +465,7 @@ def prepare_USGS(generate=True):
         df.label = "Bird"
         df = df[~(df.xmin >= df.xmax)]
         df = df[~(df.ymin >= df.ymax)]
-        
+        df = df[["xmin","ymin","xmax","ymax","image_path","label"]]
         #pad the edges by a few pixels
         df = check_shape(df)
                 
