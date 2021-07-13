@@ -57,6 +57,7 @@ def view_training(paths,comet_logger, n=10):
 
 def fit(model, train_annotations, comet_logger):
     #Give it a unique timestamp
+    sleep(random.randint(0,10))
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
     train_annotations["xmax"] = train_annotations["xmax"].astype(float)
