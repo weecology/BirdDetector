@@ -826,7 +826,7 @@ def prepare_poland(generate):
         files = glob.glob("/blue/ewhite/b.weinstein/poland/*.shp")         
         for x in files:
             img_name = "{}.jpg".format(os.path.splitext(x)[0])
-            df = shapefile_to_annotations(shapefile=x, rgb=img_name, box_points=False, buffer_size=15)
+            df = shapefile_to_annotations(shapefile=x, rgb=img_name, box_points=False, buffer_size=20)
             train_annotations.append(df)
             
         train_annotations = pd.concat(train_annotations)
@@ -838,7 +838,7 @@ def prepare_poland(generate):
                                                 path_to_raster="/blue/ewhite/b.weinstein/poland/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
                                                 allow_empty=False,
-                                                patch_size=1200)
+                                                patch_size=1300)
             return result
 
         #Split into crops
