@@ -255,6 +255,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
         except Exception as e:
             print(e)
         
+        model = BirdDetector(transforms = deepforest_transform)                   
         model_path = "{}/{}_random_{}.pt".format(savedir, dataset,i)        
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
@@ -265,7 +266,6 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
             #pretrained_DOTA.load_state_dict(torch.load("/orange/ewhite/b.weinstein/AerialDetection/snapshots/20210530_233702/DOTA.pl")["state_dict"])
                     
             #update backbone weights with new Retinanet head
-            model = BirdDetector(transforms = deepforest_transform)           
             #model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
             model.config = config
             model.config["train"]["epochs"] = 30
