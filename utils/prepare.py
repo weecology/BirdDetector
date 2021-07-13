@@ -873,8 +873,8 @@ def prepare():
     paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
     paths["neill"] = prepare_neill(generate=False)
     paths["newmexico"] = prepare_newmexico(generate=False)
-    paths["valle"] = prepare_valle(generate=True)
-    #paths["cros"] = prepare_cros(generate=True)
-    paths["poland"] = prepare_poland(generate=True)
+    paths["valle"] = prepare_valle(generate=False)
+    #paths["cros"] = prepare_cros(generate=False)
+    paths["poland"] = prepare_poland(generate=False)
     
     return paths
