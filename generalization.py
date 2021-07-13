@@ -65,6 +65,7 @@ def fit(model, train_annotations, comet_logger):
     
     train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
     train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
+    train_annotations = train_annotations[["xmin","ymin","xmax","ymax","label","image_path"]]
     comet_logger.experiment.log_parameter("Training_data","/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(timestamp))
     train_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(timestamp))    
 
