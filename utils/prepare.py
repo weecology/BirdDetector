@@ -276,13 +276,13 @@ def prepare_valle(generate=True):
     train_path = "/blue/ewhite/b.weinstein/generalization/crops/valle_train.csv"
     if generate:   
         df = shapefile_to_annotations(shapefile="/blue/ewhite/b.weinstein/valle/terns_italy.shp",
-                                      rgb="/blue/ewhite/b.weinstein/valle/terns_italy.png", buffer_size=15)
+                                      rgb="/blue/ewhite/b.weinstein/valle/terns_italy.png", buffer_size=5)
         df.to_csv("/blue/ewhite/b.weinstein/valle/terns_italy.csv")
         
         annotations = preprocess.split_raster(
             path_to_raster="/blue/ewhite/b.weinstein/valle/terns_italy.png",
             annotations_file="/blue/ewhite/b.weinstein/valle/terns_italy.csv",
-            patch_size=800,
+            patch_size=600,
             patch_overlap=0,
             base_dir="/blue/ewhite/b.weinstein/generalization/crops",
             allow_empty=False
@@ -838,7 +838,7 @@ def prepare_poland(generate):
                                                 path_to_raster="/blue/ewhite/b.weinstein/poland/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
                                                 allow_empty=False,
-                                                patch_size=800)
+                                                patch_size=1200)
             return result
 
         #Split into crops
@@ -867,14 +867,14 @@ def prepare():
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
     paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=False)
+    paths["USGS"] = prepare_USGS(generate=True)
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
     paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
     paths["neill"] = prepare_neill(generate=False)
     paths["newmexico"] = prepare_newmexico(generate=False)
-    paths["valle"] = prepare_valle(generate=False)
+    paths["valle"] = prepare_valle(generate=True)
     #paths["cros"] = prepare_cros(generate=True)
-    paths["poland"] = prepare_poland(generate=False)
+    paths["poland"] = prepare_poland(generate=True)
     
     return paths
