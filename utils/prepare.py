@@ -867,14 +867,14 @@ def prepare():
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
     paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=True)
+    paths["USGS"] = prepare_USGS(generate=False)
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
     paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
     paths["neill"] = prepare_neill(generate=False)
     paths["newmexico"] = prepare_newmexico(generate=False)
-    paths["valle"] = prepare_valle(generate=True)
-    #paths["cros"] = prepare_cros(generate=True)
-    paths["poland"] = prepare_poland(generate=True)
+    paths["valle"] = prepare_valle(generate=False)
+    #paths["cros"] = prepare_cros(generate=False)
+    paths["poland"] = prepare_poland(generate=False)
     
     return paths
