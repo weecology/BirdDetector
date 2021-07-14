@@ -5,7 +5,7 @@
 workers: 8
 gpus: 2
 distributed_backend: ddp
-batch_size: 4
+batch_size: 16
 
 #Non-max supression of overlapping predictions
 nms_thresh: 0.2
