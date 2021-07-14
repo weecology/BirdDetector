@@ -55,10 +55,8 @@ def view_training(paths,comet_logger, n=10):
                     print(e)
                     continue
 
-def fit(model, train_annotations, comet_logger):
+def fit(model, train_annotations, comet_logger, name):
     #Give it a unique timestamp
-    sleep(random.randint(0,10))
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
     train_annotations["xmax"] = train_annotations["xmax"].astype(float)
     train_annotations["ymin"] = train_annotations["ymin"].astype(float)
@@ -67,10 +65,10 @@ def fit(model, train_annotations, comet_logger):
     train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
     train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
     train_annotations = train_annotations[["xmin","ymin","xmax","ymax","label","image_path"]]
-    comet_logger.experiment.log_parameter("Training_data","/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(timestamp))
-    train_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(timestamp))    
+    comet_logger.experiment.log_parameter("Training_data","/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(name))
+    train_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(name))    
 
-    model.config["train"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(timestamp)
+    model.config["train"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(name)
     model.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
     model.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))        
     model.trainer.fit(model)
@@ -152,7 +150,7 @@ def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
         print("loading {}".format(model_path))
         model.model.load_state_dict(torch.load(model_path))
     else:
-        model = fit(model, train_annotations, comet_logger)
+        model = fit(model, train_annotations, comet_logger, name = "{}_zeroshot".format(test_sets[0]))
         if savedir:
             if not model.config["train"]["fast_dev_run"]:
                 torch.save(model.model.state_dict(),model_path)            
@@ -192,7 +190,7 @@ def fine_tune(dataset, comet_logger, savedir, config):
     if os.path.exists(model_path):
         model.model.load_state_dict(torch.load(model_path))
     else:
-        model = fit(model, train_annotations, comet_logger)
+        model = fit(model, train_annotations, comet_logger, "{}_finetune".format(dataset))
         if savedir:
             if not model.config["train"]["fast_dev_run"]:
                 torch.save(model.model.state_dict(),model_path)            
@@ -229,7 +227,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
         else: 
             df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
             train_annotations = select(df, 1000)
-            model = fit(model, train_annotations, comet_logger)
+            model = fit(model, train_annotations, comet_logger, "mini_fine_tune_{}".format(dataset))
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
@@ -274,7 +272,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
             
             df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
             train_annotations = select(df, 1000)
-            model = fit(model, train_annotations, comet_logger)
+            model = fit(model, train_annotations, comet_logger,"random_{}".format(dataset))
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
