@@ -26,7 +26,7 @@ def get_transform(augment):
     """Custom albumentations transformation of bounding boxs"""
     if augment:
         transform = A.Compose([
-            A.PadIfNeeded(1000,1000, border_mode=cv2.BORDER_CONSTANT, value=0),
+            #A.PadIfNeeded(1000,1000, border_mode=cv2.BORDER_CONSTANT, value=0),
             #RandomSizedBBoxSafeCrop(height=1000,width=1000,erosion_rate=1,p=1),
             A.Flip(p=0.5),
             A.RandomBrightnessContrast(),

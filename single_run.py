@@ -11,8 +11,8 @@ comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_out
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-savedir = "/blue/ewhite/b.weinstein/generalization/snapshots/"
-#savedir = "/blue/ewhite/b.weinstein/generalization/{}/".format(timestamp)
+#savedir = "/blue/ewhite/b.weinstein/generalization/snapshots/"
+savedir = "/blue/ewhite/b.weinstein/generalization/{}/".format(timestamp)
 comet_logger.experiment.log_parameter("savedir",savedir)
 try:
     os.mkdir(savedir)
@@ -28,7 +28,7 @@ path_dict = prepare()
 #Log commit
 comet_logger.experiment.log_parameter("commit hash",subprocess.check_output(['git', 'rev-parse', 'HEAD']).decode('ascii').strip())
 comet_logger.experiment.log_parameters(model.config)
-view_training(path_dict, comet_logger=comet_logger)
+#view_training(path_dict, comet_logger=comet_logger)
 
 #Train Models
 train_list = ["newmexico","seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","palmyra","mckellar","monash","everglades","murres","valle","poland"]
