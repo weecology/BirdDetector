@@ -2,10 +2,10 @@
 
 #cpu workers for data loaders
 #Dataloaders
-workers: 8
+workers: 10
 gpus: 2
 distributed_backend: ddp
-batch_size: 16
+batch_size: 24
 
 #Non-max supression of overlapping predictions
 nms_thresh: 0.2
