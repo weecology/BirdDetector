@@ -1,13 +1,13 @@
 ,test_set,Recall,Precision,Model,Iteration
-0,mckellar,0.6542553191489362,0.1343700005206187,Zero Shot,
-0,mckellar,0.7056737588652482,0.5685425685425686,Fine Tune,
-0,mckellar,0.6968085106382979,0.5483044733044733,Min Annotation,0.0
-0,mckellar,0.675531914893617,0.5096590909090909,Min Annotation,1.0
-0,mckellar,0.6968085106382979,0.5668050941306755,Min Annotation,2.0
-0,mckellar,0.6826241134751772,0.5284958427815571,Min Annotation,3.0
-0,mckellar,0.6826241134751772,0.5137135474344776,Min Annotation,4.0
+0,mckellar,0.4,0.190707671957672,Zero Shot,
+0,mckellar,0.7,0.6063953488372092,Fine Tune,
+0,mckellar,0.68,0.5076135105204873,Min Annotation,0.0
+0,mckellar,0.68,0.48077242524916947,Min Annotation,1.0
+0,mckellar,0.68,0.5698863636363637,Min Annotation,2.0
+0,mckellar,0.68,0.5461710124500823,Min Annotation,3.0
+0,mckellar,0.69,0.570070562512423,Min Annotation,4.0
 0,mckellar,0.0,0.0,RandomWeight,0.0
-0,mckellar,0.7092198581560283,0.2860212920162858,RandomWeight,1.0
-0,mckellar,0.1453900709219858,0.38431372549019605,RandomWeight,2.0
-0,mckellar,0.7709219858156029,0.3735124778603039,RandomWeight,3.0
+0,mckellar,0.0,0.0,RandomWeight,1.0
+0,mckellar,0.67,0.655,RandomWeight,2.0
+0,mckellar,0.56,0.7043114543114544,RandomWeight,3.0
 0,mckellar,0.0,0.0,RandomWeight,4.0
