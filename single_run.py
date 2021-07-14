@@ -31,8 +31,8 @@ comet_logger.experiment.log_parameters(model.config)
 view_training(path_dict, comet_logger=comet_logger)
 
 #Train Models
-#train_list = ["newmexico","seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","palmyra","mckellar","monash","everglades","murres","valle","poland"]
-train_list = ["seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","mckellar","monash","everglades"]
+train_list = ["newmexico","seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","palmyra","mckellar","monash","everglades","murres","valle","poland"]
+#train_list = ["seabirdwatch","neill","USGS","hayes","terns","penguins","pfeifer","mckellar","monash","everglades"]
 train_sets = [y for y in train_list if not y==args.dataset]
 test_sets =[args.dataset]
 result = run(path_dict=path_dict,
