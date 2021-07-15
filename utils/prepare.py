@@ -825,7 +825,7 @@ def prepare_poland(generate):
         client = start_cluster.start(cpus=5)
         files = glob.glob("/blue/ewhite/b.weinstein/poland/annotations/*.shp")         
         for x in files:
-            img_name = "/blue/ewhite/b.weinstein/poland/{}.jpg".format(os.path.basename(os.path.splitext(x)[0]))
+            img_name = "/blue/ewhite/b.weinstein/poland/{}.jpg".format(os.path.splitext(os.path.basename(x)[0]))
             gdf = gpd.read_file(x)
             #get coordinates
             df = gdf.geometry.bounds
