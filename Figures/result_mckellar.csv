@@ -1,13 +1,13 @@
 ,test_set,Recall,Precision,Model,Iteration
-0,mckellar,0.4,0.190707671957672,Zero Shot,
-0,mckellar,0.7,0.6063953488372092,Fine Tune,
-0,mckellar,0.68,0.5076135105204873,Min Annotation,0.0
-0,mckellar,0.68,0.48077242524916947,Min Annotation,1.0
-0,mckellar,0.68,0.5698863636363637,Min Annotation,2.0
-0,mckellar,0.68,0.5461710124500823,Min Annotation,3.0
-0,mckellar,0.69,0.570070562512423,Min Annotation,4.0
+0,mckellar,0.56,0.36593434343434345,Zero Shot,
+0,mckellar,0.62,0.5985772357723577,Fine Tune,
+0,mckellar,0.665,0.4326455026455026,Min Annotation,0.0
+0,mckellar,0.665,0.4235714285714286,Min Annotation,1.0
+0,mckellar,0.665,0.4165506715506716,Min Annotation,2.0
+0,mckellar,0.685,0.43005291005291,Min Annotation,3.0
+0,mckellar,0.665,0.437010582010582,Min Annotation,4.0
 0,mckellar,0.0,0.0,RandomWeight,0.0
-0,mckellar,0.0,0.0,RandomWeight,1.0
-0,mckellar,0.67,0.655,RandomWeight,2.0
-0,mckellar,0.56,0.7043114543114544,RandomWeight,3.0
+0,mckellar,0.61,0.7013888888888888,RandomWeight,1.0
+0,mckellar,0.0,0.0,RandomWeight,2.0
+0,mckellar,0.0,0.0,RandomWeight,3.0
 0,mckellar,0.0,0.0,RandomWeight,4.0
