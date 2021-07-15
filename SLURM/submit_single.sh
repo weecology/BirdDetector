@@ -25,7 +25,6 @@ cd ~/BirdDetector/
 module load git
 git checkout $1
 python single_run.py $3
-git commit -a -m "$3 results"
 git push
 EOT
 
