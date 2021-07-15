@@ -156,7 +156,7 @@ def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
                 torch.save(model.model.state_dict(),model_path)            
         
     for x in test_sets:
-        test_results = model.evaluate(csv_file=path_dict[x]["test"], root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=image_save_dir)
+        test_results = model.evaluate(csv_file=path_dict[x]["test"], root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2, savedir=image_save_dir)
         if comet_logger is not None:
             try:
                 test_results["results"].to_csv("{}/{}_iou_dataframe.csv".format(savedir, x))
@@ -194,7 +194,7 @@ def fine_tune(dataset, comet_logger, savedir, config):
         if savedir:
             if not model.config["train"]["fast_dev_run"]:
                 torch.save(model.model.state_dict(),model_path)            
-    finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=image_save_dir)
+    finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2, savedir=image_save_dir)
     if comet_logger is not None:
         comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(dataset),finetune_results["box_recall"])
         comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(dataset),finetune_results["box_precision"])
@@ -231,7 +231,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
-        finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=image_save_dir)
+        finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2, savedir=image_save_dir)
         if comet_logger is not None:
             comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
             comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Precision - Iteration {}".format(dataset, i),finetune_results["box_precision"])
@@ -276,7 +276,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
-        finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.25, savedir=image_save_dir)
+        finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2, savedir=image_save_dir)
         if comet_logger is not None:
             comet_logger.experiment.log_metric("Random Weight 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
             comet_logger.experiment.log_metric("Random Weight 1000 {} Box Precision - Iteration {}".format(dataset, i),finetune_results["box_precision"])
