@@ -24,19 +24,19 @@ boxes = gpd.GeoDataFrame(boxes)
 boxes.to_file("seabirds_rgb_809_predictions.shp")
 
 #B
-shutil.copy2(src="/blue/ewhite/b.weinstein/generalization/crops/Islands_south_2016_Chinstrap_penguins_76.png", dst="Islands_south_2016_Chinstrap_penguins_76.png")
+shutil.copy2(src="/blue/ewhite/b.weinstein/generalization/crops/Islands_south_2016_Chinstrap_penguins_76.png", dst="Rzepecki Islands_south_2016_Chinstrap_penguins_76.png")
 ground_truth = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/pfeifer_test.csv")
-ground_truth = ground_truth[ground_truth.image_path == "Islands_south_2016_Chinstrap_penguins_76.png"]
+ground_truth = ground_truth[ground_truth.image_path == "Rzepecki Islands_south_2016_Chinstrap_penguins_76.png"]
 ground_truth["geometry"] = ground_truth.apply(lambda x: geometry.box(x["xmin"],-x["ymin"],x["xmax"],-x["ymax"]), axis = 1)
 ground_truth = gpd.GeoDataFrame(ground_truth)
-ground_truth.to_file("Islands_south_2016_Chinstrap_penguins_76_annotations.shp")
+ground_truth.to_file("Rzepecki Islands_south_2016_Chinstrap_penguins_76_annotations.shp")
 
 m = main.deepforest()
 m.model.load_state_dict(torch.load("/blue/ewhite/b.weinstein/generalization/snapshots/pfeifer_zeroshot.pt"))
 boxes = m.predict_image(path = "/blue/ewhite/b.weinstein/generalization/crops/Rzepecki Islands_south_2016_Chinstrap_penguins_76.png")
 boxes["geometry"] = boxes.apply(lambda x: geometry.box(x["xmin"],-x["ymin"],x["xmax"],-x["ymax"]), axis = 1)
 boxes = gpd.GeoDataFrame(boxes)
-boxes.to_file("Islands_south_2016_Chinstrap_penguins_76_predictions.shp")
+boxes.to_file("Rzepecki Islands_south_2016_Chinstrap_penguins_76_predictions.shp")
 
 #C
 shutil.copy2(src="/blue/ewhite/b.weinstein/generalization/crops/Dudley_projected_307.png", dst="Dudley_projected_307.png")
