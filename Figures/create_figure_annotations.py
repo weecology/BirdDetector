@@ -12,14 +12,14 @@ import shutil
 shutil.copy2(src="/blue/ewhite/b.weinstein/generalization/crops/seabirds_rgb_809.png", dst="seabirds_rgb_809.png")
 ground_truth = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/terns_test.csv")
 ground_truth = ground_truth[ground_truth.image_path == "seabirds_rgb_809.png"]
-ground_truth["geometry"] = ground_truth.apply(lambda x: geometry.box(x["xmin"],x["ymin"],x["xmax"],-x["ymax"]), axis = 1)
+ground_truth["geometry"] = ground_truth.apply(lambda x: geometry.box(x["xmin"],-x["ymin"],x["xmax"],-x["ymax"]), axis = 1)
 ground_truth = gpd.GeoDataFrame(ground_truth)
 ground_truth.to_file("seabirds_rgb_809_annotations.shp")
 
 m = main.deepforest()
 m.model.load_state_dict(torch.load("/blue/ewhite/b.weinstein/generalization/snapshots/terns_zeroshot.pt"))
 boxes = m.predict_image(path = "/blue/ewhite/b.weinstein/generalization/crops/seabirds_rgb_809.png")
-boxes["geometry"] = boxes.apply(lambda x: geometry.box(x["xmin"],x["ymin"],x["xmax"],-x["ymax"]), axis = 1)
+boxes["geometry"] = boxes.apply(lambda x: geometry.box(x["xmin"],-x["ymin"],x["xmax"],-x["ymax"]), axis = 1)
 boxes = gpd.GeoDataFrame(boxes)
 boxes.to_file("seabirds_rgb_809_predictions.shp")
 
