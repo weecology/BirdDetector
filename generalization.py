@@ -72,7 +72,7 @@ def fit(model, train_annotations, comet_logger, name):
     model.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
     
     model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(name.split("_")[0])
-    model.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
+    model.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
     
     model.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))        
     model.trainer.fit(model)
