@@ -71,7 +71,7 @@ def fit(model, train_annotations, comet_logger, name):
     model.config["train"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(name)
     model.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
     
-    model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(name)
+    model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(name.split("_")[0])
     model.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
     
     model.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))        
@@ -231,7 +231,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
         else: 
             df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
             train_annotations = select(df, 1000)
-            model = fit(model, train_annotations, comet_logger, "mini_fine_tune_{}".format(dataset))
+            model = fit(model, train_annotations, comet_logger, "{}_mini_fine_tune".format(dataset))
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
@@ -276,7 +276,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
             
             df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
             train_annotations = select(df, 1000)
-            model = fit(model, train_annotations, comet_logger,"random_{}".format(dataset))
+            model = fit(model, train_annotations, comet_logger,"{}_random".format(dataset))
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
