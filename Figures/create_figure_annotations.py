@@ -101,16 +101,17 @@ boxes = gpd.GeoDataFrame(boxes)
 boxes.to_file("KIPPa2016a_000144_3_predictions.shp")
 
 #C
-shutil.copy2(src="/blue/ewhite/b.weinstein/generalization/crops/JackfishLakeBLTE_Sony_1_373.png", dst="JackfishLakeBLTE_Sony_1_373.png")
+shutil.copy2(src="/blue/ewhite/b.weinstein/generalization/crops/JackfishLakeBLTE_Sony_2_2848.png", dst="JackfishLakeBLTE_Sony_2_2848.png")
 ground_truth = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/mckellar_test.csv")
-ground_truth = ground_truth[ground_truth.image_path == "JackfishLakeBLTE_Sony_1_373.png"]
+ground_truth = ground_truth[ground_truth.image_path == "JackfishLakeBLTE_Sony_2_2848.png"]
 ground_truth["geometry"] = ground_truth.apply(lambda x: geometry.box(x["xmin"],-x["ymin"],x["xmax"],-x["ymax"]), axis = 1)
 ground_truth = gpd.GeoDataFrame(ground_truth)
-ground_truth.to_file("JackfishLakeBLTE_Sony_1_373.shp")
+ground_truth.to_file("JackfishLakeBLTE_Sony_2_2848.png")
 
 m = main.deepforest()
 m.model.load_state_dict(torch.load("/blue/ewhite/b.weinstein/generalization/snapshots/mckellar_zeroshot.pt"))
-boxes = m.predict_image(path = "/blue/ewhite/b.weinstein/generalization/crops/JackfishLakeBLTE_Sony_1_373.png")
+boxes = m.predict_image(path = "/blue/ewhite/b.weinstein/generalization/crops/JackfishLakeBLTE_Sony_2_2848.png")
 boxes["geometry"] = boxes.apply(lambda x: geometry.box(x["xmin"],-x["ymin"],x["xmax"],-x["ymax"]), axis = 1)
 boxes = gpd.GeoDataFrame(boxes)
-boxes.to_file("JackfishLakeBLTE_Sony_1_373_predictions.shp")
+boxes.to_file("JackfishLakeBLTE_Sony_2_2848_predictions.shp")
+
