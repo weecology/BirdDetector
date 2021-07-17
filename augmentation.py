@@ -26,8 +26,8 @@ def get_transform(augment):
     """Custom albumentations transformation of bounding boxs"""
     if augment:
         transform = A.Compose([
-            A.RandomSizedBBoxSafeCrop(height=1000, width=1000, erosion_rate=0.75, p=0.5),
-            #A.PadIfNeeded(1000,1000, border_mode=cv2.BORDER_CONSTANT, value=0),
+            A.RandomSizedBBoxSafeCrop(height=1000, width=1000, erosion_rate=0.5, p=0.75),
+            A.PadIfNeeded(1000,1000, border_mode=cv2.BORDER_CONSTANT, value=0),
             #RandomSizedBBoxSafeCrop(height=1000,width=1000,erosion_rate=0.5,p=0.5),
             A.Flip(p=0.5),
             A.RandomBrightnessContrast(),
@@ -98,8 +98,8 @@ class RandomSizedBBoxSafeCrop(A.DualTransform):
             width=img_w, height=img_h, bboxes=params["bboxes"], erosion_rate=self.erosion_rate
         )
         # find bigger region
-        left_expand = random.random()
-        right_expand = random.random()
+        left_expand = random.random() + 0.1
+        right_expand = random.random() + 0.1
         
         bx, by = x * left_expand,  y * left_expand
         bx2, by2 = x2 + (1 - x2) * right_expand, y2 + (1 - y2) * right_expand
