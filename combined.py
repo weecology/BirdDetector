@@ -61,5 +61,5 @@ model = BirdDetector(transforms = get_transform)
 #update backbone weights with new Retinanet head
 model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
 model.config = config
-model = fit(model, train_annotations, comet_logger)
+model = fit(model, train_annotations, comet_logger, "palmyra_combined")
 torch.save(model.model.state_dict(),"/blue/ewhite/b.weinstein/generalization/snapshots/combined.pt")
