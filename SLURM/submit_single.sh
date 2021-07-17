@@ -9,7 +9,7 @@ sbatch <<EOT
 #SBATCH --account=ewhite
 #SBATCH --nodes=1                 # Number of MPI ran
 #SBATCH --cpus-per-task=12
-#SBATCH --mem=50GB
+#SBATCH --mem=80GB
 #SBATCH --time=48:00:00       #Time limit hrs:min:sec
 #SBATCH --output=/home/b.weinstein/logs/DeepForest_%j.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/DeepForest_%j.err
