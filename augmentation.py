@@ -98,8 +98,8 @@ class RandomSizedBBoxSafeCrop(A.DualTransform):
             width=img_w, height=img_h, bboxes=params["bboxes"], erosion_rate=self.erosion_rate
         )
         # find bigger region
-        left_expand = random.random() + 0.1
-        right_expand = random.random() + 0.1
+        left_expand = random.random() + 0.15
+        right_expand = random.random() + 0.15
         
         bx, by = x * left_expand,  y * left_expand
         bx2, by2 = x2 + (1 - x2) * right_expand, y2 + (1 - y2) * right_expand
