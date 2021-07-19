@@ -6,16 +6,16 @@ import pandas as pd
 import zipfile
 
 def zip_dataset(dataset):
-    train = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))
-    test = pd.read_csv("/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset))
+    train = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))
+    test = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset))
     df = pd.concat([train, test])
     images_to_upload = df.image_path.unique()
-    zipname = "/orange/ewhite/b.weinstein/generalization/zenodo/{}.zip".format(dataset)
+    zipname = "/blue/ewhite/b.weinstein/generalization/zenodo/{}.zip".format(dataset)
     z = zipfile.ZipFile(zipname,'w')
-    z.write("/orange/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset), arcname="{}_train.csv".format(dataset))
-    z.write("/orange/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), arcname="{}_test.csv".format(dataset))    
+    z.write("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset), arcname="{}_train.csv".format(dataset))
+    z.write("/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), arcname="{}_test.csv".format(dataset))    
     for x in images_to_upload:
-        z.write("/orange/ewhite/b.weinstein/generalization/crops/{}".format(x), arcname=x)
+        z.write("/blue/ewhite/b.weinstein/generalization/crops/{}".format(x), arcname=x)
     z.close()
     
     return zipname
@@ -48,7 +48,7 @@ if __name__== "__main__":
     #    z = zip_dataset(x)
     #    zipped_datasets.append(z)
     
-    zipped_datasets = glob.glob("/orange/ewhite/b.weinstein/generalization/zenodo/*.zip")
+    zipped_datasets = glob.glob("/blue/ewhite/b.weinstein/generalization/zenodo/*.zip")
     ACCESS_TOKEN = get_token()    
     for f in zipped_datasets:
         upload(ACCESS_TOKEN, f)
