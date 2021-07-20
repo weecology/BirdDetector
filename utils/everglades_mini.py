@@ -23,7 +23,10 @@ while counter < 10000:
     img_annotations = train[train.image_path == img_name]
     sampled_annotations.append(img_annotations)
     counter = counter + img_annotations.shape[0]
-    
+
+comet_logger.experiment.log_parameter("training images",len(sampled_annotations.image_path.unique()))
+comet_logger.experiment.log_parameter("training annotations",sampled_annotations.shape[0])
+
 sampled_annotations = pd.concat(sampled_annotations)
 sampled_annotations.to_csv("{}/annotations.csv".format(tmpdir))
 m = main.deepforest(label_dict={"Bird":0})
