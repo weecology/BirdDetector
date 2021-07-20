@@ -270,6 +270,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir):
                     
             #update backbone weights with new Retinanet head
             #model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
+            model.use_release()
             model.config = config
             model.config["train"]["epochs"] = 30
             model.config["train"]["lr"] = 0.005
