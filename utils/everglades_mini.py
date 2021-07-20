@@ -5,6 +5,7 @@ from pytorch_lightning import loggers
 import pandas as pd
 import random
 import tempfile
+import glob
 
 comet_logger = loggers.CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
 train = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/everglades_train.csv")
@@ -35,7 +36,7 @@ m.config["epochs"] = 10
 m.create_trainer(logger=comet_logger)
 m.trainer.fit(m)
 
-results = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], iou_threshold=0.2)
+results = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], iou_threshold=0.2, savedir=tmpdir)
 recall = results["box_recall"]
 precision = results["box_precision"]
 
@@ -43,3 +44,12 @@ comet_logger.experiment.log_metric("Recall",recall)
 comet_logger.experiment.log_metric("Precision",precision)
 
 
+results = m.evaluate(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], iou_threshold=0.2)
+recall = results["box_recall"]
+precision = results["box_precision"]
+
+comet_logger.experiment.log_metric("Train Recall",recall)
+comet_logger.experiment.log_metric("Train Precision",precision)
+
+for x in glob.glob("{}/*.png".format(tmpdir)):
+    comet_logger.experiment.log_image(x, image_scale=0.25)
