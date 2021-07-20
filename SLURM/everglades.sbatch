@@ -10,11 +10,10 @@
 #SBATCH --output=/home/b.weinstein/logs/DeepForest_%j.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/DeepForest_%j.err
 #SBATCH --partition=gpu
-#SBATCH --gpus=6
+#SBATCH --gpus=3
 
 source activate Zooniverse_pytorch
 
 #comet debug
 cd ~/BirdDetector/
-module load git
-python combined.py
+python utils/everglades_mini.py
