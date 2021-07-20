@@ -16,7 +16,7 @@ train:
     root_dir:
     
     #Optomizer  initial learning rate
-    lr: 0.0001
+    lr: 0.005
 
     #Print loss every n epochs
     epochs: 12
