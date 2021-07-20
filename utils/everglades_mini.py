@@ -51,14 +51,14 @@ precision = results["box_precision"]
 comet_logger.experiment.log_metric("Recall",recall)
 comet_logger.experiment.log_metric("Precision",precision)
 
-results = m.evaluate(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], iou_threshold=0.2, savedir=tmpdir)
+results = m.evaluate(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], iou_threshold=0.2)
 recall = results["box_recall"]
 precision = results["box_precision"]
 
 comet_logger.experiment.log_metric("Train Recall",recall)
 comet_logger.experiment.log_metric("Train Precision",precision)
 
-for x in train_images:
+for x in train_images[:10]:
     img = m.predict_image(path = "{}/{}".format(m.config["train"]["root_dir"],x), return_plot=True)
     cv2.imwrite("{}/{}".format(tmpdir,x), img)
     comet_logger.experiment.log_image("{}/{}".format(tmpdir,x), image_scale=0.25)
