@@ -8,7 +8,7 @@ import tempfile
 import glob
 import cv2
 
-comet_logger = loggers.CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
+comet_logger = loggers.CometLogger(project_name="everglades", workspace="bw4sz")
 train = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/everglades_train.csv")
 comet_logger.experiment.add_tag("Everglades")
 
@@ -18,7 +18,7 @@ tmpdir = tempfile.gettempdir()
 
 sampled_annotations = []
 counter = 0
-while counter < 1000:
+while counter < 10000:
     img_name = list(train_images).pop()
     img_annotations = train[train.image_path == img_name]
     sampled_annotations.append(img_annotations)
