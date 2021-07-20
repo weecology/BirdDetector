@@ -6,6 +6,7 @@ import pandas as pd
 import random
 import tempfile
 import glob
+import cv2
 
 comet_logger = loggers.CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
 train = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/everglades_train.csv")
@@ -32,7 +33,7 @@ m.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
     
 #m.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/everglades_test.csv"
 #m.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
-m.config["train"]["epochs"] = 100
+m.config["train"]["epochs"] = 30
 m.create_trainer(logger=comet_logger)
 m.trainer.fit(m)
 
@@ -51,5 +52,7 @@ precision = results["box_precision"]
 comet_logger.experiment.log_metric("Train Recall",recall)
 comet_logger.experiment.log_metric("Train Precision",precision)
 
-for x in glob.glob("{}/*.png".format(tmpdir)):
-    comet_logger.experiment.log_image(x, image_scale=0.25)
+for x in train_images:
+    img = m.predict_image(path = "{}/{}".format(m.config["train"]["root_dir"],x), return_plot=True)
+    cv2.imwrite("{}/{}".format(tmpdir,x), img)
+    comet_logger.experiment.log_image("{}/{}".format(tmpdir,x), image_scale=0.25)
