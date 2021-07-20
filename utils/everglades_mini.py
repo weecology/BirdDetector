@@ -27,7 +27,7 @@ sampled_annotations.to_csv("{}/annotations.csv".format(tmpdir))
 m = main.deepforest(label_dict={"Bird":0})
 
 m.config["train"]["csv_file"] = "{}/annotations.csv".format(tmpdir)
-m.config["train"]["root_dir"] = tmpdir
+m.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
     
 m.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/everglades_test.csv"
 m.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
