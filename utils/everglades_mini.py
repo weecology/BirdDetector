@@ -32,7 +32,7 @@ comet_logger.experiment.log_parameter("training annotations",sampled_annotations
 
 sampled_annotations.to_csv("{}/annotations.csv".format(tmpdir))
 m = main.deepforest(label_dict={"Bird":0})
-#m.use_release()
+m.use_release()
 m.config["train"]["csv_file"] = "{}/annotations.csv".format(tmpdir)
 m.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
     
