@@ -8,7 +8,7 @@ import tempfile
 
 comet_logger = loggers.CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
 train = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/everglades_train.csv")
-comet_logger.experiment.tags("Everglades")
+comet_logger.experiment.add_tag("Everglades")
 
 train_images = train.image_path.unique()
 random.shuffle(train_images)
