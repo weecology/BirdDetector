@@ -30,13 +30,13 @@ m = main.deepforest(label_dict={"Bird":0})
 m.config["train"]["csv_file"] = "{}/annotations.csv".format(tmpdir)
 m.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
     
-m.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/everglades_test.csv"
-m.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
-m.config["train"]["epochs"] = 50
+#m.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/everglades_test.csv"
+#m.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
+m.config["train"]["epochs"] = 100
 m.create_trainer(logger=comet_logger)
 m.trainer.fit(m)
 
-results = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], iou_threshold=0.2, savedir=tmpdir)
+results = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], iou_threshold=0.2)
 recall = results["box_recall"]
 precision = results["box_precision"]
 
@@ -44,7 +44,7 @@ comet_logger.experiment.log_metric("Recall",recall)
 comet_logger.experiment.log_metric("Precision",precision)
 
 
-results = m.evaluate(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], iou_threshold=0.2)
+results = m.evaluate(csv_file=m.config["train"]["csv_file"], root_dir=m.config["train"]["root_dir"], iou_threshold=0.2, savedir=tmpdir)
 recall = results["box_recall"]
 precision = results["box_precision"]
 
