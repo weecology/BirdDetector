@@ -17,7 +17,7 @@ tmpdir = tempfile.gettempdir()
 sampled_annotations = []
 counter = 0
 while counter < 1000:
-    img_name = train_images.pop()
+    img_name = list(train_images).pop()
     img_annotations = train[train.image_path == img_name]
     sampled_annotations.append(img_annotations)
     counter = counter + img_annotations.shape[0]
