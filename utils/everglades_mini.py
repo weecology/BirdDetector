@@ -1,4 +1,5 @@
 #Everglades 1000 bird test, entirely new code to check results from other parts of the analysis
+import comet_ml
 from deepforest import main
 from pytorch_lightning import loggers
 import pandas as pd
