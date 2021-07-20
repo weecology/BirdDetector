@@ -19,7 +19,7 @@ tmpdir = tempfile.gettempdir()
 sampled_annotations = []
 counter = 0
 
-while counter < 1000:
+while counter < 5000:
     img_name = train_images.pop()
     img_annotations = train[train.image_path == img_name]
     sampled_annotations.append(img_annotations)
@@ -32,7 +32,7 @@ comet_logger.experiment.log_parameter("training annotations",sampled_annotations
 
 sampled_annotations.to_csv("{}/annotations.csv".format(tmpdir))
 m = main.deepforest(label_dict={"Bird":0})
-m.use_release()
+#m.use_release()
 m.config["train"]["csv_file"] = "{}/annotations.csv".format(tmpdir)
 m.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
     
