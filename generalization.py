@@ -292,12 +292,7 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
     comet_logger.experiment.log_parameter("test_set",test_sets)
     comet_logger.experiment.add_tag("Generalization")
     
-    results = []
-    
-    if run_random:
-        for n in [1000, 5000, 10000, 20000, 25000, 30000, 40000]:        
-            random_results = mini_random_weights(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
-            results.append(random_results)            
+    results = []            
             
     zero_shot_results = zero_shot(path_dict=path_dict, train_sets=train_sets, test_sets=test_sets, config=config, comet_logger=comet_logger, savedir=savedir)
     gc.collect()      
@@ -310,7 +305,13 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
         mini_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger)
         gc.collect()          
         results.append(mini_results)
-        
+    
+    if run_random:
+        for n in [1000, 5000, 10000, 20000, 25000, 30000, 40000]:        
+            random_results = mini_random_weights(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
+            results.append(random_results)         
+            gc.collect()      
+                
     result_frame = pd.concat(results)
     
     return result_frame
