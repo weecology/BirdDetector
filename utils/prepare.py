@@ -817,6 +817,72 @@ def prepare_cros(generate):
         
     return {"train":train_path}
 
+def prepare_michigan(generate):
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops/michigan_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops/michigan_test.csv"
+    
+    if generate:   
+        json = glob.glob("/blue/ewhite/b.weinstein/michigan/*.json")
+        random.shuffle(json)
+        train_json = json[:round(len(json) * 0.8)]
+        test_json = json[round(len(json) * 0.8):]
+        
+        train_annotations = []
+        for x in train_json:
+            image_annotations = []
+            with open(x) as f:
+                data = json.loads(f)
+            for x in data["shapes"]:
+                basename = os.path.splitext(os.path.basename(x))[0]
+                bird_annotation = create_box(x["points"])
+                image_annotations.append(bird_annotation)
+            image_annotations = gpd.GeoDataFrame(image_annotations)
+            image_annotations = image_annotations.bounds
+            image_annotations = image_annotations.rename(columns={"minx":"xmin","miny":"ymax","maxx":"xmax","maxy":"ymin"})                
+            image_annotations["image_path"] = "{}.JPG".format(basename)  
+            image_annotations["label"] = "Bird"
+            train_annotations.append(image_annotations)
+            train_annotations.to_csv("/blue/ewhite/b.weinstein/michigan/{}.csv".format(basename))
+            
+            cropped_df = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/michigan/{}.csv".format(basename),
+                                                                path_to_raster="/blue/ewhite/b.weinstein/michigan/{}.JPG".format(basename),
+                                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+                                                                allow_empty=False,
+                                                                patch_size=1000)
+            train_annotations.append(cropped_df)
+            
+        train_annotations = pd.concat(train_annotations)
+        train_annotations.to_csv(train_path)
+        
+        test_annotations = []
+        for x in test_json:
+            image_annotations = []
+            with open(x) as f:
+                data = json.loads(f)
+            for x in data["shapes"]:
+                basename = os.path.splitext(os.path.basename(x))[0]
+                bird_annotation = create_box(x["points"])
+                image_annotations.append(bird_annotation)
+            image_annotations = gpd.GeoDataFrame(image_annotations)
+            image_annotations = image_annotations.bounds
+            image_annotations = image_annotations.rename(columns={"minx":"xmin","miny":"ymax","maxx":"xmax","maxy":"ymin"})                
+            image_annotations["image_path"] = "{}.JPG".format(basename)  
+            image_annotations["label"] = "Bird"
+            test_annotations.append(image_annotations)
+            test_annotations.to_csv("/blue/ewhite/b.weinstein/michigan/{}.csv".format(basename))
+            
+            cropped_df = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/michigan/{}.csv".format(basename),
+                                                                path_to_raster="/blue/ewhite/b.weinstein/michigan/{}.JPG".format(basename),
+                                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+                                                                allow_empty=False,
+                                                                patch_size=1000)
+            test_annotations.append(cropped_df)
+            
+        test_annotations = pd.concat(test_annotations)
+        test_annotations.to_csv(test_path)
+        
+    return {"train":train_path, "test":test_path}
+
 def prepare_poland(generate):
     train_path = "/blue/ewhite/b.weinstein/generalization/crops/poland_train.csv"
     
@@ -890,5 +956,6 @@ def prepare():
     paths["valle"] = prepare_valle(generate=False)
     #paths["cros"] = prepare_cros(generate=False)
     paths["poland"] = prepare_poland(generate=False)
+    paths["michigan"] = prepare_michigan(generate=False)
     
     return paths
