@@ -2,24 +2,24 @@
 
 #cpu workers for data loaders
 #Dataloaders
-workers: 12
+workers: 15
 gpus: 2
 distributed_backend: ddp
-batch_size: 32
+batch_size: 40
 
 #Non-max supression of overlapping predictions
 nms_thresh: 0.2
-score_thresh: 0.001
+score_thresh: 0.2
 
 train:
     csv_file:
     root_dir:
     
     #Optomizer  initial learning rate
-    lr: 0.005
+    lr: 0.001
 
     #Print loss every n epochs
-    epochs: 12
+    epochs: 11
     #Useful debugging flag in pytorch lightning, set to True to get a single batch of training to test settings.
     fast_dev_run: False
     
