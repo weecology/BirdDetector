@@ -138,15 +138,9 @@ def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
 
     comet_logger.experiment.log_parameter("training_images",len(train_annotations.image_path.unique()))
     comet_logger.experiment.log_parameter("training_annotations",train_annotations.shape[0])
-    
-    #train_df = pd.read_csv("/blue/ewhite/b.weinstein/AerialDetection/data/trainval1024/train.csv")
-    #label_dict = {x: index for index, x in enumerate(train_df.label.unique())}    
-    #pretrained_DOTA = main.deepforest(num_classes=15, label_dict=label_dict)
-    #pretrained_DOTA.load_state_dict(torch.load("/orange/ewhite/b.weinstein/AerialDetection/snapshots/20210530_233702/DOTA.pl")["state_dict"])
-    
+
     #update backbone weights with new Retinanet head
     model = BirdDetector(transforms = get_transform)    
-    #model.model = create_model(num_classes=1, nms_thresh=model.config["nms_thresh"], score_thresh=model.config["score_thresh"], backbone=pretrained_DOTA.model.backbone)
     model.config = config
     model_path = "{}/{}_zeroshot.pt".format(savedir,test_sets[0])
     
@@ -296,6 +290,12 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
     comet_logger.experiment.add_tag("Generalization")
     
     results = []
+    
+    if run_random:
+        for n in [1000, 5000, 10000, 20000, 25000, 30000, 40000]:        
+            random_results = mini_random_weights(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
+            results.append(random_results)            
+            
     zero_shot_results = zero_shot(path_dict=path_dict, train_sets=train_sets, test_sets=test_sets, config=config, comet_logger=comet_logger, savedir=savedir)
     gc.collect()      
     results.append(zero_shot_results)
@@ -307,10 +307,6 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
         mini_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger)
         gc.collect()          
         results.append(mini_results)
-    if run_random:
-        for n in [1000, 5000, 10000, 20000, 25000, 30000, 40000]:        
-            random_results = mini_random_weights(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
-        results.append(random_results)
         
     result_frame = pd.concat(results)
     
