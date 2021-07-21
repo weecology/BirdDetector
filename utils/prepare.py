@@ -823,61 +823,57 @@ def prepare_michigan(generate):
     test_path = "/blue/ewhite/b.weinstein/generalization/crops/michigan_test.csv"
     
     if generate:   
+        client = start_cluster.start(cpus=20)
         jsons = glob.glob("/blue/ewhite/b.weinstein/michigan/*.json")
         random.shuffle(jsons)
         train_json = jsons[:round(len(jsons) * 0.8)]
         test_json = jsons[round(len(jsons) * 0.8):]
         
-        train_annotations = []
-        for x in train_json:
+        def cut(x):
             image_annotations = []
+            basename = os.path.splitext(os.path.basename(x))[0]    
             with open(x) as f:
-                data = json.loads(f)
+                data = json.load(f)
             for x in data["shapes"]:
-                basename = os.path.splitext(os.path.basename(x))[0]
                 bird_annotation = create_box(x["points"])
                 image_annotations.append(bird_annotation)
+            image_annotations = pd.DataFrame({"geometry":image_annotations})
             image_annotations = gpd.GeoDataFrame(image_annotations)
             image_annotations = image_annotations.bounds
             image_annotations = image_annotations.rename(columns={"minx":"xmin","miny":"ymax","maxx":"xmax","maxy":"ymin"})                
             image_annotations["image_path"] = "{}.JPG".format(basename)  
             image_annotations["label"] = "Bird"
-            train_annotations.append(image_annotations)
-            train_annotations.to_csv("/blue/ewhite/b.weinstein/michigan/{}.csv".format(basename))
+            image_annotations.to_csv("/blue/ewhite/b.weinstein/michigan/{}.csv".format(basename))
             
             cropped_df = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/michigan/{}.csv".format(basename),
                                                                 path_to_raster="/blue/ewhite/b.weinstein/michigan/{}.JPG".format(basename),
                                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
                                                                 allow_empty=False,
                                                                 patch_size=1000)
-            train_annotations.append(cropped_df)
+            return cropped_df
+                
+        train_annotations = []
+        futures = client.map(cut, train_json)
+        for x in futures:
+            try:
+                cropped_df = x.result()
+                train_annotations.append(cropped_df)                
+            except Exception as e:
+                print("failed with {}".format(e))
+                pass
             
         train_annotations = pd.concat(train_annotations)
         train_annotations.to_csv(train_path)
         
         test_annotations = []
-        for x in test_json:
-            image_annotations = []
-            with open(x) as f:
-                data = json.loads(f)
-            for x in data["shapes"]:
-                basename = os.path.splitext(os.path.basename(x))[0]
-                bird_annotation = create_box(x["points"])
-                image_annotations.append(bird_annotation)
-            image_annotations = gpd.GeoDataFrame(image_annotations)
-            image_annotations = image_annotations.bounds
-            image_annotations = image_annotations.rename(columns={"minx":"xmin","miny":"ymax","maxx":"xmax","maxy":"ymin"})                
-            image_annotations["image_path"] = "{}.JPG".format(basename)  
-            image_annotations["label"] = "Bird"
-            test_annotations.append(image_annotations)
-            test_annotations.to_csv("/blue/ewhite/b.weinstein/michigan/{}.csv".format(basename))
-            
-            cropped_df = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/michigan/{}.csv".format(basename),
-                                                                path_to_raster="/blue/ewhite/b.weinstein/michigan/{}.JPG".format(basename),
-                                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
-                                                                allow_empty=False,
-                                                                patch_size=1000)
-            test_annotations.append(cropped_df)
+        futures = client.map(cut, test_json)
+        for x in futures:
+            try:
+                cropped_df = x.result()
+                test_annotations.append(cropped_df)                
+            except Exception as e:
+                print("failed with {}".format(e))
+                pass
             
         test_annotations = pd.concat(test_annotations)
         test_annotations.to_csv(test_path)
