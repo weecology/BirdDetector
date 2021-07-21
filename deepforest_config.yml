@@ -21,7 +21,7 @@ train:
     #Print loss every n epochs
     epochs: 11
     #Useful debugging flag in pytorch lightning, set to True to get a single batch of training to test settings.
-    fast_dev_run: False
+    fast_dev_run: True
     
 validation:
     #callback args
