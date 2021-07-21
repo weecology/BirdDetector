@@ -281,7 +281,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
         
     try:
         min_annotation_results = pd.concat(min_annotation_results)
-    else:
+    except:
         min_annotation_results = None
     
     return min_annotation_results
