@@ -12,6 +12,7 @@ import os
 import PIL
 import tempfile
 import cv2
+import json
 
 def prepare_palmyra(generate=True):
     test_path = "/blue/ewhite/b.weinstein/generalization/crops/palmyra_test.csv"
@@ -822,10 +823,10 @@ def prepare_michigan(generate):
     test_path = "/blue/ewhite/b.weinstein/generalization/crops/michigan_test.csv"
     
     if generate:   
-        json = glob.glob("/blue/ewhite/b.weinstein/michigan/*.json")
-        random.shuffle(json)
-        train_json = json[:round(len(json) * 0.8)]
-        test_json = json[round(len(json) * 0.8):]
+        jsons = glob.glob("/blue/ewhite/b.weinstein/michigan/*.json")
+        random.shuffle(jsons)
+        train_json = jsons[:round(len(jsons) * 0.8)]
+        test_json = jsons[round(len(jsons) * 0.8):]
         
         train_annotations = []
         for x in train_json:
