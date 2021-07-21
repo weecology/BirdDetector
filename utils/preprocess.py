@@ -6,6 +6,7 @@ from shapely.geometry import Point, box
 import geopandas as gpd
 import cv2
 import pandas as pd
+from shapely import geometry
 
 def split_test_train(annotations, split = 0.9):
     """Split annotation in train and test by image"""
@@ -118,3 +119,12 @@ def check_shape(df):
     df = pd.concat(updated_data)    
     
     return df
+
+def create_box(x):
+    try:
+        pointList = [geometry.Point(node[0],node[1]) for node in x]
+        minx, miny, maxx, maxy = geometry.Polygon([[p.x, p.y] for p in pointList]).bounds
+        return geometry.box(minx, miny, maxx, maxy)
+    except Exception as e:
+        print(e)
+        return None
