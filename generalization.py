@@ -279,7 +279,10 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
         torch.cuda.empty_cache()
         gc.collect()
         
-    min_annotation_results = pd.concat(min_annotation_results)
+    try:
+        min_annotation_results = pd.concat(min_annotation_results)
+    else:
+        min_annotation_results = None
     
     return min_annotation_results
 
