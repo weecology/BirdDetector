@@ -826,8 +826,8 @@ def prepare_michigan(generate):
         client = start_cluster.start(cpus=20)
         jsons = glob.glob("/blue/ewhite/b.weinstein/michigan/*.json")
         random.shuffle(jsons)
-        train_json = jsons[:round(len(jsons) * 0.8)]
-        test_json = jsons[round(len(jsons) * 0.8):]
+        train_json = jsons[:round(len(jsons) * 0.9)]
+        test_json = jsons[round(len(jsons) * 0.9):]
         
         def cut(x):
             image_annotations = []
