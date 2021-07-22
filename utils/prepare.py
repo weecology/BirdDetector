@@ -840,7 +840,7 @@ def prepare_michigan(generate):
             image_annotations = pd.DataFrame({"geometry":image_annotations})
             image_annotations = gpd.GeoDataFrame(image_annotations)
             image_annotations = image_annotations.bounds
-            image_annotations = image_annotations.rename(columns={"minx":"xmin","miny":"ymax","maxx":"xmax","maxy":"ymin"})                
+            image_annotations = image_annotations.rename(columns={"minx":"xmin","miny":"ymin","maxx":"xmax","maxy":"ymax"})                
             image_annotations["image_path"] = "{}.JPG".format(basename)  
             image_annotations["label"] = "Bird"
             image_annotations.to_csv("/blue/ewhite/b.weinstein/michigan/{}.csv".format(basename))

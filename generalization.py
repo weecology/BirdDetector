@@ -207,7 +207,7 @@ def fine_tune(dataset, comet_logger, savedir, config):
 def mini_fine_tune(dataset, comet_logger, config, savedir):
     #Fine tuning, up to 1000 birds from train
     min_annotation_results = []
-    for i in range(5):
+    for i in range(3):
         try:
             image_save_dir = "{}/{}_mini_{}".format(savedir, dataset, i)
             os.mkdir(image_save_dir)
@@ -245,7 +245,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
 def mini_random_weights(dataset, comet_logger, config, savedir, n):
     #Fine tuning, up to 1000 birds from train
     min_annotation_results = []
-    for i in range(2):
+    for i in range(3):
         try:
             image_save_dir = "{}/{}_random_{}_{}".format(savedir, dataset, i, n)
             os.mkdir(image_save_dir)
