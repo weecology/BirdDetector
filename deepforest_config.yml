@@ -3,7 +3,7 @@
 #cpu workers for data loaders
 #Dataloaders
 workers: 12
-gpus: 3
+gpus: 2
 distributed_backend: ddp
 batch_size: 32
 
