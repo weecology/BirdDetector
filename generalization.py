@@ -258,7 +258,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
             model.model.load_state_dict(torch.load(model_path))
         else: 
             model.config = config
-            model.config["train"]["epochs"] = 25
+            model.config["train"]["epochs"] = 20
             model.config["train"]["lr"] = 0.002
             
             df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset)) 
