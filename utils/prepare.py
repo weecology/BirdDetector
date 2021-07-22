@@ -218,7 +218,7 @@ def prepare_pfeifer(generate=True):
             annotations = preprocess.split_raster(
                 path_to_raster="/blue/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
                 annotations_file="/blue/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
-                patch_size=450,
+                patch_size=300,
                 patch_overlap=0,
                 base_dir="/blue/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
@@ -238,7 +238,7 @@ def prepare_pfeifer(generate=True):
             annotations = preprocess.split_raster(
                 path_to_raster="/blue/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
                 annotations_file="/blue/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
-                patch_size=450,
+                patch_size=300,
                 patch_overlap=0,
                 base_dir="/blue/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
@@ -647,7 +647,7 @@ def prepare_newmexico(generate):
                                                 path_to_raster="/blue/ewhite/b.weinstein/newmexico/Imagery/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
                                                 allow_empty=False,
-                                                patch_size=800)
+                                                patch_size=1200)
             return result
 
         #Split into crops
