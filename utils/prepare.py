@@ -647,7 +647,7 @@ def prepare_newmexico(generate):
                                                 path_to_raster="/blue/ewhite/b.weinstein/newmexico/Imagery/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
                                                 allow_empty=False,
-                                                patch_size=1200)
+                                                patch_size=1500)
             return result
 
         #Split into crops
