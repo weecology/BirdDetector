@@ -33,6 +33,7 @@ m.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
 m.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/terns_test.csv"
 m.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
 m.config["epochs"] = 20
+m.config["batch_size"] = 4
 m.create_trainer(logger=comet_logger)
 m.trainer.fit(m)
 

@@ -28,7 +28,7 @@ def get_transform(augment):
         transform = A.Compose([
             #A.RandomSizedBBoxSafeCrop(height=1000, width=1000, erosion_rate=0.5, p=0.75),
             A.PadIfNeeded(1000,1000, border_mode=cv2.BORDER_CONSTANT, value=0),
-            RandomSizedBBoxSafeCrop(height=1000,width=1000,erosion_rate=1,p=0.75),
+            RandomSizedBBoxSafeCrop(height=1000,width=1000,erosion_rate=1,p=1),
             A.Flip(p=0.5),
             A.RandomBrightnessContrast(),
             A.pytorch.ToTensorV2()
