@@ -15,8 +15,8 @@ import cv2
 import json
 
 def prepare_palmyra(generate=True):
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/palmyra_test.csv"
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/palmyra_train.csv"      
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/palmyra_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/palmyra_train.csv"      
     if generate:      
         df = shapefile_to_annotations(
             shapefile="/blue/ewhite/everglades/Palmyra/Dudley_projected.shp",
@@ -30,7 +30,7 @@ def prepare_palmyra(generate=True):
         
         test_annotations = preprocess.split_raster(numpy_image=numpy_image,
                                                    annotations_file="Figures/test_annotations.csv",
-                                                   patch_size=1300, patch_overlap=0.05, base_dir="/blue/ewhite/b.weinstein/generalization/crops/", image_name="Dudley_projected.tif")
+                                                   patch_size=1300, patch_overlap=0.05, base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/", image_name="Dudley_projected.tif")
         
         test_annotations.to_csv(test_path,index=False)
         
@@ -52,7 +52,7 @@ def prepare_palmyra(generate=True):
             annotations_file="Figures/training_annotations.csv",
             patch_size=1300,
             patch_overlap=0.05,
-            base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+            base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
             image_name="CooperStrawn_53m_tile_clip_projected.tif",
             allow_empty=False
         )
@@ -71,20 +71,27 @@ def prepare_palmyra(generate=True):
             annotations_file="Figures/training_annotations.csv",
             patch_size=1300,
             patch_overlap=0.05,
-            base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+            base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
             image_name="CooperEelPond_53M.tif",
             allow_empty=False
         )
 
         
         train_annotations = pd.concat([train_annotations_1, train_annotations2])
+        
+        empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
+        train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
+        selected_empty = empty_frames.image_path.unique()[:100]
+        empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
+        train_annotations = pd.concat([train_annotations, empty_frames])
+                
         train_annotations.to_csv(train_path,index=False)
             
     return {"train":train_path, "test":test_path}
 
 def prepare_penguin(generate=True):
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/penguins_test.csv"
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/penguins_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/penguins_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/penguins_train.csv"
     
     if generate:
         df = shapefile_to_annotations(
@@ -98,7 +105,7 @@ def prepare_penguin(generate=True):
         numpy_image = numpy_image[:,:,:3].astype("uint8")
         
         test_annotations = preprocess.split_raster(numpy_image=numpy_image, annotations_file="/blue/ewhite/b.weinstein/penguins/test_annotations.csv", patch_size=500, patch_overlap=0.05,
-                                                   base_dir="/blue/ewhite/b.weinstein/generalization/crops", image_name="cape_wallace_survey_8.tif")
+                                                   base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty", image_name="cape_wallace_survey_8.tif")
         
         test_annotations.to_csv(test_path,index=False)
     
@@ -116,10 +123,17 @@ def prepare_penguin(generate=True):
             annotations_file="/blue/ewhite/b.weinstein/penguins/training_annotations.csv",
             patch_size=500,
             patch_overlap=0.05,
-            base_dir="/blue/ewhite/b.weinstein/generalization/crops",
+            base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
             image_name="offshore_rocks_cape_wallace_survey_4.tif",
-            allow_empty=False
+            allow_empty=True,
         )
+        
+        empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
+        train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
+        
+        selected_empty = empty_frames.image_path.unique()[:100]
+        empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
+        train_annotations = pd.concat([train_annotations, empty_frames])
         
         train_annotations.to_csv(train_path,index=False)
         
@@ -128,16 +142,16 @@ def prepare_penguin(generate=True):
 def prepare_everglades():
     
     #too large to repeat here, see create_model.py
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/everglades_train.csv"
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/everglades_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/everglades_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/everglades_test.csv"
     
     return {"train":train_path, "test":test_path}
 
 def prepare_terns(generate=True):
     PIL.Image.MAX_IMAGE_PIXELS = 933120000
     
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/terns_test.csv"
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/terns_train.csv"        
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/terns_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/terns_train.csv"        
     if generate:   
         df = shapefile_to_annotations(shapefile="/blue/ewhite/b.weinstein/terns/birds.shp",
                                       rgb="/blue/ewhite/b.weinstein/terns/seabirds_rgb.tif", buffer_size=0.15)
@@ -148,7 +162,7 @@ def prepare_terns(generate=True):
             annotations_file="/blue/ewhite/b.weinstein/terns/seabirds_rgb.csv",
             patch_size=700,
             patch_overlap=0,
-            base_dir="/blue/ewhite/b.weinstein/generalization/crops",
+            base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
             image_name="seabirds_rgb.tif",
             allow_empty=False
         )
@@ -163,8 +177,8 @@ def prepare_terns(generate=True):
     return {"train":train_path, "test":test_path}
 
 def prepare_hayes(generate=True):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/hayes_train.csv"
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/hayes_test.csv"    
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/hayes_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/hayes_test.csv"    
     if generate:
         hayes_albatross_train = pd.read_csv("/blue/ewhite/b.weinstein/Hayes/Label/Albatross_Labels/albatross_train_annotations_final.csv",
                       names=["image_path","xmin","ymin","xmax","ymax","label"])
@@ -203,8 +217,8 @@ def prepare_hayes(generate=True):
     
 def prepare_pfeifer(generate=True):
     
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/pfeifer_train.csv"
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/pfeifer_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/pfeifer_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/pfeifer_test.csv"
     
     train_annotations = []
     test_annotations = []
@@ -224,7 +238,7 @@ def prepare_pfeifer(generate=True):
                 annotations_file="/blue/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
                 patch_size=400,
                 patch_overlap=0,
-                base_dir="/blue/ewhite/b.weinstein/generalization/crops",
+                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
                 allow_empty=False
             )
             
@@ -245,8 +259,8 @@ def prepare_pfeifer(generate=True):
                     annotations_file="/blue/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
                     patch_size=400,
                     patch_overlap=0,
-                    base_dir="/blue/ewhite/b.weinstein/generalization/crops",
-                    allow_empty=False
+                    base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
+                    allow_empty=True
                 )
             except Exception as e:
                 print("{} failed with {}".format(x,e))
@@ -254,12 +268,20 @@ def prepare_pfeifer(generate=True):
             train_annotations.append(annotations)
         
         train_annotations = pd.concat(train_annotations)
+        
+        empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
+        train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
+        
+        selected_empty = empty_frames.image_path.unique()[:100]
+        empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
+        train_annotations = pd.concat([train_annotations, empty_frames])
+        
         train_annotations.to_csv(train_path, index=False)
         
     return {"train":train_path, "test":test_path}
         
 def prepare_murres(generate=True):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/murres_train.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/murres_train.csv"
     if generate:   
         df = shapefile_to_annotations(shapefile="/blue/ewhite/b.weinstein/murres/DJI_0019.shp",
                                       rgb="/blue/ewhite/b.weinstein/murres/DJI_0019.JPG", buffer_size=25)
@@ -270,7 +292,7 @@ def prepare_murres(generate=True):
             annotations_file="/blue/ewhite/b.weinstein/murres/DJI_0019.csv",
             patch_size=800,
             patch_overlap=0,
-            base_dir="/blue/ewhite/b.weinstein/generalization/crops",
+            base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
             allow_empty=False
         )
         
@@ -281,7 +303,7 @@ def prepare_murres(generate=True):
 
         
 def prepare_valle(generate=True):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/valle_train.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/valle_train.csv"
     if generate:   
         df = shapefile_to_annotations(shapefile="/blue/ewhite/b.weinstein/valle/terns_italy.shp",
                                       rgb="/blue/ewhite/b.weinstein/valle/terns_italy.png", buffer_size=5)
@@ -292,7 +314,7 @@ def prepare_valle(generate=True):
             annotations_file="/blue/ewhite/b.weinstein/valle/terns_italy.csv",
             patch_size=300,
             patch_overlap=0,
-            base_dir="/blue/ewhite/b.weinstein/generalization/crops",
+            base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
             allow_empty=False
         )
         
@@ -302,7 +324,7 @@ def prepare_valle(generate=True):
     return {"train":train_path}
 
 def prepare_pelicans(generate=True):
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/pelicans_test.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/pelicans_test.csv"
     if generate:   
         df = shapefile_to_annotations(shapefile="/blue/ewhite/b.weinstein/pelicans/AWPE_Pigeon_Lake_2020_DJI_0005.shp",
                                       rgb="/blue/ewhite/b.weinstein/pelicans/AWPE_Pigeon_Lake_2020_DJI_0005.JPG", buffer_size=30)
@@ -313,7 +335,7 @@ def prepare_pelicans(generate=True):
             annotations_file="/blue/ewhite/b.weinstein/pelicans/AWPE_Pigeon_Lake_2020_DJI_0005.csv",
             patch_size=800,
             patch_overlap=0,
-            base_dir="/blue/ewhite/b.weinstein/generalization/crops",
+            base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
             allow_empty=False
         )
         
@@ -323,7 +345,7 @@ def prepare_pelicans(generate=True):
     return {"test":test_path}
 
 def prepare_schedl(generate=True):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/schedl_train.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/schedl_train.csv"
     
     test_annotations = []
     if generate:   
@@ -338,7 +360,7 @@ def prepare_schedl(generate=True):
                 annotations_file="/blue/ewhite/b.weinstein/schedl/{}.csv".format(basename),
                 patch_size=800,
                 patch_overlap=0,
-                base_dir="/blue/ewhite/b.weinstein/generalization/crops",
+                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
                 allow_empty=False
             )
             
@@ -349,8 +371,8 @@ def prepare_schedl(generate=True):
     return {"train":train_path}
 
 def prepare_monash(generate=True):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/monash_train.csv"
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/monash_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/monash_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/monash_test.csv"
         
     if generate:
         client = start_cluster.start(cpus=30, mem_size="10GB")
@@ -407,7 +429,7 @@ def prepare_monash(generate=True):
                 annotations_file="/blue/ewhite/b.weinstein/Monash/annotations.csv",
                 patch_size=1000,
                 patch_overlap=0,
-                base_dir="/blue/ewhite/b.weinstein/generalization/crops",
+                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
                 allow_empty=False
             )
             
@@ -437,8 +459,8 @@ def prepare_monash(generate=True):
 
 def prepare_USGS(generate=True):
     
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/USGS_train.csv"
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/USGS_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/USGS_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/USGS_test.csv"
     
     if generate:
         
@@ -454,8 +476,8 @@ def prepare_USGS(generate=True):
                 annotations_file="/blue/ewhite/b.weinstein/USGS/migbirds/annotations.csv",
                 patch_size=1100,
                 patch_overlap=0,
-                base_dir="/blue/ewhite/b.weinstein/generalization/crops",
-                allow_empty=False
+                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
+                allow_empty=True
             )
             
             return annotations
@@ -471,6 +493,11 @@ def prepare_USGS(generate=True):
         
         df = pd.concat(crop_annotations)
         df.label = "Bird"
+        
+        #Exract empty and selectively add
+        empty_frames = df[(df.xmin==0) & (df.xmax==0)]
+        selected_empty = empty_frames.image_path.unique()[:100]
+        
         df = df[~(df.xmin >= df.xmax)]
         df = df[~(df.ymin >= df.ymax)]
         df = df[["xmin","ymin","xmax","ymax","image_path","label"]]
@@ -479,6 +506,8 @@ def prepare_USGS(generate=True):
                 
         train_images = df.image_path.sample(frac=0.85)
         train_annotations = df[df.image_path.isin(train_images)]
+        train_annotations_empty = df[df.image_path.isin(selected_empty)]
+        train_annotations = pd.concat([train_annotations,train_annotations_empty])
         train_annotations.to_csv(train_path, index=False)    
     
         test_annotations = df[~(df.image_path.isin(train_images))]
@@ -488,8 +517,8 @@ def prepare_USGS(generate=True):
     return {"train":train_path, "test":test_path}
 
 def prepare_mckellar(generate=True):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/mckellar_train.csv"
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/mckellar_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/mckellar_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/mckellar_test.csv"
     
     train_annotations = []
     test_annotations = []
@@ -505,7 +534,7 @@ def prepare_mckellar(generate=True):
                 annotations_file="/blue/ewhite/b.weinstein/mckellar/{}.csv".format(basename),
                 patch_size=600,
                 patch_overlap=0,
-                base_dir="/blue/ewhite/b.weinstein/generalization/crops",
+                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
                 allow_empty=False
             )
             
@@ -525,7 +554,7 @@ def prepare_mckellar(generate=True):
                 annotations_file="/blue/ewhite/b.weinstein/mckellar/{}.csv".format(basename),
                 patch_size=600,
                 patch_overlap=0,
-                base_dir="/blue/ewhite/b.weinstein/generalization/crops",
+                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
                 allow_empty=False
             )
             
@@ -537,8 +566,8 @@ def prepare_mckellar(generate=True):
     return {"train":train_path, "test":test_path}
 
 def prepare_seabirdwatch(generate):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/seabirdwatch_train.csv"
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/seabirdwatch_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/seabirdwatch_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/seabirdwatch_test.csv"
     
     if generate:   
         
@@ -568,8 +597,8 @@ def prepare_seabirdwatch(generate):
         
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/seabirdwatch/train_images.csv",
-                                                path_to_raster="/blue/ewhite/b.weinstein/generalization/crops/{}".format(x),
-                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+                                                path_to_raster="/blue/ewhite/b.weinstein/generalization/crops_empty/{}".format(x),
+                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
                                                 patch_size=500)
             return result
@@ -602,8 +631,8 @@ def prepare_seabirdwatch(generate):
                 
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/seabirdwatch/test_images.csv",
-                                                path_to_raster="/blue/ewhite/b.weinstein/generalization/crops/{}".format(x),
-                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+                                                path_to_raster="/blue/ewhite/b.weinstein/generalization/crops_empty/{}".format(x),
+                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
                                                 patch_size=500)
             return result
@@ -624,8 +653,8 @@ def prepare_seabirdwatch(generate):
     return {"train":train_path, "test":test_path}
 
 def prepare_newmexico(generate):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/newmexico_train.csv"
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/newmexico_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/newmexico_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/newmexico_test.csv"
     
     if generate:   
         client = start_cluster.start(cpus=5)
@@ -652,7 +681,7 @@ def prepare_newmexico(generate):
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/newmexico/train_images.csv",
                                                 path_to_raster="/blue/ewhite/b.weinstein/newmexico/Imagery/{}".format(x),
-                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
                                                 patch_size=1500)
             return result
@@ -686,7 +715,7 @@ def prepare_newmexico(generate):
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/newmexico/test_images.csv",
                                                 path_to_raster="/blue/ewhite/b.weinstein/newmexico/Imagery/{}".format(x),
-                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
                                                 patch_size=800)
             return result
@@ -707,8 +736,8 @@ def prepare_newmexico(generate):
     return {"train":train_path, "test":test_path}
 
 def prepare_neill(generate):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/neill_train.csv"
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/neill_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/neill_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/neill_test.csv"
     
     if generate:   
         client = start_cluster.start(cpus=30)
@@ -737,8 +766,8 @@ def prepare_neill(generate):
         
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/neill/train_images.csv",
-                                                path_to_raster="/blue/ewhite/b.weinstein/generalization/crops/{}".format(x),
-                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+                                                path_to_raster="/blue/ewhite/b.weinstein/generalization/crops_empty/{}".format(x),
+                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
                                                 patch_size=700)
             return result
@@ -773,8 +802,8 @@ def prepare_neill(generate):
         #Too large for GPU memory, cut into pieces
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/neill/test_images.csv",
-                                                path_to_raster="/blue/ewhite/b.weinstein/generalization/crops/{}".format(x),
-                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+                                                path_to_raster="/blue/ewhite/b.weinstein/generalization/crops_empty/{}".format(x),
+                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
                                                 patch_size=700)
             return result
@@ -795,7 +824,7 @@ def prepare_neill(generate):
     return {"train":train_path, "test":test_path}
 
 def prepare_cros(generate):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/cros_train.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/cros_train.csv"
     
     if generate:   
         txts = glob.glob("/blue/ewhite/b.weinstein/cros/*.txt")
@@ -815,7 +844,7 @@ def prepare_cros(generate):
             df.to_csv("/blue/ewhite/b.weinstein/cros/{}.csv".format(basename))
             cropped_df = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/cros/{}.csv".format(basename),
                                                                 path_to_raster="/blue/ewhite/b.weinstein/cros/{}.jpg".format(basename),
-                                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+                                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                                 allow_empty=False,
                                                                 patch_size=700)
             train_annotations.append(cropped_df)
@@ -826,8 +855,8 @@ def prepare_cros(generate):
     return {"train":train_path}
 
 def prepare_michigan(generate):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/michigan_train.csv"
-    test_path = "/blue/ewhite/b.weinstein/generalization/crops/michigan_test.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/michigan_train.csv"
+    test_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/michigan_test.csv"
     
     if generate:   
         client = start_cluster.start(cpus=20)
@@ -854,7 +883,7 @@ def prepare_michigan(generate):
             
             cropped_df = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/michigan/{}.csv".format(basename),
                                                                 path_to_raster="/blue/ewhite/b.weinstein/michigan/{}.JPG".format(basename),
-                                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
+                                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                                 allow_empty=False,
                                                                 patch_size=1000)
             return cropped_df
@@ -888,7 +917,7 @@ def prepare_michigan(generate):
     return {"train":train_path, "test":test_path}
 
 def prepare_poland(generate):
-    train_path = "/blue/ewhite/b.weinstein/generalization/crops/poland_train.csv"
+    train_path = "/blue/ewhite/b.weinstein/generalization/crops_empty/poland_train.csv"
     
     if generate:   
         train_annotations = []        
@@ -920,8 +949,8 @@ def prepare_poland(generate):
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/poland/train_images.csv",
                                                 path_to_raster="/blue/ewhite/b.weinstein/poland/{}".format(x),
-                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
-                                                allow_empty=False,
+                                                base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
+                                                allow_empty=True,
                                                 patch_size=1200)
             return result
 
@@ -935,31 +964,38 @@ def prepare_poland(generate):
                 print(e)
                 pass
                         
-        crop_annotations = pd.concat(crop_annotations)
-        crop_annotations.to_csv(train_path)
+        train_annotations = pd.concat(crop_annotations)
+        
+        
+        empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
+        train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
+        
+        selected_empty = empty_frames.image_path.unique()[:100]
+        empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
+        train_annotations = pd.concat([train_annotations, empty_frames])
+        train_annotations.to_csv(train_path)
         
     return {"train":train_path}
 
 def prepare():
     paths = {}
-    paths["terns"] = prepare_terns(generate=False)
+    paths["terns"] = prepare_terns(generate=True)
     paths["everglades"] = prepare_everglades()
-    paths["penguins"] = prepare_penguin(generate=False)
-    paths["palmyra"] = prepare_palmyra(generate=False)
-    paths["neill"] = prepare_pelicans(generate=False)
-    paths["murres"] = prepare_murres(generate=False)
-    paths["schedl"] = prepare_schedl(generate=False)
-    paths["pfeifer"] = prepare_pfeifer(generate=False)    
-    paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=False)
-    paths["monash"] = prepare_monash(generate=False)
-    paths["mckellar"] = prepare_mckellar(generate=False)
-    paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
-    paths["neill"] = prepare_neill(generate=False)
-    paths["newmexico"] = prepare_newmexico(generate=False)
-    paths["valle"] = prepare_valle(generate=False)
-    #paths["cros"] = prepare_cros(generate=False)
-    paths["poland"] = prepare_poland(generate=False)
-    paths["michigan"] = prepare_michigan(generate=False)
+    paths["penguins"] = prepare_penguin(generate=True)
+    paths["palmyra"] = prepare_palmyra(generate=True)
+    paths["neill"] = prepare_pelicans(generate=True)
+    paths["murres"] = prepare_murres(generate=True)
+    paths["schedl"] = prepare_schedl(generate=True)
+    paths["pfeifer"] = prepare_pfeifer(generate=True)    
+    paths["hayes"] = prepare_hayes(generate=True)
+    paths["USGS"] = prepare_USGS(generate=True)
+    paths["monash"] = prepare_monash(generate=True)
+    paths["mckellar"] = prepare_mckellar(generate=True)
+    paths["seabirdwatch"] = prepare_seabirdwatch(generate=True)
+    paths["neill"] = prepare_neill(generate=True)
+    paths["newmexico"] = prepare_newmexico(generate=True)
+    paths["valle"] = prepare_valle(generate=True)
+    paths["poland"] = prepare_poland(generate=True)
+    paths["michigan"] = prepare_michigan(generate=True)
     
     return paths
