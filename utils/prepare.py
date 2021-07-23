@@ -209,7 +209,11 @@ def prepare_pfeifer(generate=True):
     train_annotations = []
     test_annotations = []
     if generate:   
-        for x in glob.glob("/blue/ewhite/b.weinstein/pfeifer/*.shp")[:1]:
+        
+        shps = glob.glob("/blue/ewhite/b.weinstein/pfeifer/*.shp")
+        shps = [x for x in shps if not x == '/blue/ewhite/b.weinstein/pfeifer/Rzepecki Islands_middle_2016_Chinstrap_penguins.shp']
+        
+        for x in ["/blue/ewhite/b.weinstein/pfeifer/Rzepecki Islands_middle_2016_Chinstrap_penguins.shp"]:
             basename = os.path.splitext(os.path.basename(x))[0]
             df = shapefile_to_annotations(shapefile="/blue/ewhite/b.weinstein/pfeifer/{}.shp".format(basename),
                                           rgb="/blue/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
@@ -228,7 +232,7 @@ def prepare_pfeifer(generate=True):
         test_annotations = pd.concat(test_annotations)
         test_annotations.to_csv(test_path, index=False)
             
-        for x in glob.glob("/blue/ewhite/b.weinstein/pfeifer/*.shp")[1:]:
+        for x in shps:
             print(x)
             basename = os.path.splitext(os.path.basename(x))[0]
             df = shapefile_to_annotations(shapefile="/blue/ewhite/b.weinstein/pfeifer/{}.shp".format(basename),
