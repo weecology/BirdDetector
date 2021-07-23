@@ -979,9 +979,9 @@ def prepare_poland(generate):
 
 def prepare():
     paths = {}
-    paths["terns"] = prepare_terns(generate=True)
+    paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
-    paths["penguins"] = prepare_penguin(generate=True)
+    paths["penguins"] = prepare_penguin(generate=False)
     paths["palmyra"] = prepare_palmyra(generate=True)
     paths["neill"] = prepare_pelicans(generate=True)
     paths["murres"] = prepare_murres(generate=True)
