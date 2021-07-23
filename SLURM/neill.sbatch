@@ -10,7 +10,7 @@
 #SBATCH --output=/home/b.weinstein/logs/DeepForest_%j.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/DeepForest_%j.err
 #SBATCH --partition=gpu
-#SBATCH --gpus=geforce:1
+#SBATCH --gpus=1
 
 source activate Zooniverse_pytorch
 
