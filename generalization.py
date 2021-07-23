@@ -205,7 +205,6 @@ def fine_tune(dataset, comet_logger, savedir, config):
     return result_frame
 
 def mini_fine_tune(dataset, comet_logger, config, savedir, n):
-    #Fine tuning, up to 1000 birds from train
     min_annotation_results = []
     for i in range(3):
         try:
@@ -214,7 +213,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         except Exception as e:
             print(e)
             
-        model_path = "{}/{}_mini_{}.pt".format(savedir, dataset,i)
+        model_path = "{}/{}_mini_{}_{}.pt".format(savedir, dataset,i, n)        
         model = BirdDetector(transforms = deepforest_transform)   
         model.config = config
         weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
@@ -225,15 +224,15 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         else: 
             df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/{}_train.csv".format(dataset))            
             train_annotations = select(df, n)
-            model = fit(model, train_annotations, comet_logger, "{}_mini_fine_tune".format(dataset))
+            model = fit(model, train_annotations, comet_logger,"{}_mini_{}".format(dataset, n))
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
         finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops_empty/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/", iou_threshold=0.2, savedir=image_save_dir)
         if comet_logger is not None:
-            comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
-            comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Precision - Iteration {}".format(dataset, i),finetune_results["box_precision"])
-        min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Iteration":[i],"Model":["Min Annotation"]}))
+            comet_logger.experiment.log_metric("Fine Tuned {} {} Box Recall - Iteration {}".format(n,dataset, i),finetune_results["box_recall"])
+            comet_logger.experiment.log_metric("Fine Tuned {} {} Box Precision - Iteration {}".format(n,dataset, i),finetune_results["box_precision"])
+            min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Annotations":[n],"Iteration":[i],"Model":["RandomWeight"]}))
         del model
         torch.cuda.empty_cache()
         gc.collect()
