@@ -204,7 +204,7 @@ def fine_tune(dataset, comet_logger, savedir, config):
         
     return result_frame
 
-def mini_fine_tune(dataset, comet_logger, config, savedir):
+def mini_fine_tune(dataset, comet_logger, config, savedir, n):
     #Fine tuning, up to 1000 birds from train
     min_annotation_results = []
     for i in range(3):
@@ -224,7 +224,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir):
             model.model.load_state_dict(torch.load(model_path))
         else: 
             df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
-            train_annotations = select(df, 1000)
+            train_annotations = select(df, n)
             model = fit(model, train_annotations, comet_logger, "{}_mini_fine_tune".format(dataset))
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
@@ -260,12 +260,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
             model.config = config
             model.config["train"]["epochs"] = 20
             model.config["train"]["lr"] = 0.002
-            
-            df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset)) 
-            #Skip if not enough annotations
-            if df.shape[0] < n:
-                continue
-            train_annotations = select(df, n)
+            train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}_mini_fine_tune.csv".format(dataset))
             model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n))
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
@@ -302,9 +297,10 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
         gc.collect()          
         results.append(finetune_results)
     if run_mini:
-        mini_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger)
-        gc.collect()          
-        results.append(mini_results)
+        for n in [1000, 5000, 10000, 20000, 25000, 30000, 40000]:        
+            random_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
+            results.append(random_results)         
+            gc.collect()      
     
     if run_random:
         for n in [1000, 5000, 10000, 20000, 25000, 30000, 40000]:        
