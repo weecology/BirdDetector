@@ -234,19 +234,22 @@ def prepare_pfeifer(generate=True):
             
         for x in shps:
             print(x)
-            basename = os.path.splitext(os.path.basename(x))[0]
-            df = shapefile_to_annotations(shapefile="/blue/ewhite/b.weinstein/pfeifer/{}.shp".format(basename),
-                                          rgb="/blue/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
-            df.to_csv("/blue/ewhite/b.weinstein/pfeifer/{}.csv".format(basename))
-            
-            annotations = preprocess.split_raster(
-                path_to_raster="/blue/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
-                annotations_file="/blue/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
-                patch_size=300,
-                patch_overlap=0,
-                base_dir="/blue/ewhite/b.weinstein/generalization/crops",
-                allow_empty=False
-            )
+            try:
+                basename = os.path.splitext(os.path.basename(x))[0]
+                df = shapefile_to_annotations(shapefile="/blue/ewhite/b.weinstein/pfeifer/{}.shp".format(basename),
+                                              rgb="/blue/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
+                df.to_csv("/blue/ewhite/b.weinstein/pfeifer/{}.csv".format(basename))
+                
+                annotations = preprocess.split_raster(
+                    path_to_raster="/blue/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
+                    annotations_file="/blue/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
+                    patch_size=300,
+                    patch_overlap=0,
+                    base_dir="/blue/ewhite/b.weinstein/generalization/crops",
+                    allow_empty=False
+                )
+            except Exception as e:
+                print("{} failed with {}".format(x,e))
             
             train_annotations.append(annotations)
         
