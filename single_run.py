@@ -12,7 +12,7 @@ ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 savedir = "/blue/ewhite/b.weinstein/generalization/snapshots/"
-savedir = "/blue/ewhite/b.weinstein/generalization/{}/".format(timestamp)
+#savedir = "/blue/ewhite/b.weinstein/generalization/{}/".format(timestamp)
 comet_logger.experiment.log_parameter("savedir",savedir)
 try:
     os.mkdir(savedir)
