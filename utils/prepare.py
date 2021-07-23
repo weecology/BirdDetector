@@ -78,6 +78,13 @@ def prepare_palmyra(generate=True):
 
         
         train_annotations = pd.concat([train_annotations_1, train_annotations2])
+        
+        empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
+        train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
+        selected_empty = empty_frames.image_path.unique()[:100]
+        empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
+        train_annotations = pd.concat([train_annotations, empty_frames])
+                
         train_annotations.to_csv(train_path,index=False)
             
     return {"train":train_path, "test":test_path}
@@ -118,8 +125,15 @@ def prepare_penguin(generate=True):
             patch_overlap=0.05,
             base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
             image_name="offshore_rocks_cape_wallace_survey_4.tif",
-            allow_empty=False
+            allow_empty=True,
         )
+        
+        empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
+        train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
+        
+        selected_empty = empty_frames.image_path.unique()[:100]
+        empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
+        train_annotations = pd.concat([train_annotations, empty_frames])
         
         train_annotations.to_csv(train_path,index=False)
         
@@ -246,7 +260,7 @@ def prepare_pfeifer(generate=True):
                     patch_size=400,
                     patch_overlap=0,
                     base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty",
-                    allow_empty=False
+                    allow_empty=True
                 )
             except Exception as e:
                 print("{} failed with {}".format(x,e))
@@ -254,6 +268,14 @@ def prepare_pfeifer(generate=True):
             train_annotations.append(annotations)
         
         train_annotations = pd.concat(train_annotations)
+        
+        empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
+        train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
+        
+        selected_empty = empty_frames.image_path.unique()[:100]
+        empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
+        train_annotations = pd.concat([train_annotations, empty_frames])
+        
         train_annotations.to_csv(train_path, index=False)
         
     return {"train":train_path, "test":test_path}
@@ -474,7 +496,7 @@ def prepare_USGS(generate=True):
         
         #Exract empty and selectively add
         empty_frames = df[(df.xmin==0) & (df.xmax==0)]
-        selected_empty = empty_frames.image_path.unique()[:200]
+        selected_empty = empty_frames.image_path.unique()[:100]
         
         df = df[~(df.xmin >= df.xmax)]
         df = df[~(df.ymin >= df.ymax)]
@@ -942,31 +964,38 @@ def prepare_poland(generate):
                 print(e)
                 pass
                         
-        crop_annotations = pd.concat(crop_annotations)
-        crop_annotations.to_csv(train_path)
+        train_annotations = pd.concat(crop_annotations)
+        
+        
+        empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
+        train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
+        
+        selected_empty = empty_frames.image_path.unique()[:100]
+        empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
+        train_annotations = pd.concat([train_annotations, empty_frames])
+        train_annotations.to_csv(train_path)
         
     return {"train":train_path}
 
 def prepare():
     paths = {}
-    paths["terns"] = prepare_terns(generate=False)
+    paths["terns"] = prepare_terns(generate=True)
     paths["everglades"] = prepare_everglades()
-    paths["penguins"] = prepare_penguin(generate=False)
-    paths["palmyra"] = prepare_palmyra(generate=False)
-    paths["neill"] = prepare_pelicans(generate=False)
-    paths["murres"] = prepare_murres(generate=False)
-    paths["schedl"] = prepare_schedl(generate=False)
-    paths["pfeifer"] = prepare_pfeifer(generate=False)    
-    paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=False)
-    paths["monash"] = prepare_monash(generate=False)
-    paths["mckellar"] = prepare_mckellar(generate=False)
-    paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
-    paths["neill"] = prepare_neill(generate=False)
-    paths["newmexico"] = prepare_newmexico(generate=False)
-    paths["valle"] = prepare_valle(generate=False)
-    #paths["cros"] = prepare_cros(generate=False)
-    paths["poland"] = prepare_poland(generate=False)
-    paths["michigan"] = prepare_michigan(generate=False)
+    paths["penguins"] = prepare_penguin(generate=True)
+    paths["palmyra"] = prepare_palmyra(generate=True)
+    paths["neill"] = prepare_pelicans(generate=True)
+    paths["murres"] = prepare_murres(generate=True)
+    paths["schedl"] = prepare_schedl(generate=True)
+    paths["pfeifer"] = prepare_pfeifer(generate=True)    
+    paths["hayes"] = prepare_hayes(generate=True)
+    paths["USGS"] = prepare_USGS(generate=True)
+    paths["monash"] = prepare_monash(generate=True)
+    paths["mckellar"] = prepare_mckellar(generate=True)
+    paths["seabirdwatch"] = prepare_seabirdwatch(generate=True)
+    paths["neill"] = prepare_neill(generate=True)
+    paths["newmexico"] = prepare_newmexico(generate=True)
+    paths["valle"] = prepare_valle(generate=True)
+    paths["poland"] = prepare_poland(generate=True)
+    paths["michigan"] = prepare_michigan(generate=True)
     
     return paths
