@@ -73,7 +73,7 @@ def prepare_palmyra(generate=True):
             patch_overlap=0.05,
             base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
             image_name="CooperEelPond_53M.tif",
-            allow_empty=False
+            allow_empty=True
         )
 
         
@@ -81,7 +81,7 @@ def prepare_palmyra(generate=True):
         
         empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
         train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
-        selected_empty = empty_frames.image_path.unique()[:100]
+        selected_empty = empty_frames.image_path.unique()
         empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
         train_annotations = pd.concat([train_annotations, empty_frames])
                 
@@ -131,7 +131,7 @@ def prepare_penguin(generate=True):
         empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
         train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
         
-        selected_empty = empty_frames.image_path.unique()[:100]
+        selected_empty = empty_frames.image_path.unique()
         empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
         train_annotations = pd.concat([train_annotations, empty_frames])
         
@@ -272,7 +272,7 @@ def prepare_pfeifer(generate=True):
         empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
         train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
         
-        selected_empty = empty_frames.image_path.unique()[:100]
+        selected_empty = empty_frames.image_path.unique()
         empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
         train_annotations = pd.concat([train_annotations, empty_frames])
         
@@ -496,7 +496,7 @@ def prepare_USGS(generate=True):
         
         #Exract empty and selectively add
         empty_frames = df[(df.xmin==0) & (df.xmax==0)]
-        selected_empty = empty_frames.image_path.unique()[:100]
+        selected_empty = empty_frames.image_path.unique()
         
         df = df[~(df.xmin >= df.xmax)]
         df = df[~(df.ymin >= df.ymax)]
@@ -970,7 +970,7 @@ def prepare_poland(generate):
         empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
         train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
         
-        selected_empty = empty_frames.image_path.unique()[:100]
+        selected_empty = empty_frames.image_path.unique()
         empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
         train_annotations = pd.concat([train_annotations, empty_frames])
         train_annotations.to_csv(train_path)

@@ -222,7 +222,9 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
         else: 
-            df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/{}_train.csv".format(dataset))            
+            df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/{}_train.csv".format(dataset))  
+            if df.shape[0] < n:
+                continue
             train_annotations = select(df, n)
             model = fit(model, train_annotations, comet_logger,"{}_mini_{}".format(dataset, n))
             if savedir:
@@ -258,8 +260,8 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
         else: 
             model.config = config
             model.config["train"]["epochs"] = 20
-            model.config["train"]["lr"] = 0.002
-            train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/training_annotations_{}_mini_fine_tune.csv".format(dataset))
+            model.config["train"]["lr"] = 0.002 
+            train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/training_annotations_{}_mini_{}.csv".format(dataset, n))
             model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n))
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
