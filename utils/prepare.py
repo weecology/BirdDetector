@@ -449,7 +449,13 @@ def prepare_monash(generate=True):
         df = df.drop_duplicates()
         
         train_annotations = df[~(df.image_path.str.contains("Transect_A_2020"))]
+        empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
+        train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
+        selected_empty = empty_frames.image_path.unique()
+        empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
+        train_annotations = pd.concat([train_annotations, empty_frames])
         train_annotations.to_csv(train_path, index=False)    
+        
         
         test_annotations = df[df.image_path.str.contains("Transect_A_2020")]
         test_annotations.to_csv(test_path, index=False)
@@ -561,6 +567,12 @@ def prepare_mckellar(generate=True):
             train_annotations.append(annotations)
         
         train_annotations = pd.concat(train_annotations)
+        
+        empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
+        train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
+        selected_empty = empty_frames.image_path.unique()
+        empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
+        train_annotations = pd.concat([train_annotations, empty_frames])        
         train_annotations.to_csv(train_path, index=False)
         
     return {"train":train_path, "test":test_path}
@@ -968,10 +980,8 @@ def prepare_poland(generate):
                         
         train_annotations = pd.concat(crop_annotations)
         
-        
         empty_frames = train_annotations[(train_annotations.xmin==0) & (train_annotations.xmax==0)]
         train_annotations = train_annotations[~((train_annotations.xmin==0) & (train_annotations.xmax==0))]
-        
         selected_empty = empty_frames.image_path.unique()
         empty_frames = empty_frames[empty_frames.image_path.isin(selected_empty)]
         train_annotations = pd.concat([train_annotations, empty_frames])
@@ -983,21 +993,21 @@ def prepare():
     paths = {}
     paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
-    paths["penguins"] = prepare_penguin(generate=False)
-    paths["palmyra"] = prepare_palmyra(generate=False)
+    paths["penguins"] = prepare_penguin(generate=True)
+    paths["palmyra"] = prepare_palmyra(generate=True)
     paths["neill"] = prepare_pelicans(generate=False)
     paths["murres"] = prepare_murres(generate=False)
     paths["schedl"] = prepare_schedl(generate=False)
-    paths["pfeifer"] = prepare_pfeifer(generate=False)    
+    paths["pfeifer"] = prepare_pfeifer(generate=True)    
     paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=False)
-    paths["monash"] = prepare_monash(generate=False)
-    paths["mckellar"] = prepare_mckellar(generate=False)
+    paths["USGS"] = prepare_USGS(generate=True)
+    paths["monash"] = prepare_monash(generate=True)
+    paths["mckellar"] = prepare_mckellar(generate=True)
     paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
     paths["neill"] = prepare_neill(generate=False)
     paths["newmexico"] = prepare_newmexico(generate=False)
     paths["valle"] = prepare_valle(generate=False)
-    paths["poland"] = prepare_poland(generate=False)
+    paths["poland"] = prepare_poland(generate=True)
     paths["michigan"] = prepare_michigan(generate=False)
     
     return paths
