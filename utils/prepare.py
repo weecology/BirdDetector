@@ -464,7 +464,7 @@ def prepare_USGS(generate=True):
     
     if generate:
         
-        client = start_cluster.start(cpus=30, mem_size="10GB")
+        client = start_cluster.start(cpus=60, mem_size="10GB")
 
         input_data = pd.read_csv("/blue/ewhite/b.weinstein/USGS/migbirds/migbirds2020_07_31.csv")
         input_data["image_path"] = input_data.file_basename
@@ -571,7 +571,7 @@ def prepare_seabirdwatch(generate):
     
     if generate:   
         
-        client = start_cluster.start(cpus=20)
+        client = start_cluster.start(cpus=60)
         shps = glob.glob("/blue/ewhite/b.weinstein/seabirdwatch/parsed/*.shp")
         
         #Hold one year out
@@ -600,6 +600,7 @@ def prepare_seabirdwatch(generate):
                                                 path_to_raster="/blue/ewhite/b.weinstein/seabirdwatch/images/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
+						patch_overlap=0,
                                                 patch_size=500)
             return result
 
@@ -634,6 +635,7 @@ def prepare_seabirdwatch(generate):
                                                 path_to_raster="/blue/ewhite/b.weinstein/seabirdwatch/images/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
+						patch_overlap=0,
                                                 patch_size=500)
             return result
         
@@ -979,23 +981,23 @@ def prepare_poland(generate):
 
 def prepare():
     paths = {}
-    paths["terns"] = prepare_terns(generate=True)
+    paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
-    paths["penguins"] = prepare_penguin(generate=True)
-    paths["palmyra"] = prepare_palmyra(generate=True)
-    paths["neill"] = prepare_pelicans(generate=True)
-    paths["murres"] = prepare_murres(generate=True)
-    paths["schedl"] = prepare_schedl(generate=True)
-    paths["pfeifer"] = prepare_pfeifer(generate=True)    
-    paths["hayes"] = prepare_hayes(generate=True)
-    paths["USGS"] = prepare_USGS(generate=True)
-    paths["monash"] = prepare_monash(generate=True)
-    paths["mckellar"] = prepare_mckellar(generate=True)
-    paths["seabirdwatch"] = prepare_seabirdwatch(generate=True)
-    paths["neill"] = prepare_neill(generate=True)
-    paths["newmexico"] = prepare_newmexico(generate=True)
-    paths["valle"] = prepare_valle(generate=True)
-    paths["poland"] = prepare_poland(generate=True)
-    paths["michigan"] = prepare_michigan(generate=True)
+    paths["penguins"] = prepare_penguin(generate=False)
+    paths["palmyra"] = prepare_palmyra(generate=False)
+    paths["neill"] = prepare_pelicans(generate=False)
+    paths["murres"] = prepare_murres(generate=False)
+    paths["schedl"] = prepare_schedl(generate=False)
+    paths["pfeifer"] = prepare_pfeifer(generate=False)    
+    paths["hayes"] = prepare_hayes(generate=False)
+    paths["USGS"] = prepare_USGS(generate=False)
+    paths["monash"] = prepare_monash(generate=False)
+    paths["mckellar"] = prepare_mckellar(generate=False)
+    paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
+    paths["neill"] = prepare_neill(generate=False)
+    paths["newmexico"] = prepare_newmexico(generate=False)
+    paths["valle"] = prepare_valle(generate=False)
+    paths["poland"] = prepare_poland(generate=False)
+    paths["michigan"] = prepare_michigan(generate=False)
     
     return paths

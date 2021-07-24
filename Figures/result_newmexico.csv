@@ -1,9 +1,45 @@
 ,test_set,Recall,Precision,Model,Iteration,Annotations
-0,newmexico,0.3899435531788473,0.3849163907987438,Zero Shot,,
-0,newmexico,0.8734084542908073,0.585586940765969,Fine Tune,,
-0,newmexico,0.8436253289194466,0.6734479246243952,Min Annotation,0.0,
-0,newmexico,0.8436253289194466,0.6734479246243952,Min Annotation,1.0,
-0,newmexico,0.8235718529836177,0.6651591545709193,Min Annotation,2.0,
+0,newmexico,0.44214200831847894,0.3336595164381542,Zero Shot,,
+0,newmexico,0.9268843901196843,0.3742901495711429,Fine Tune,,
+0,newmexico,0.9351285968933027,0.3974608797558209,Min Annotation,0.0,
+0,newmexico,0.9057168321874204,0.40050778479234533,Min Annotation,1.0,
+0,newmexico,0.9057168321874204,0.3899709900951062,Min Annotation,2.0,
+0,newmexico,0.9351285968933027,0.3974608797558209,Min Annotation,0.0,
+0,newmexico,0.9057168321874204,0.40050778479234533,Min Annotation,1.0,
+0,newmexico,0.9057168321874204,0.3899709900951062,Min Annotation,2.0,
+0,newmexico,0.9351285968933027,0.3974608797558209,Min Annotation,0.0,
+0,newmexico,0.9057168321874204,0.40050778479234533,Min Annotation,1.0,
+0,newmexico,0.9057168321874204,0.3899709900951062,Min Annotation,2.0,
+0,newmexico,0.9351285968933027,0.3974608797558209,Min Annotation,0.0,
+0,newmexico,0.9057168321874204,0.40050778479234533,Min Annotation,1.0,
+0,newmexico,0.9057168321874204,0.3899709900951062,Min Annotation,2.0,
+0,newmexico,0.9351285968933027,0.3974608797558209,Min Annotation,0.0,
+0,newmexico,0.9057168321874204,0.40050778479234533,Min Annotation,1.0,
+0,newmexico,0.9057168321874204,0.3899709900951062,Min Annotation,2.0,
+0,newmexico,0.9351285968933027,0.3974608797558209,Min Annotation,0.0,
+0,newmexico,0.9057168321874204,0.40050778479234533,Min Annotation,1.0,
+0,newmexico,0.9057168321874204,0.3899709900951062,Min Annotation,2.0,
+0,newmexico,0.9351285968933027,0.3974608797558209,Min Annotation,0.0,
+0,newmexico,0.9057168321874204,0.40050778479234533,Min Annotation,1.0,
+0,newmexico,0.9057168321874204,0.3899709900951062,Min Annotation,2.0,
 0,newmexico,0.0,0.0,RandomWeight,0.0,1000.0
 0,newmexico,0.0,0.0,RandomWeight,1.0,1000.0
 0,newmexico,0.0,0.0,RandomWeight,2.0,1000.0
+0,newmexico,0.0,0.0,RandomWeight,0.0,5000.0
+0,newmexico,0.0,0.0,RandomWeight,1.0,5000.0
+0,newmexico,0.0,0.0,RandomWeight,2.0,5000.0
+0,newmexico,0.0,0.0,RandomWeight,0.0,10000.0
+0,newmexico,0.0,0.0,RandomWeight,1.0,10000.0
+0,newmexico,0.0,0.0,RandomWeight,2.0,10000.0
+0,newmexico,0.0,0.0,RandomWeight,0.0,20000.0
+0,newmexico,0.0,0.0,RandomWeight,1.0,20000.0
+0,newmexico,0.0,0.0,RandomWeight,2.0,20000.0
+0,newmexico,0.0,0.0,RandomWeight,0.0,25000.0
+0,newmexico,0.0,0.0,RandomWeight,1.0,25000.0
+0,newmexico,0.0,0.0,RandomWeight,2.0,25000.0
+0,newmexico,0.0,0.0,RandomWeight,0.0,30000.0
+0,newmexico,0.0,0.0,RandomWeight,1.0,30000.0
+0,newmexico,0.0,0.0,RandomWeight,2.0,30000.0
+0,newmexico,0.0,0.0,RandomWeight,0.0,40000.0
+0,newmexico,0.0,0.0,RandomWeight,1.0,40000.0
+0,newmexico,0.0,0.0,RandomWeight,2.0,40000.0
