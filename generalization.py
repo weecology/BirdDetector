@@ -120,13 +120,13 @@ def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
     train_annotations = pd.concat(all_sets)
     
     #A couple illegal boxes, make slightly smaller
-    train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
-    train_annotations["xmax"] = train_annotations["xmax"].astype(float) - 3
-    train_annotations["ymin"] = train_annotations["ymin"].astype(float)
-    train_annotations["ymax"] = train_annotations["ymax"].astype(float) - 3
+    #train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
+    #train_annotations["xmax"] = train_annotations["xmax"].astype(float) - 3
+    #train_annotations["ymin"] = train_annotations["ymin"].astype(float)
+    #train_annotations["ymax"] = train_annotations["ymax"].astype(float) - 3
     
-    train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
-    train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
+    #train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
+    #train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
     train_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/training_annotations.csv")
 
     all_val_sets = []
