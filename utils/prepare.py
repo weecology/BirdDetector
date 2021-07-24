@@ -464,7 +464,7 @@ def prepare_USGS(generate=True):
     
     if generate:
         
-        client = start_cluster.start(cpus=30, mem_size="10GB")
+        client = start_cluster.start(cpus=60, mem_size="10GB")
 
         input_data = pd.read_csv("/blue/ewhite/b.weinstein/USGS/migbirds/migbirds2020_07_31.csv")
         input_data["image_path"] = input_data.file_basename
@@ -571,7 +571,7 @@ def prepare_seabirdwatch(generate):
     
     if generate:   
         
-        client = start_cluster.start(cpus=20)
+        client = start_cluster.start(cpus=40)
         shps = glob.glob("/blue/ewhite/b.weinstein/seabirdwatch/parsed/*.shp")
         
         #Hold one year out
@@ -982,12 +982,12 @@ def prepare():
     paths["terns"] = prepare_terns(generate=False)
     paths["everglades"] = prepare_everglades()
     paths["penguins"] = prepare_penguin(generate=False)
-    paths["palmyra"] = prepare_palmyra(generate=True)
-    paths["neill"] = prepare_pelicans(generate=True)
-    paths["murres"] = prepare_murres(generate=True)
-    paths["schedl"] = prepare_schedl(generate=True)
-    paths["pfeifer"] = prepare_pfeifer(generate=True)    
-    paths["hayes"] = prepare_hayes(generate=True)
+    paths["palmyra"] = prepare_palmyra(generate=False)
+    paths["neill"] = prepare_pelicans(generate=False)
+    paths["murres"] = prepare_murres(generate=False)
+    paths["schedl"] = prepare_schedl(generate=False)
+    paths["pfeifer"] = prepare_pfeifer(generate=False)    
+    paths["hayes"] = prepare_hayes(generate=False)
     paths["USGS"] = prepare_USGS(generate=True)
     paths["monash"] = prepare_monash(generate=True)
     paths["mckellar"] = prepare_mckellar(generate=True)
