@@ -571,7 +571,7 @@ def prepare_seabirdwatch(generate):
     
     if generate:   
         
-        client = start_cluster.start(cpus=40)
+        client = start_cluster.start(cpus=60)
         shps = glob.glob("/blue/ewhite/b.weinstein/seabirdwatch/parsed/*.shp")
         
         #Hold one year out
@@ -600,6 +600,7 @@ def prepare_seabirdwatch(generate):
                                                 path_to_raster="/blue/ewhite/b.weinstein/seabirdwatch/images/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
+						patch_overlap=0,
                                                 patch_size=500)
             return result
 
@@ -634,6 +635,7 @@ def prepare_seabirdwatch(generate):
                                                 path_to_raster="/blue/ewhite/b.weinstein/seabirdwatch/images/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
+						patch_overlap=0,
                                                 patch_size=500)
             return result
         
@@ -988,9 +990,9 @@ def prepare():
     paths["schedl"] = prepare_schedl(generate=False)
     paths["pfeifer"] = prepare_pfeifer(generate=False)    
     paths["hayes"] = prepare_hayes(generate=False)
-    paths["USGS"] = prepare_USGS(generate=True)
-    paths["monash"] = prepare_monash(generate=True)
-    paths["mckellar"] = prepare_mckellar(generate=True)
+    paths["USGS"] = prepare_USGS(generate=False)
+    paths["monash"] = prepare_monash(generate=False)
+    paths["mckellar"] = prepare_mckellar(generate=False)
     paths["seabirdwatch"] = prepare_seabirdwatch(generate=True)
     paths["neill"] = prepare_neill(generate=True)
     paths["newmexico"] = prepare_newmexico(generate=True)
