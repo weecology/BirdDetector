@@ -597,7 +597,7 @@ def prepare_seabirdwatch(generate):
         
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/seabirdwatch/train_images.csv",
-                                                path_to_raster="/blue/ewhite/b.weinstein/generalization/crops_empty/{}".format(x),
+                                                path_to_raster="/blue/ewhite/b.weinstein/seabirdwatch/images/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
                                                 patch_size=500)
@@ -631,7 +631,7 @@ def prepare_seabirdwatch(generate):
                 
         def cut(x):
             result = preprocess.split_raster(annotations_file="/blue/ewhite/b.weinstein/seabirdwatch/test_images.csv",
-                                                path_to_raster="/blue/ewhite/b.weinstein/generalization/crops_empty/{}".format(x),
+                                                path_to_raster="/blue/ewhite/b.weinstein/seabirdwatch/images/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/",
                                                 allow_empty=False,
                                                 patch_size=500)
