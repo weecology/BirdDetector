@@ -994,10 +994,10 @@ def prepare():
     paths["monash"] = prepare_monash(generate=False)
     paths["mckellar"] = prepare_mckellar(generate=False)
     paths["seabirdwatch"] = prepare_seabirdwatch(generate=False)
-    paths["neill"] = prepare_neill(generate=True)
-    paths["newmexico"] = prepare_newmexico(generate=True)
-    paths["valle"] = prepare_valle(generate=True)
-    paths["poland"] = prepare_poland(generate=True)
-    paths["michigan"] = prepare_michigan(generate=True)
+    paths["neill"] = prepare_neill(generate=False)
+    paths["newmexico"] = prepare_newmexico(generate=False)
+    paths["valle"] = prepare_valle(generate=False)
+    paths["poland"] = prepare_poland(generate=False)
+    paths["michigan"] = prepare_michigan(generate=False)
     
     return paths
