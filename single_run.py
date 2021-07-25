@@ -1,4 +1,4 @@
-#Single run
+'#Single run
 from generalization import *
 import argparse
 
@@ -11,7 +11,7 @@ comet_logger = CometLogger(project_name="everglades", workspace="bw4sz",auto_out
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-savedir = "/blue/ewhite/b.weinstein/generalization/snapshots/"
+#savedir = "/blue/ewhite/b.weinstein/generalization/snapshots/"
 savedir = "/blue/ewhite/b.weinstein/generalization/{}/".format(timestamp)
 comet_logger.experiment.log_parameter("savedir",savedir)
 try:
