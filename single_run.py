@@ -1,4 +1,4 @@
-'#Single run
+#Single run
 from generalization import *
 import argparse
 
