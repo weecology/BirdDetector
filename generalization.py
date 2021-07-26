@@ -247,6 +247,12 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
     return min_annotation_results
 
 def mini_random_weights(dataset, comet_logger, config, savedir, n):
+    
+    df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))  
+    if df.shape[0] < n: 
+        print("There are {} annotations in {}, cannot select {}".format(df.shape[0],dataset, n))
+        return None
+    
     #Fine tuning, up to 1000 birds from train
     min_annotation_results = []
     for i in range(3):
