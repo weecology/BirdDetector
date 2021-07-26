@@ -211,9 +211,9 @@ def prepare_pfeifer(generate=True):
     if generate:   
         
         shps = glob.glob("/blue/ewhite/b.weinstein/pfeifer/*.shp")
-        shps = [x for x in shps if not x == '/blue/ewhite/b.weinstein/pfeifer/Rzepecki Islands_middle_2016_Chinstrap_penguins.shp']
+        shps = [x for x in shps if not x == '/blue/ewhite/b.weinstein/pfeifer/Rzepecki Islands_south_2016_Chinstrap_penguins.shp']
         
-        for x in ["/blue/ewhite/b.weinstein/pfeifer/Rzepecki Islands_middle_2016_Chinstrap_penguins.shp"]:
+        for x in ["/blue/ewhite/b.weinstein/pfeifer/Rzepecki Islands_south_2016_Chinstrap_penguins.shp"]:
             basename = os.path.splitext(os.path.basename(x))[0]
             df = shapefile_to_annotations(shapefile="/blue/ewhite/b.weinstein/pfeifer/{}.shp".format(basename),
                                           rgb="/blue/ewhite/b.weinstein/pfeifer/{}.tif".format(basename))
@@ -222,7 +222,7 @@ def prepare_pfeifer(generate=True):
             annotations = preprocess.split_raster(
                 path_to_raster="/blue/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
                 annotations_file="/blue/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
-                patch_size=400,
+                patch_size=450,
                 patch_overlap=0,
                 base_dir="/blue/ewhite/b.weinstein/generalization/crops",
                 allow_empty=False
@@ -243,7 +243,7 @@ def prepare_pfeifer(generate=True):
                 annotations = preprocess.split_raster(
                     path_to_raster="/blue/ewhite/b.weinstein/pfeifer/{}.tif".format(basename),
                     annotations_file="/blue/ewhite/b.weinstein/pfeifer/{}.csv".format(basename),
-                    patch_size=400,
+                    patch_size=450,
                     patch_overlap=0,
                     base_dir="/blue/ewhite/b.weinstein/generalization/crops",
                     allow_empty=False
