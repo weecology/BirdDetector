@@ -630,9 +630,8 @@ def prepare_newmexico(generate):
     if generate:   
         client = start_cluster.start(cpus=5)
         gdf = gpd.read_file("/blue/ewhite/b.weinstein/newmexico/annotations.shp")
-        
-        train_gdf = gdf[~(gdf.image_path == "BDA_18A4_20181107_1.JPG")]
-        test_gdf = gdf[gdf.image_path == "BDA_18A4_20181107_1.JPG"]
+        train_gdf = gdf[~(gdf.image_path.isin(["BDA_18A4_20181107_1.JPG","BDA_18A4_20181107_3.JPG"]))]
+        test_gdf = gdf[(gdf.image_path.isin(["BDA_18A4_20181107_1.JPG","BDA_18A4_20181107_3.JPG"]))]
         
         train_annotations = []
         test_annotations = []
@@ -654,7 +653,7 @@ def prepare_newmexico(generate):
                                                 path_to_raster="/blue/ewhite/b.weinstein/newmexico/Imagery/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
                                                 allow_empty=False,
-                                                patch_size=1500)
+                                                patch_size=1100)
             return result
 
         #Split into crops
@@ -688,7 +687,7 @@ def prepare_newmexico(generate):
                                                 path_to_raster="/blue/ewhite/b.weinstein/newmexico/Imagery/{}".format(x),
                                                 base_dir="/blue/ewhite/b.weinstein/generalization/crops/",
                                                 allow_empty=False,
-                                                patch_size=800)
+                                                patch_size=1100)
             return result
 
         #Split into crops
