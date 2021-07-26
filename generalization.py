@@ -218,12 +218,12 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         model.config = config
         weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
         model.model.load_state_dict(torch.load(weights))
-        
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
         else: 
             df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))  
-            if df.shape[0] < n:
+            if df.shape[0] < n: 
+                print("There are {} annotations in {}, cannot select {}".format(df.shape[0],dataset, n))
                 continue
             train_annotations = select(df, n)
             model = fit(model, train_annotations, comet_logger,"{}_mini_{}".format(dataset, n))
@@ -234,7 +234,8 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         if comet_logger is not None:
             comet_logger.experiment.log_metric("Fine Tuned {} {} Box Recall - Iteration {}".format(n,dataset, i),finetune_results["box_recall"])
             comet_logger.experiment.log_metric("Fine Tuned {} {} Box Precision - Iteration {}".format(n,dataset, i),finetune_results["box_precision"])
-            min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Annotations":[n],"Iteration":[i],"Model":["Min Annotation"]}))
+            result = pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Annotations":[n],"Iteration":[i],"Model":["Min Annotation"]})
+            min_annotation_results.append(result)
         del model
         torch.cuda.empty_cache()
         gc.collect()
@@ -299,8 +300,8 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
         results.append(finetune_results)
     if run_mini:
         for n in [1000, 5000, 10000, 20000, 25000, 30000, 40000]:        
-            random_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
-            results.append(random_results)         
+            mini_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
+            results.append(mini_results)         
             gc.collect()      
     
     if run_random:
