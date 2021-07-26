@@ -62,17 +62,17 @@ def fit(model, train_annotations, comet_logger, name):
     train_annotations["ymin"] = train_annotations["ymin"].astype(float)
     train_annotations["ymax"] = train_annotations["ymax"].astype(float)
     
-    train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
-    train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
+    #train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
+    #train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
     train_annotations = train_annotations[["xmin","ymin","xmax","ymax","label","image_path"]]
-    comet_logger.experiment.log_parameter("Training_data","/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(name))
-    train_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(name))    
+    comet_logger.experiment.log_parameter("Training_data","/blue/ewhite/b.weinstein/generalization/crops_empty/training_annotations_{}.csv".format(name))
+    train_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/training_annotations_{}.csv".format(name))    
 
-    model.config["train"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(name)
-    model.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
+    model.config["train"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops_empty/training_annotations_{}.csv".format(name)
+    model.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops_empty/"
     
-    #model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(name.split("_")[0])
-    #model.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
+    #model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops_empty/{}_test.csv".format(name.split("_")[0])
+    #model.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops_empty/"
     
     model.create_trainer(logger=comet_logger, plugins = DDPPlugin(find_unused_parameters=False))        
     model.trainer.fit(model)
@@ -120,21 +120,21 @@ def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
     train_annotations = pd.concat(all_sets)
     
     #A couple illegal boxes, make slightly smaller
-    train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
-    train_annotations["xmax"] = train_annotations["xmax"].astype(float) - 3
-    train_annotations["ymin"] = train_annotations["ymin"].astype(float)
-    train_annotations["ymax"] = train_annotations["ymax"].astype(float) - 3
+    #train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
+    #train_annotations["xmax"] = train_annotations["xmax"].astype(float) - 3
+    #train_annotations["ymin"] = train_annotations["ymin"].astype(float)
+    #train_annotations["ymax"] = train_annotations["ymax"].astype(float) - 3
     
     train_annotations = train_annotations[~(train_annotations.xmin >= train_annotations.xmax)]
     train_annotations = train_annotations[~(train_annotations.ymin >= train_annotations.ymax)]
-    train_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations.csv")
+    train_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/training_annotations.csv")
 
     all_val_sets = []
     for x in test_sets:
         df = pd.read_csv(path_dict[x]["test"])
         all_val_sets.append(df)
     test_annotations = pd.concat(all_val_sets)
-    test_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops/test_annotations.csv")
+    test_annotations.to_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/test_annotations.csv")
 
     comet_logger.experiment.log_parameter("training_images",len(train_annotations.image_path.unique()))
     comet_logger.experiment.log_parameter("training_annotations",train_annotations.shape[0])
@@ -154,7 +154,7 @@ def zero_shot(path_dict, train_sets, test_sets, comet_logger, savedir, config):
                 torch.save(model.model.state_dict(),model_path)            
         
     for x in test_sets:
-        test_results = model.evaluate(csv_file=path_dict[x]["test"], root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2, savedir=image_save_dir)
+        test_results = model.evaluate(csv_file=path_dict[x]["test"], root_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/", iou_threshold=0.2, savedir=image_save_dir)
         if comet_logger is not None:
             try:
                 test_results["results"].to_csv("{}/{}_iou_dataframe.csv".format(savedir, x))
@@ -178,7 +178,7 @@ def fine_tune(dataset, comet_logger, savedir, config):
     except Exception as e:
         print(e)
         
-    train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))
+    train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/{}_train.csv".format(dataset))
     model_path = "{}/{}_finetune.pt".format(savedir, dataset)
     model = BirdDetector(transforms = deepforest_transform)   
     model.config = config
@@ -192,7 +192,7 @@ def fine_tune(dataset, comet_logger, savedir, config):
         if savedir:
             if not model.config["train"]["fast_dev_run"]:
                 torch.save(model.model.state_dict(),model_path)            
-    finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2, savedir=image_save_dir)
+    finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops_empty/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/", iou_threshold=0.2, savedir=image_save_dir)
     if comet_logger is not None:
         comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(dataset),finetune_results["box_recall"])
         comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(dataset),finetune_results["box_precision"])
@@ -205,7 +205,6 @@ def fine_tune(dataset, comet_logger, savedir, config):
     return result_frame
 
 def mini_fine_tune(dataset, comet_logger, config, savedir, n):
-    #Fine tuning, up to 1000 birds from train
     min_annotation_results = []
     for i in range(3):
         try:
@@ -214,7 +213,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         except Exception as e:
             print(e)
             
-        model_path = "{}/{}_mini_{}.pt".format(savedir, dataset,i)
+        model_path = "{}/{}_mini_{}_{}.pt".format(savedir, dataset,i, n)        
         model = BirdDetector(transforms = deepforest_transform)   
         model.config = config
         weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
@@ -223,17 +222,19 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
         else: 
-            df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))            
+            df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/{}_train.csv".format(dataset))  
+            if df.shape[0] < n:
+                continue
             train_annotations = select(df, n)
-            model = fit(model, train_annotations, comet_logger, "{}_mini_fine_tune".format(dataset))
+            model = fit(model, train_annotations, comet_logger,"{}_mini_{}".format(dataset, n))
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
-        finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2, savedir=image_save_dir)
+        finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops_empty/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/", iou_threshold=0.2, savedir=image_save_dir)
         if comet_logger is not None:
-            comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Recall - Iteration {}".format(dataset, i),finetune_results["box_recall"])
-            comet_logger.experiment.log_metric("Fine Tuned 1000 {} Box Precision - Iteration {}".format(dataset, i),finetune_results["box_precision"])
-        min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Iteration":[i],"Model":["Min Annotation"]}))
+            comet_logger.experiment.log_metric("Fine Tuned {} {} Box Recall - Iteration {}".format(n,dataset, i),finetune_results["box_recall"])
+            comet_logger.experiment.log_metric("Fine Tuned {} {} Box Precision - Iteration {}".format(n,dataset, i),finetune_results["box_precision"])
+            min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Annotations":[n],"Iteration":[i],"Model":["Min Annotation"]}))
         del model
         torch.cuda.empty_cache()
         gc.collect()
@@ -259,13 +260,13 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
         else: 
             model.config = config
             model.config["train"]["epochs"] = 20
-            model.config["train"]["lr"] = 0.002
-            train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}_mini_fine_tune.csv".format(dataset))
+            model.config["train"]["lr"] = 0.002 
+            train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/training_annotations_{}_mini_{}.csv".format(dataset, n))
             model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n))
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
-        finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2, savedir=image_save_dir)
+        finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops_empty/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/", iou_threshold=0.2, savedir=image_save_dir)
         if comet_logger is not None:
             comet_logger.experiment.log_metric("Random Weight {} {} Box Recall - Iteration {}".format(n, dataset, i),finetune_results["box_recall"])
             comet_logger.experiment.log_metric("Random Weight {} {} Box Precision - Iteration {}".format(n, dataset, i),finetune_results["box_precision"])
