@@ -1,9 +1,45 @@
 ,test_set,Recall,Precision,Model,Iteration,Annotations
-0,mckellar,0.585,0.2723145989812656,Zero Shot,,
-0,mckellar,0.725,0.6010335917312661,Fine Tune,,
-0,mckellar,0.695,0.6397018970189701,Min Annotation,0.0,
-0,mckellar,0.73,0.7239583333333333,Min Annotation,1.0,
-0,mckellar,0.715,0.6935416666666666,Min Annotation,2.0,
+0,mckellar,0.68,0.22627709324517833,Zero Shot,,
+0,mckellar,0.71,0.37042000552638854,Fine Tune,,
+0,mckellar,0.7,0.3893617021276596,Min Annotation,0.0,
+0,mckellar,0.7,0.41776625543834556,Min Annotation,1.0,
+0,mckellar,0.7,0.39408415540129094,Min Annotation,2.0,
+0,mckellar,0.7,0.3893617021276596,Min Annotation,0.0,
+0,mckellar,0.7,0.41776625543834556,Min Annotation,1.0,
+0,mckellar,0.7,0.39408415540129094,Min Annotation,2.0,
+0,mckellar,0.7,0.3893617021276596,Min Annotation,0.0,
+0,mckellar,0.7,0.41776625543834556,Min Annotation,1.0,
+0,mckellar,0.7,0.39408415540129094,Min Annotation,2.0,
+0,mckellar,0.7,0.3893617021276596,Min Annotation,0.0,
+0,mckellar,0.7,0.41776625543834556,Min Annotation,1.0,
+0,mckellar,0.7,0.39408415540129094,Min Annotation,2.0,
+0,mckellar,0.7,0.3893617021276596,Min Annotation,0.0,
+0,mckellar,0.7,0.41776625543834556,Min Annotation,1.0,
+0,mckellar,0.7,0.39408415540129094,Min Annotation,2.0,
+0,mckellar,0.7,0.3893617021276596,Min Annotation,0.0,
+0,mckellar,0.7,0.41776625543834556,Min Annotation,1.0,
+0,mckellar,0.7,0.39408415540129094,Min Annotation,2.0,
+0,mckellar,0.7,0.3893617021276596,Min Annotation,0.0,
+0,mckellar,0.7,0.41776625543834556,Min Annotation,1.0,
+0,mckellar,0.7,0.39408415540129094,Min Annotation,2.0,
 0,mckellar,0.0,0.0,RandomWeight,0.0,1000.0
 0,mckellar,0.0,0.0,RandomWeight,1.0,1000.0
 0,mckellar,0.0,0.0,RandomWeight,2.0,1000.0
+0,mckellar,0.0,0.0,RandomWeight,0.0,5000.0
+0,mckellar,0.0,0.0,RandomWeight,1.0,5000.0
+0,mckellar,0.0,0.0,RandomWeight,2.0,5000.0
+0,mckellar,0.0,0.0,RandomWeight,0.0,10000.0
+0,mckellar,0.0,0.0,RandomWeight,1.0,10000.0
+0,mckellar,0.0,0.0,RandomWeight,2.0,10000.0
+0,mckellar,0.0,0.0,RandomWeight,0.0,20000.0
+0,mckellar,0.0,0.0,RandomWeight,1.0,20000.0
+0,mckellar,0.0,0.0,RandomWeight,2.0,20000.0
+0,mckellar,0.0,0.0,RandomWeight,0.0,25000.0
+0,mckellar,0.0,0.0,RandomWeight,1.0,25000.0
+0,mckellar,0.0,0.0,RandomWeight,2.0,25000.0
+0,mckellar,0.0,0.0,RandomWeight,0.0,30000.0
+0,mckellar,0.0,0.0,RandomWeight,1.0,30000.0
+0,mckellar,0.0,0.0,RandomWeight,2.0,30000.0
+0,mckellar,0.0,0.0,RandomWeight,0.0,40000.0
+0,mckellar,0.0,0.0,RandomWeight,1.0,40000.0
+0,mckellar,0.0,0.0,RandomWeight,2.0,40000.0

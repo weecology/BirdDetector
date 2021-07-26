@@ -1,9 +1,45 @@
 ,test_set,Recall,Precision,Model,Iteration,Annotations
-0,penguins,0.5222691476143497,0.7393336214086268,Zero Shot,,
-0,penguins,0.8567543447292816,0.8397302646747719,Fine Tune,,
-0,penguins,0.8427832818714888,0.8192782793226921,Min Annotation,0.0,
-0,penguins,0.87314170989021,0.7607417309713974,Min Annotation,1.0,
-0,penguins,0.8567199000111497,0.767851230645191,Min Annotation,2.0,
+0,penguins,0.6980724370707894,0.6208903710732773,Zero Shot,,
+0,penguins,0.8744018222449506,0.8688934931643092,Fine Tune,,
+0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
+0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
+0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
+0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
+0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
+0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
+0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
+0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
+0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
+0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
+0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
+0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
+0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
+0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
+0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
+0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
+0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
+0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
+0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
+0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
+0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
 0,penguins,0.0,0.0,RandomWeight,0.0,1000.0
 0,penguins,0.0,0.0,RandomWeight,1.0,1000.0
 0,penguins,0.0,0.0,RandomWeight,2.0,1000.0
+0,penguins,0.0,0.0,RandomWeight,0.0,5000.0
+0,penguins,0.0,0.0,RandomWeight,1.0,5000.0
+0,penguins,0.0,0.0,RandomWeight,2.0,5000.0
+0,penguins,0.0,0.0,RandomWeight,0.0,10000.0
+0,penguins,0.0,0.0,RandomWeight,1.0,10000.0
+0,penguins,0.0,0.0,RandomWeight,2.0,10000.0
+0,penguins,0.0,0.0,RandomWeight,0.0,20000.0
+0,penguins,0.0,0.0,RandomWeight,1.0,20000.0
+0,penguins,0.0,0.0,RandomWeight,2.0,20000.0
+0,penguins,0.0,0.0,RandomWeight,0.0,25000.0
+0,penguins,0.0,0.0,RandomWeight,1.0,25000.0
+0,penguins,0.0,0.0,RandomWeight,2.0,25000.0
+0,penguins,0.0,0.0,RandomWeight,0.0,30000.0
+0,penguins,0.0,0.0,RandomWeight,1.0,30000.0
+0,penguins,0.0,0.0,RandomWeight,2.0,30000.0
+0,penguins,0.0,0.0,RandomWeight,0.0,40000.0
+0,penguins,0.0,0.0,RandomWeight,1.0,40000.0
+0,penguins,0.0,0.0,RandomWeight,2.0,40000.0
