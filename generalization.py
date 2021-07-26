@@ -206,9 +206,15 @@ def fine_tune(dataset, comet_logger, savedir, config):
 
 def mini_fine_tune(dataset, comet_logger, config, savedir, n):
     min_annotation_results = []
+    
+    df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))  
+    if df.shape[0] < n: 
+        print("There are {} annotations in {}, cannot select {}".format(df.shape[0],dataset, n))
+        return None
+    
     for i in range(3):
         try:
-            image_save_dir = "{}/{}_mini_{}".format(savedir, dataset, i)
+            image_save_dir = "{}/{}_mini_{}_{}".format(savedir, dataset, i, n)
             os.mkdir(image_save_dir)
         except Exception as e:
             print(e)
@@ -221,10 +227,6 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
         else: 
-            df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))  
-            if df.shape[0] < n: 
-                print("There are {} annotations in {}, cannot select {}".format(df.shape[0],dataset, n))
-                continue
             train_annotations = select(df, n)
             model = fit(model, train_annotations, comet_logger,"{}_mini_{}".format(dataset, n))
             if savedir:
