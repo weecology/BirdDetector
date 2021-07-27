@@ -6,6 +6,8 @@ import pandas as pd
 import random
 import tempfile
 from pytorch_lightning.plugins import DDPPlugin
+from deepforest.dataset import get_transform as deepforest_transform
+from ..model import BirdDetector
 
 comet_logger = loggers.CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
 train = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/terns_train.csv")
@@ -26,7 +28,8 @@ while counter < 20000:
     
 sampled_annotations = pd.concat(sampled_annotations)
 sampled_annotations.to_csv("{}/annotations.csv".format(tmpdir))
-m = main.deepforest(label_dict={"Bird":0})
+model = BirdDetector(transforms = deepforest_transform)                   
+
 
 m.config["train"]["csv_file"] = "{}/annotations.csv".format(tmpdir)
 m.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"

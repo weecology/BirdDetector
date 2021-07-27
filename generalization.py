@@ -18,7 +18,6 @@ import os
 import numpy as np
 import cv2
 import random
-from model import BirdDetector
 import pandas as pd
 import torch
 import gc
