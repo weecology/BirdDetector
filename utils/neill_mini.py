@@ -5,6 +5,7 @@ from pytorch_lightning import loggers
 import pandas as pd
 import random
 import tempfile
+from pytorch_lightning.plugins import DDPPlugin
 
 comet_logger = loggers.CometLogger(project_name="terns", workspace="bw4sz",auto_output_logging = "simple")
 train = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/terns_train.csv")
@@ -35,7 +36,7 @@ m.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/cr
 m.config["epochs"] = 20
 m.config["train"]["lr"] = 0.002 
 
-m.create_trainer(logger=comet_logger)
+m.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))
 m.trainer.fit(m)
 
 results = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], iou_threshold=0.2)
