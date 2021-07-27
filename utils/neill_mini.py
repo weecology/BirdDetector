@@ -36,7 +36,7 @@ m.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/cr
 m.config["epochs"] = 20
 m.config["train"]["lr"] = 0.002 
 
-m.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=False))
+m.create_trainer(logger=comet_logger, plugins=DDPPlugin(find_unused_parameters=True))
 m.trainer.fit(m)
 
 results = m.evaluate(csv_file=m.config["validation"]["csv_file"], root_dir=m.config["validation"]["root_dir"], iou_threshold=0.2)
