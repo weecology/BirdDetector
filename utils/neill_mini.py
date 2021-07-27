@@ -7,7 +7,7 @@ import random
 import tempfile
 from pytorch_lightning.plugins import DDPPlugin
 
-comet_logger = loggers.CometLogger(project_name="terns", workspace="bw4sz",auto_output_logging = "simple")
+comet_logger = loggers.CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
 train = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/terns_train.csv")
 comet_logger.experiment.add_tag("terns")
 
