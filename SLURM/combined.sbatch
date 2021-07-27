@@ -4,8 +4,8 @@
 #SBATCH --mail-user=benweinstein2010@gmail.com  # Where to send mail
 #SBATCH --account=ewhite
 #SBATCH --nodes=1                 # Number of MPI ran
-#SBATCH --cpus-per-task=10
-#SBATCH --mem=100GB
+#SBATCH --cpus-per-task=20
+#SBATCH --mem=80GB
 #SBATCH --time=12:00:00       #Time limit hrs:min:sec
 #SBATCH --output=/home/b.weinstein/logs/DeepForest_%j.out   # Standard output and error log
 #SBATCH --error=/home/b.weinstein/logs/DeepForest_%j.err

@@ -1,45 +1,9 @@
-,test_set,Recall,Precision,Model,Iteration,Annotations
-0,penguins,0.6980724370707894,0.6208903710732773,Zero Shot,,
-0,penguins,0.8744018222449506,0.8688934931643092,Fine Tune,,
-0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
-0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
-0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
-0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
-0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
-0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
-0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
-0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
-0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
-0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
-0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
-0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
-0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
-0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
-0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
-0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
-0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
-0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
-0,penguins,0.6797907205161512,0.9085642894233629,Min Annotation,0.0,
-0,penguins,0.5619708929688723,0.9357686459873551,Min Annotation,1.0,
-0,penguins,0.8841005106044605,0.744741269527045,Min Annotation,2.0,
-0,penguins,0.0,0.0,RandomWeight,0.0,1000.0
-0,penguins,0.0,0.0,RandomWeight,1.0,1000.0
-0,penguins,0.0,0.0,RandomWeight,2.0,1000.0
-0,penguins,0.0,0.0,RandomWeight,0.0,5000.0
-0,penguins,0.0,0.0,RandomWeight,1.0,5000.0
-0,penguins,0.0,0.0,RandomWeight,2.0,5000.0
-0,penguins,0.0,0.0,RandomWeight,0.0,10000.0
-0,penguins,0.0,0.0,RandomWeight,1.0,10000.0
-0,penguins,0.0,0.0,RandomWeight,2.0,10000.0
-0,penguins,0.0,0.0,RandomWeight,0.0,20000.0
-0,penguins,0.0,0.0,RandomWeight,1.0,20000.0
-0,penguins,0.0,0.0,RandomWeight,2.0,20000.0
-0,penguins,0.0,0.0,RandomWeight,0.0,25000.0
-0,penguins,0.0,0.0,RandomWeight,1.0,25000.0
-0,penguins,0.0,0.0,RandomWeight,2.0,25000.0
-0,penguins,0.0,0.0,RandomWeight,0.0,30000.0
-0,penguins,0.0,0.0,RandomWeight,1.0,30000.0
-0,penguins,0.0,0.0,RandomWeight,2.0,30000.0
-0,penguins,0.0,0.0,RandomWeight,0.0,40000.0
-0,penguins,0.0,0.0,RandomWeight,1.0,40000.0
-0,penguins,0.0,0.0,RandomWeight,2.0,40000.0
+,test_set,Recall,Precision,Model,Annotations,Iteration
+0,penguins,0.6414178215152663,0.7293277287329331,Zero Shot,,
+0,penguins,0.8785767517625478,0.8222074061883634,Fine Tune,,
+0,penguins,0.8660155019362283,0.7936453261774528,Min Annotation,1000.0,0.0
+0,penguins,0.868866629708136,0.7554331696604936,Min Annotation,1000.0,1.0
+0,penguins,0.8819494339885814,0.7638626624493894,Min Annotation,1000.0,2.0
+0,penguins,0.0,0.0,RandomWeight,1000.0,0.0
+0,penguins,0.0,0.0,RandomWeight,1000.0,1.0
+0,penguins,0.0,0.0,RandomWeight,1000.0,2.0
