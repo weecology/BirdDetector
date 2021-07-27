@@ -1,45 +1,9 @@
-,test_set,Recall,Precision,Model,Iteration,Annotations
-0,palmyra,0.8612674362674362,0.7020569708069707,Zero Shot,,
-0,palmyra,0.8550933866971603,0.5456478795835891,Fine Tune,,
-0,palmyra,0.8391779429515278,0.6331626314437621,Min Annotation,0.0,
-0,palmyra,0.8367321008830443,0.6490143784786642,Min Annotation,1.0,
-0,palmyra,0.847483822955521,0.6305325414760098,Min Annotation,2.0,
-0,palmyra,0.8391779429515278,0.6331626314437621,Min Annotation,0.0,
-0,palmyra,0.8367321008830443,0.6490143784786642,Min Annotation,1.0,
-0,palmyra,0.847483822955521,0.6305325414760098,Min Annotation,2.0,
-0,palmyra,0.8391779429515278,0.6331626314437621,Min Annotation,0.0,
-0,palmyra,0.8367321008830443,0.6490143784786642,Min Annotation,1.0,
-0,palmyra,0.847483822955521,0.6305325414760098,Min Annotation,2.0,
-0,palmyra,0.8391779429515278,0.6331626314437621,Min Annotation,0.0,
-0,palmyra,0.8367321008830443,0.6490143784786642,Min Annotation,1.0,
-0,palmyra,0.847483822955521,0.6305325414760098,Min Annotation,2.0,
-0,palmyra,0.8391779429515278,0.6331626314437621,Min Annotation,0.0,
-0,palmyra,0.8367321008830443,0.6490143784786642,Min Annotation,1.0,
-0,palmyra,0.847483822955521,0.6305325414760098,Min Annotation,2.0,
-0,palmyra,0.8391779429515278,0.6331626314437621,Min Annotation,0.0,
-0,palmyra,0.8367321008830443,0.6490143784786642,Min Annotation,1.0,
-0,palmyra,0.847483822955521,0.6305325414760098,Min Annotation,2.0,
-0,palmyra,0.8391779429515278,0.6331626314437621,Min Annotation,0.0,
-0,palmyra,0.8367321008830443,0.6490143784786642,Min Annotation,1.0,
-0,palmyra,0.847483822955521,0.6305325414760098,Min Annotation,2.0,
-0,palmyra,0.0,0.0,RandomWeight,0.0,1000.0
-0,palmyra,0.0,0.0,RandomWeight,1.0,1000.0
-0,palmyra,0.0,0.0,RandomWeight,2.0,1000.0
-0,palmyra,0.0,0.0,RandomWeight,0.0,5000.0
-0,palmyra,0.0,0.0,RandomWeight,1.0,5000.0
-0,palmyra,0.0,0.0,RandomWeight,2.0,5000.0
-0,palmyra,0.0,0.0,RandomWeight,0.0,10000.0
-0,palmyra,0.0,0.0,RandomWeight,1.0,10000.0
-0,palmyra,0.0,0.0,RandomWeight,2.0,10000.0
-0,palmyra,0.0,0.0,RandomWeight,0.0,20000.0
-0,palmyra,0.0,0.0,RandomWeight,1.0,20000.0
-0,palmyra,0.0,0.0,RandomWeight,2.0,20000.0
-0,palmyra,0.0,0.0,RandomWeight,0.0,25000.0
-0,palmyra,0.0,0.0,RandomWeight,1.0,25000.0
-0,palmyra,0.0,0.0,RandomWeight,2.0,25000.0
-0,palmyra,0.0,0.0,RandomWeight,0.0,30000.0
-0,palmyra,0.0,0.0,RandomWeight,1.0,30000.0
-0,palmyra,0.0,0.0,RandomWeight,2.0,30000.0
-0,palmyra,0.0,0.0,RandomWeight,0.0,40000.0
-0,palmyra,0.0,0.0,RandomWeight,1.0,40000.0
-0,palmyra,0.0,0.0,RandomWeight,2.0,40000.0
+,test_set,Recall,Precision,Model,Annotations,Iteration
+0,palmyra,0.8761945601568244,0.7389801238188335,Zero Shot,,
+0,palmyra,0.8123555864121902,0.6713227513227513,Fine Tune,,
+0,palmyra,0.8519836732100884,0.6274177211677211,Min Annotation,1000.0,0.0
+0,palmyra,0.8530318912394385,0.6324145911808249,Min Annotation,1000.0,1.0
+0,palmyra,0.8373657963280604,0.6562214111233718,Min Annotation,1000.0,2.0
+0,palmyra,0.0,0.0,RandomWeight,1000.0,0.0
+0,palmyra,0.0,0.0,RandomWeight,1000.0,1.0
+0,palmyra,0.0,0.0,RandomWeight,1000.0,2.0
