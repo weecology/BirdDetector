@@ -113,7 +113,8 @@ class BirdDataset(Dataset):
             
 
 class BirdDetector(main.deepforest):
-    def __init__(self,transforms=None):
+    def __init__(self,transforms=None, learning_monitor=False):
+        self.learning_monitor=learning_monitor
         super(BirdDetector, self).__init__(num_classes=1, label_dict={"Bird":0},transforms=transforms)
     
     def load_dataset(self,
@@ -147,4 +148,4 @@ class BirdDetector(main.deepforest):
             num_workers=self.config["workers"],
         )
 
-        return data_loader        
+        return data_loader
