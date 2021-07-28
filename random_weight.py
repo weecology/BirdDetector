@@ -6,7 +6,7 @@ from generalization import *
 from model import BirdDetector
 import tempfile
 
-dataset = "seabirdwatch"
+dataset = "monash"
 tmpdir = tempfile.gettempdir()
 
 comet_logger = loggers.CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
