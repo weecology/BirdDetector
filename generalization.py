@@ -271,7 +271,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
             model.config = config
             
             if n == 1000:
-                model.config["train"]["epochs"] = 10
+                model.config["train"]["epochs"] = 20
                 model.config["train"]["lr"] = 0.01 
             if n == 5000:
                 model.config["train"]["epochs"] = 20
