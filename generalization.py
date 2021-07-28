@@ -222,6 +222,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         model_path = "{}/{}_mini_{}_{}.pt".format(savedir, dataset,i, n)        
         model = BirdDetector(transforms = deepforest_transform)   
         model.config = config
+        model.config["train"]["epochs"] = 20
         weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
         model.model.load_state_dict(torch.load(weights))
         if os.path.exists(model_path):
