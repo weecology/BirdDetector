@@ -54,7 +54,7 @@ def view_training(paths,comet_logger, n=10):
                     print(e)
                     continue
 
-def fit(model, train_annotations, comet_logger, name):
+def fit(model, train_annotations, comet_logger, name, validation=False):
     #Give it a unique timestamp
     train_annotations["xmin"] = train_annotations["xmin"].astype(float) 
     train_annotations["xmax"] = train_annotations["xmax"].astype(float)
@@ -70,9 +70,10 @@ def fit(model, train_annotations, comet_logger, name):
     model.config["train"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}.csv".format(name)
     model.config["train"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
     
-    #model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(name.split("_")[0])
-    #model.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
-    
+    if validation:
+        model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(name.split("_")[0])
+        model.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
+        
     model.create_trainer(logger=comet_logger, plugins = DDPPlugin(find_unused_parameters=False))        
     model.trainer.fit(model)
     
@@ -267,8 +268,8 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
             model.model.load_state_dict(torch.load(model_path))
         else: 
             model.config = config
-            model.config["train"]["epochs"] = 20
-            model.config["train"]["lr"] = 0.002 
+            model.config["train"]["epochs"] = 100
+            model.config["train"]["lr"] = 0.02 
             train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}_mini_{}.csv".format(dataset, n))
             model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n))
             if savedir:
@@ -306,13 +307,13 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
         gc.collect()          
         results.append(finetune_results)
     if run_mini:
-        for n in [1000, 5000, 10000, 20000, 25000, 30000, 40000]:        
+        for n in [1000, 5000, 10000, 20000, 30000, 40000]:        
             mini_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
             results.append(mini_results)         
             gc.collect()      
     
     if run_random:
-        for n in [1000, 5000, 10000, 20000, 25000, 30000, 40000]:        
+        for n in [1000, 5000, 10000, 20000, 30000, 40000]:        
             random_results = mini_random_weights(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
             results.append(random_results)         
             gc.collect()      
