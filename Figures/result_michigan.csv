@@ -1,5 +1,5 @@
 ,test_set,Recall,Precision,Model,Iteration,Annotations
-0,michigan,0.4650870974043253,0.5545696815908975,Zero Shot,,
+0,michigan,0.48,0.508,Zero Shot,,
 0,michigan,0.8294228943889389,0.7617053412306451,Fine Tune,,
 0,michigan,0.7484817553678262,0.700464123591068,Min Annotation,0.0,
 0,michigan,0.7598888473989761,0.6809534064032079,Min Annotation,1.0,
