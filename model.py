@@ -113,7 +113,8 @@ class BirdDataset(Dataset):
             
 
 class BirdDetector(main.deepforest):
-    def __init__(self,transforms=None):
+    def __init__(self,transforms=None, learning_monitor=False):
+        self.learning_monitor=learning_monitor
         super(BirdDetector, self).__init__(num_classes=1, label_dict={"Bird":0},transforms=transforms)
     
     def load_dataset(self,
@@ -147,4 +148,24 @@ class BirdDetector(main.deepforest):
             num_workers=self.config["workers"],
         )
 
-        return data_loader        
+        return data_loader
+    
+    def configure_optimizers(self):
+        optimizer = torch.optim.SGD(self.model.parameters(),
+                                   lr=self.config["train"]["lr"],
+                                   momentum=0.9)
+        if self.learning_monitor:
+            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer,
+                                                                   mode='min',
+                                                                   factor=0.5,
+                                                                   patience=5,
+                                                                   verbose=True,
+                                                                   threshold=0.001,
+                                                                   threshold_mode='rel',
+                                                                   cooldown=0,
+                                                                   min_lr=0,
+                                                                   eps=1e-08)
+            return {'optimizer':optimizer, 'lr_scheduler': scheduler,"monitor":'loss'}
+     
+        else:
+            return optimizer    
