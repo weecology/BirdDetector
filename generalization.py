@@ -308,13 +308,13 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
         gc.collect()          
         results.append(finetune_results)
     if run_mini:
-        for n in [1000, 5000, 10000, 20000, 30000, 40000]:        
+        for n in [1000, 5000, 10000, 20000, 30000]:        
             mini_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
             results.append(mini_results)         
             gc.collect()      
     
     if run_random:
-        for n in [1000, 5000, 10000, 20000, 30000, 40000]:        
+        for n in [1000, 5000, 10000, 20000, 30000]:        
             random_results = mini_random_weights(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
             results.append(random_results)         
             gc.collect()      
