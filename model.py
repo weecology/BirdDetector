@@ -165,7 +165,7 @@ class BirdDetector(main.deepforest):
                                                                    cooldown=0,
                                                                    min_lr=0,
                                                                    eps=1e-08)
-            return {'optimizer':optimizer, 'lr_scheduler': scheduler,"interval":"epoch","monitor":'val_classification'}
+            return {'optimizer':optimizer, 'lr_scheduler': scheduler,"monitor":'val_classification'}
      
         else:
             return optimizer    
