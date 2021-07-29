@@ -1,4 +1,7 @@
-,test_set,Recall,Precision,Model
-0,newmexico,0.6418839095557188,0.5432830297639236,Zero Shot
-0,newmexico,0.9558325187357445,0.6911668049428961,Fine Tune
-0,newmexico,0.0,0.0,LocalOnly
+,test_set,Recall,Precision,Model,Annotations,Iteration
+0,newmexico,0.6418839095557188,0.5432830297639236,Zero Shot,,
+0,newmexico,0.9558325187357445,0.6911668049428961,Fine Tune,4333.0,
+0,newmexico,0.8754880740174857,0.5572537125707135,RandomWeight,1000.0,0.0
+0,newmexico,0.878756047873695,0.5642675853134865,RandomWeight,1000.0,1.0
+0,newmexico,0.8754880740174857,0.5650968498256156,RandomWeight,1000.0,2.0
+0,newmexico,0.0,0.0,LocalOnly,4333.0,
