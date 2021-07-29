@@ -204,105 +204,36 @@ def fine_tune(dataset, comet_logger, savedir, config):
         
     return result_frame
 
-def mini_fine_tune(dataset, comet_logger, config, savedir, n):
-    min_annotation_results = []
-    
-    df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))  
-    if df.shape[0] < n: 
-        print("There are {} annotations in {}, cannot select {}".format(df.shape[0],dataset, n))
-        return None
-    
-    for i in range(3):
-        try:
-            image_save_dir = "{}/{}_mini_{}_{}".format(savedir, dataset, i, n)
-            os.mkdir(image_save_dir)
-        except Exception as e:
-            print(e)
-            
-        model_path = "{}/{}_mini_{}_{}.pt".format(savedir, dataset,i, n)        
-        model = BirdDetector(transforms = deepforest_transform)   
-        model.config = config
-        model.config["train"]["epochs"] = 20
-        weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
-        model.model.load_state_dict(torch.load(weights))
-        if os.path.exists(model_path):
-            model.model.load_state_dict(torch.load(model_path))
-        else: 
-            train_annotations = select(df, n)
-            model = fit(model, train_annotations, comet_logger,"{}_mini_{}".format(dataset, n))
-            if savedir:
-                if not model.config["train"]["fast_dev_run"]:
-                    torch.save(model.model.state_dict(),model_path)
-        finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2, savedir=image_save_dir)
-        if comet_logger is not None:
-            comet_logger.experiment.log_metric("Fine Tuned {} {} Box Recall - Iteration {}".format(n,dataset, i),finetune_results["box_recall"])
-            comet_logger.experiment.log_metric("Fine Tuned {} {} Box Precision - Iteration {}".format(n,dataset, i),finetune_results["box_precision"])
-            result = pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Annotations":[n],"Iteration":[i],"Model":["Min Annotation"]})
-            min_annotation_results.append(result)
-        del model
-        torch.cuda.empty_cache()
-        gc.collect()
-        
-    min_annotation_results = pd.concat(min_annotation_results)
-    
-    return min_annotation_results
-
-def mini_random_weights(dataset, comet_logger, config, savedir, n):
-    
-    df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))  
-    if df.shape[0] < n: 
-        print("There are {} annotations in {}, cannot select {}".format(df.shape[0],dataset, n))
-        return None
-    
-    #Fine tuning, up to 1000 birds from train
-    min_annotation_results = []
-    for i in range(3):
-        try:
-            image_save_dir = "{}/{}_random_{}_{}".format(savedir, dataset, i, n)
-            os.mkdir(image_save_dir)
-        except Exception as e:
-            print(e)
-        
-        model = BirdDetector(transforms = deepforest_transform, learning_monitor=True)                   
-        model_path = "{}/{}_random_{}_{}.pt".format(savedir, dataset,i, n)        
-        if os.path.exists(model_path):
-            model.model.load_state_dict(torch.load(model_path))
-        else: 
-            model.config = config
-            
-            if n == 1000:
-                model.config["train"]["epochs"] = 20
-                model.config["train"]["lr"] = 0.005 
-            if n == 5000:
-                model.config["train"]["epochs"] = 20
-                model.config["train"]["lr"] = 0.005   
-            if n == 10000:
-                model.config["train"]["epochs"] = 30
-                model.config["train"]["lr"] = 0.02 
-            if n > 10000:
-                model.config["train"]["epochs"] = 60
-                model.config["train"]["lr"] = 0.02 
-                    
-            train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}_mini_{}.csv".format(dataset, n))
-            model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n), validation=True)
-            if savedir:
-                if not model.config["train"]["fast_dev_run"]:
-                    torch.save(model.model.state_dict(),model_path)
-        finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2, savedir=image_save_dir)
-        if comet_logger is not None:
-            comet_logger.experiment.log_metric("Random Weight {} {} Box Recall - Iteration {}".format(n, dataset, i),finetune_results["box_recall"])
-            comet_logger.experiment.log_metric("Random Weight {} {} Box Precision - Iteration {}".format(n, dataset, i),finetune_results["box_precision"])
-        min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Annotations":[n],"Iteration":[i],"Model":["RandomWeight"]}))
-        del model
-        torch.cuda.empty_cache()
-        gc.collect()
-        
+def localonly(dataset, comet_logger, savedir, config):
     try:
-        min_annotation_results = pd.concat(min_annotation_results)
-    except:
-        min_annotation_results = None
+        image_save_dir = "{}/{}_localonly".format(savedir, dataset)
+        os.mkdir(image_save_dir)
+    except Exception as e:
+        print(e)
+        
+    train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))
+    model_path = "{}/{}_localonly.pt".format(savedir, dataset)
+    model = BirdDetector(transforms = deepforest_transform)   
+    model.config = config
     
-    return min_annotation_results
+    if os.path.exists(model_path):
+        model.model.load_state_dict(torch.load(model_path))
+    else:
+        model = fit(model, train_annotations, comet_logger, "{}_localonly".format(dataset))
+        if savedir:
+            if not model.config["train"]["fast_dev_run"]:
+                torch.save(model.model.state_dict(),model_path)            
+    finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2, savedir=image_save_dir)
+    if comet_logger is not None:
+        comet_logger.experiment.log_metric("LocalOnly {} Box Recall".format(dataset),finetune_results["box_recall"])
+        comet_logger.experiment.log_metric("LocalOnly {} Box Precision".format(dataset),finetune_results["box_precision"])
+        result_frame = pd.DataFrame({"test_set":[dataset],"Recall":[finetune_results["box_recall"]], "Precision":[finetune_results["box_precision"]],"Model":["LocalOnly"]})
+    
+    del model
+    torch.cuda.empty_cache()
+    gc.collect()
+        
+    return result_frame
 
 def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyra"],test_sets=["everglades"], comet_logger=None, savedir=None, run_fine_tune=True, run_mini=True, run_random=True):
     #Log experiment
@@ -319,17 +250,11 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
         finetune_results = fine_tune(dataset=test_sets[0], comet_logger=comet_logger, config=config, savedir=savedir)
         gc.collect()          
         results.append(finetune_results)
-    if run_mini:
-        for n in [1000, 5000, 10000, 20000, 30000]:        
-            mini_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
-            results.append(mini_results)         
-            gc.collect()      
-    
-    if run_random:
-        for n in [1000, 5000, 10000, 20000, 30000]:        
-            random_results = mini_random_weights(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
-            results.append(random_results)         
-            gc.collect()      
+
+    if run_fine_tune:
+        localonly_results = localonly(dataset=test_sets[0], comet_logger=comet_logger, config=config, savedir=savedir)
+        gc.collect()          
+        results.append(localonly_results)
                 
     result_frame = pd.concat(results)
     
