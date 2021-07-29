@@ -1,4 +1,7 @@
-,test_set,Recall,Precision,Model
-0,penguins,0.6414178215152663,0.7293277287329331,Zero Shot
-0,penguins,0.8785767517625478,0.8222074061883634,Fine Tune
-0,penguins,0.0,0.0,LocalOnly
+,test_set,Recall,Precision,Model,Annotations,Iteration
+0,penguins,0.6414178215152663,0.7293277287329331,Zero Shot,,
+0,penguins,0.8785767517625478,0.8222074061883634,Fine Tune,2019.0,
+0,penguins,0.8660155019362283,0.7936453261774528,RandomWeight,1000.0,0.0
+0,penguins,0.868866629708136,0.7554331696604936,RandomWeight,1000.0,1.0
+0,penguins,0.8819494339885814,0.7638626624493894,RandomWeight,1000.0,2.0
+0,penguins,0.0,0.0,LocalOnly,2019.0,
