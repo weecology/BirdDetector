@@ -196,7 +196,7 @@ def fine_tune(dataset, comet_logger, savedir, config):
     if comet_logger is not None:
         comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(dataset),finetune_results["box_recall"])
         comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(dataset),finetune_results["box_precision"])
-        result_frame = pd.DataFrame({"test_set":[dataset],"Recall":[finetune_results["box_recall"]], "Precision":[finetune_results["box_precision"]],"Model":["Fine Tune"]})
+        result_frame = pd.DataFrame({"test_set":[dataset],"Recall":[finetune_results["box_recall"]],"Annotations":[train_annotations.shape[0]], "Precision":[finetune_results["box_precision"]],"Model":["Fine Tune"]})
     
     del model
     torch.cuda.empty_cache()
@@ -227,7 +227,7 @@ def localonly(dataset, comet_logger, savedir, config):
     if comet_logger is not None:
         comet_logger.experiment.log_metric("LocalOnly {} Box Recall".format(dataset),finetune_results["box_recall"])
         comet_logger.experiment.log_metric("LocalOnly {} Box Precision".format(dataset),finetune_results["box_precision"])
-        result_frame = pd.DataFrame({"test_set":[dataset],"Recall":[finetune_results["box_recall"]], "Precision":[finetune_results["box_precision"]],"Model":["LocalOnly"]})
+        result_frame = pd.DataFrame({"test_set":[dataset],"Annotations":[train_annotations.shape[0]],"Recall":[finetune_results["box_recall"]], "Precision":[finetune_results["box_precision"]],"Model":["LocalOnly"]})
     
     del model
     torch.cuda.empty_cache()
@@ -235,8 +235,46 @@ def localonly(dataset, comet_logger, savedir, config):
         
     return result_frame
 
-def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyra"],test_sets=["everglades"], comet_logger=None, savedir=None, run_fine_tune=True, run_mini=True, run_random=True):
-    #Log experiment
+def mini_fine_tune(dataset, comet_logger, config, savedir, n=1000):
+    min_annotation_results = []
+    for i in range(3):
+        try:
+            image_save_dir = "{}/{}_mini_{}".format(savedir, dataset, i)
+            os.mkdir(image_save_dir)
+        except Exception as e:
+            print(e)
+            
+        model_path = "{}/{}_mini_{}_{}.pt".format(savedir, dataset,i, n)        
+        model = BirdDetector(transforms = deepforest_transform)   
+        model.config = config
+        weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
+        model.model.load_state_dict(torch.load(weights))
+        
+        if os.path.exists(model_path):
+            model.model.load_state_dict(torch.load(model_path))
+        else: 
+            df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops_empty/{}_train.csv".format(dataset))  
+            if df.shape[0] < n:
+                continue
+            train_annotations = select(df, n)
+            model = fit(model, train_annotations, comet_logger,"{}_mini_{}".format(dataset, n))
+            if savedir:
+                if not model.config["train"]["fast_dev_run"]:
+                    torch.save(model.model.state_dict(),model_path)
+        finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops_empty/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops_empty/", iou_threshold=0.2, savedir=image_save_dir)
+        if comet_logger is not None:
+            comet_logger.experiment.log_metric("Fine Tuned {} {} Box Recall - Iteration {}".format(n,dataset, i),finetune_results["box_recall"])
+            comet_logger.experiment.log_metric("Fine Tuned {} {} Box Precision - Iteration {}".format(n,dataset, i),finetune_results["box_precision"])
+            min_annotation_results.append(pd.DataFrame({"Recall":finetune_results["box_recall"], "Precision":finetune_results["box_precision"],"test_set":dataset,"Annotations":[n],"Iteration":[i],"Model":["RandomWeight"]}))
+        del model
+        torch.cuda.empty_cache()
+        gc.collect()
+        
+    min_annotation_results = pd.concat(min_annotation_results)
+    
+    return min_annotation_results
+
+def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyra"],test_sets=["everglades"], comet_logger=None, savedir=None):
     comet_logger.experiment.log_parameter("train_set",train_sets)
     comet_logger.experiment.log_parameter("test_set",test_sets)
     comet_logger.experiment.add_tag("Generalization")
@@ -246,15 +284,17 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
     zero_shot_results = zero_shot(path_dict=path_dict, train_sets=train_sets, test_sets=test_sets, config=config, comet_logger=comet_logger, savedir=savedir)
     gc.collect()      
     results.append(zero_shot_results)
-    if run_fine_tune:
-        finetune_results = fine_tune(dataset=test_sets[0], comet_logger=comet_logger, config=config, savedir=savedir)
-        gc.collect()          
-        results.append(finetune_results)
-
-    if run_fine_tune:
-        localonly_results = localonly(dataset=test_sets[0], comet_logger=comet_logger, config=config, savedir=savedir)
-        gc.collect()          
-        results.append(localonly_results)
+    finetune_results = fine_tune(dataset=test_sets[0], comet_logger=comet_logger, config=config, savedir=savedir)
+    gc.collect()          
+    results.append(finetune_results)
+    
+    random_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger)
+    results.append(random_results)         
+    gc.collect() 
+    
+    localonly_results = localonly(dataset=test_sets[0], comet_logger=comet_logger, config=config, savedir=savedir)
+    gc.collect()          
+    results.append(localonly_results)
                 
     result_frame = pd.concat(results)
     
