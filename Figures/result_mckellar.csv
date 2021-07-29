@@ -1,6 +1,6 @@
 ,test_set,Recall,Precision,Model,Annotations,Iteration
 0,mckellar,0.74,0.18888678999435868,Zero Shot,,
-0,mckellar,0.68,0.6396631823461092,Fine Tune,1597.0,
+0,mckellar,0.675,0.5948502886002885,Fine Tune,1597.0,
 0,mckellar,0.74,0.5131862455726092,Min Annotation,1000.0,0.0
 0,mckellar,0.75,0.5211137347500984,Min Annotation,1000.0,1.0
 0,mckellar,0.75,0.5009365634365633,Min Annotation,1000.0,2.0
