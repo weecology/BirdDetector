@@ -1,9 +1,4 @@
-,test_set,Recall,Precision,Model,Annotations,Iteration
-0,palmyra,0.8761945601568244,0.7389801238188335,Zero Shot,,
-0,palmyra,0.8123555864121902,0.6713227513227513,Fine Tune,,
-0,palmyra,0.8519836732100884,0.6274177211677211,Min Annotation,1000.0,0.0
-0,palmyra,0.8530318912394385,0.6324145911808249,Min Annotation,1000.0,1.0
-0,palmyra,0.8373657963280604,0.6562214111233718,Min Annotation,1000.0,2.0
-0,palmyra,0.0,0.0,RandomWeight,1000.0,0.0
-0,palmyra,0.0,0.0,RandomWeight,1000.0,1.0
-0,palmyra,0.0,0.0,RandomWeight,1000.0,2.0
+,test_set,Recall,Precision,Model
+0,palmyra,0.8761945601568244,0.7389801238188335,Zero Shot
+0,palmyra,0.8123555864121902,0.6713227513227513,Fine Tune
+0,palmyra,0.0,0.0,LocalOnly
