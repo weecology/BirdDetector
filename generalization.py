@@ -185,6 +185,9 @@ def fine_tune(dataset, comet_logger, savedir, config):
     weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
     model.model.load_state_dict(torch.load(weights))
     
+    model.config["train"]["epochs"] = 60
+    model.config["train"]["lr"] = 0.001
+    
     if os.path.exists(model_path):
         model.model.load_state_dict(torch.load(model_path))
     else:
