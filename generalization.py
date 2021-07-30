@@ -185,8 +185,8 @@ def fine_tune(dataset, comet_logger, savedir, config):
     weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
     model.model.load_state_dict(torch.load(weights))
     
-    model.config["train"]["epochs"] = 100
-    model.config["train"]["lr"] = 0.001
+    model.config["train"]["epochs"] = 20
+    model.config["train"]["lr"] = 0.0005
     
     if os.path.exists(model_path):
         model.model.load_state_dict(torch.load(model_path))
@@ -225,8 +225,8 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         model_path = "{}/{}_mini_{}_{}.pt".format(savedir, dataset,i, n)        
         model = BirdDetector(transforms = deepforest_transform, learning_monitor=True)   
         model.config = config
-        model.config["train"]["epochs"] = 100
-        model.config["train"]["lr"] = 0.001
+        model.config["train"]["epochs"] = 20
+        model.config["train"]["lr"] = 0.0005
         weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
         model.model.load_state_dict(torch.load(weights))
         if os.path.exists(model_path):
@@ -273,7 +273,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
             model.model.load_state_dict(torch.load(model_path))
         else: 
             model.config = config
-            model.config["train"]["epochs"] = 100
+            model.config["train"]["epochs"] = 70
             model.config["train"]["lr"] = 0.001
             train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}_mini_{}.csv".format(dataset, n))
             model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n), validation=True)
