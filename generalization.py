@@ -180,15 +180,18 @@ def fine_tune(dataset, comet_logger, savedir, config):
         
     train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))
     model_path = "{}/{}_finetune.pt".format(savedir, dataset)
-    model = BirdDetector(transforms = deepforest_transform)   
+    model = BirdDetector(transforms = deepforest_transform, learning_monitor=True)   
     model.config = config
     weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
     model.model.load_state_dict(torch.load(weights))
     
+    model.config["train"]["epochs"] = 100
+    model.config["train"]["lr"] = 0.001
+    
     if os.path.exists(model_path):
         model.model.load_state_dict(torch.load(model_path))
     else:
-        model = fit(model, train_annotations, comet_logger, "{}_finetune".format(dataset))
+        model = fit(model, train_annotations, comet_logger, "{}_finetune".format(dataset), validation=True)
         if savedir:
             if not model.config["train"]["fast_dev_run"]:
                 torch.save(model.model.state_dict(),model_path)            
@@ -196,7 +199,7 @@ def fine_tune(dataset, comet_logger, savedir, config):
     if comet_logger is not None:
         comet_logger.experiment.log_metric("Fine Tuned {} Box Recall".format(dataset),finetune_results["box_recall"])
         comet_logger.experiment.log_metric("Fine Tuned {} Box Precision".format(dataset),finetune_results["box_precision"])
-        result_frame = pd.DataFrame({"test_set":[dataset],"Recall":[finetune_results["box_recall"]], "Precision":[finetune_results["box_precision"]],"Model":["Fine Tune"]})
+        result_frame = pd.DataFrame({"test_set":[dataset],"Recall":[finetune_results["box_recall"]], "Precision":[finetune_results["box_precision"]],"Annotations":[train_annotations.shape[0]],"Model":["Fine Tune"]})
     
     del model
     torch.cuda.empty_cache()
@@ -212,7 +215,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         print("There are {} annotations in {}, cannot select {}".format(df.shape[0],dataset, n))
         return None
     
-    for i in range(3):
+    for i in range(2):
         try:
             image_save_dir = "{}/{}_mini_{}_{}".format(savedir, dataset, i, n)
             os.mkdir(image_save_dir)
@@ -220,16 +223,17 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
             print(e)
             
         model_path = "{}/{}_mini_{}_{}.pt".format(savedir, dataset,i, n)        
-        model = BirdDetector(transforms = deepforest_transform)   
+        model = BirdDetector(transforms = deepforest_transform, learning_monitor=True)   
         model.config = config
-        model.config["train"]["epochs"] = 20
+        model.config["train"]["epochs"] = 100
+        model.config["train"]["lr"] = 0.001
         weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
         model.model.load_state_dict(torch.load(weights))
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
         else: 
             train_annotations = select(df, n)
-            model = fit(model, train_annotations, comet_logger,"{}_mini_{}".format(dataset, n))
+            model = fit(model, train_annotations, comet_logger,"{}_mini_{}".format(dataset, n), validation=True)
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
@@ -256,7 +260,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
     
     #Fine tuning, up to 1000 birds from train
     min_annotation_results = []
-    for i in range(3):
+    for i in range(2):
         try:
             image_save_dir = "{}/{}_random_{}_{}".format(savedir, dataset, i, n)
             os.mkdir(image_save_dir)
@@ -269,20 +273,8 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
             model.model.load_state_dict(torch.load(model_path))
         else: 
             model.config = config
-            
-            if n == 1000:
-                model.config["train"]["epochs"] = 20
-                model.config["train"]["lr"] = 0.005 
-            if n == 5000:
-                model.config["train"]["epochs"] = 20
-                model.config["train"]["lr"] = 0.005   
-            if n == 10000:
-                model.config["train"]["epochs"] = 30
-                model.config["train"]["lr"] = 0.02 
-            if n > 10000:
-                model.config["train"]["epochs"] = 60
-                model.config["train"]["lr"] = 0.02 
-                    
+            model.config["train"]["epochs"] = 100
+            model.config["train"]["lr"] = 0.001
             train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}_mini_{}.csv".format(dataset, n))
             model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n), validation=True)
             if savedir:
@@ -320,13 +312,13 @@ def run(path_dict, config, train_sets = ["penguins","terns","everglades","palmyr
         gc.collect()          
         results.append(finetune_results)
     if run_mini:
-        for n in [1000, 5000, 10000, 20000, 30000]:        
+        for n in [1000, 5000, 10000]:        
             mini_results = mini_fine_tune(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
             results.append(mini_results)         
             gc.collect()      
     
     if run_random:
-        for n in [1000, 5000, 10000, 20000, 30000]:        
+        for n in [1000, 5000, 10000]:        
             random_results = mini_random_weights(dataset=test_sets[0], config=config, savedir=savedir, comet_logger=comet_logger, n=n)
             results.append(random_results)         
             gc.collect()      
