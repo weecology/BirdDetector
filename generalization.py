@@ -223,7 +223,7 @@ def localonly(dataset, comet_logger, savedir, config):
     if os.path.exists(model_path):
         model.model.load_state_dict(torch.load(model_path))
     else:
-        model.config["train"]["epochs"] = 60
+        model.config["train"]["epochs"] = 200
         model.config["train"]["lr"] = 0.001
         model = fit(model, train_annotations, comet_logger, "{}_localonly".format(dataset),validation=True)
         if savedir:
