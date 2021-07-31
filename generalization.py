@@ -186,12 +186,12 @@ def fine_tune(dataset, comet_logger, savedir, config):
     model.model.load_state_dict(torch.load(weights))
     
     model.config["train"]["epochs"] = 20
-    model.config["train"]["lr"] = 0.0005
+    model.config["train"]["lr"] = 0.0001
     
     if os.path.exists(model_path):
         model.model.load_state_dict(torch.load(model_path))
     else:
-        model = fit(model, train_annotations, comet_logger, "{}_finetune".format(dataset), validation=True)
+        model = fit(model, train_annotations, comet_logger, "{}_finetune".format(dataset), validation=False)
         if savedir:
             if not model.config["train"]["fast_dev_run"]:
                 torch.save(model.model.state_dict(),model_path)            
@@ -226,14 +226,14 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         model = BirdDetector(transforms = deepforest_transform, learning_monitor=True)   
         model.config = config
         model.config["train"]["epochs"] = 20
-        model.config["train"]["lr"] = 0.0005
+        model.config["train"]["lr"] = 0.001
         weights = "{}/{}_zeroshot.pt".format(savedir,dataset)
         model.model.load_state_dict(torch.load(weights))
         if os.path.exists(model_path):
             model.model.load_state_dict(torch.load(model_path))
         else: 
             train_annotations = select(df, n)
-            model = fit(model, train_annotations, comet_logger,"{}_mini_{}".format(dataset, n), validation=True)
+            model = fit(model, train_annotations, comet_logger,"{}_mini_{}".format(dataset, n), validation=False)
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
@@ -276,7 +276,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
             model.config["train"]["epochs"] = 70
             model.config["train"]["lr"] = 0.001
             train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}_mini_{}.csv".format(dataset, n))
-            model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n), validation=True)
+            model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n), validation=False)
             if savedir:
                 if not model.config["train"]["fast_dev_run"]:
                     torch.save(model.model.state_dict(),model_path)
