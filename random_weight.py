@@ -6,7 +6,7 @@ from generalization import *
 from model import BirdDetector
 import tempfile
 
-dataset = "newmexico"
+dataset = "terns"
 tmpdir = tempfile.gettempdir()
 
 comet_logger = loggers.CometLogger(project_name="everglades", workspace="bw4sz",auto_output_logging = "simple")
@@ -15,13 +15,13 @@ comet_logger.experiment.add_tag(dataset)
 
 df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))  
 n = df.shape[0]
-model = BirdDetector(transforms = deepforest_transform)   
-n=5000
+model = BirdDetector(transforms = deepforest_transform)
+n=20000
 train_annotations = select(df, n=n)
 #model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset)
 #model.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
-model.config["train"]["epochs"] = 200
-model.config["train"]["lr"] = 0.001
+model.config["train"]["epochs"] = 70
+model.config["train"]["lr"] = 0.005
 model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n), validation=True)
 finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2)
 comet_logger.experiment.log_metric("Box Recall {} {}".format(n,dataset),finetune_results["box_recall"])
