@@ -20,7 +20,7 @@ n=1000
 train_annotations = select(df, n=n)
 #model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset)
 #model.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
-model.config["train"]["epochs"] = 50
+model.config["train"]["epochs"] = 200
 model.config["train"]["lr"] = 0.001
 model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n), validation=True)
 finetune_results = model.evaluate(csv_file="/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), root_dir="/blue/ewhite/b.weinstein/generalization/crops/", iou_threshold=0.2)
