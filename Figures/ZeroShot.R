@@ -11,7 +11,7 @@
   #Label datasets
   naming<-unique(df$test_set)
   nameframe <-data.frame(test_set=naming,newname=c("6. Albatross - Falklands","7. Marshbirds - Canada","13. Lake Michigan - USA","10. Seabirds - Indian Ocean","11. Pelicans - Utah","12. Ducks - New Mexico","2. Seabirds - South Pacific","3. Penguins - Antartica","5. Penguins and Shags - Antartica","9. Seabirds - North Atlantic","4. Terns - Guinea","8. Ducks - Cape Cod"))
-  df<-df %>% inner_join(nameframe) %>% select(-test_set) %>% select(-X)
+  df<-df %>% inner_join(nameframe) %>% select(-test_set) %>% select(-X, -Iteration)
   df<-melt(df,id.vars=c("Model","newname","Annotations"))
   df[df$Model == "Zero Shot","Model"]<-"None"
   df[df$Model == "Fine Tune","Model"]<-"All available"
