@@ -16,7 +16,7 @@ comet_logger.experiment.add_tag(dataset)
 df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))  
 n = df.shape[0]
 model = BirdDetector(transforms = deepforest_transform)   
-n=1000
+n=5000
 train_annotations = select(df, n=n)
 #model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset)
 #model.config["validation"]["root_dir"] = "/blue/ewhite/b.weinstein/generalization/crops/"
