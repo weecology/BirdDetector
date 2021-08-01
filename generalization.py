@@ -273,8 +273,12 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
             model.model.load_state_dict(torch.load(model_path))
         else: 
             model.config = config
-            model.config["train"]["epochs"] = 70
-            model.config["train"]["lr"] = 0.001
+            if dataset == "terns":
+                model.config["train"]["epochs"] = 110
+                model.config["train"]["lr"] = 0.001
+            else:
+                model.config["train"]["epochs"] = 70
+                model.config["train"]["lr"] = 0.001
             train_annotations = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/training_annotations_{}_mini_{}.csv".format(dataset, n))
             model = fit(model, train_annotations, comet_logger,"{}_random_{}".format(dataset, n), validation=False)
             if savedir:

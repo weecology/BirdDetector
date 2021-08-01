@@ -39,8 +39,6 @@
   zenodo<-df %>% filter(Model == "Fine Tune")
   write.csv(zenodo,"finetuned_results.csv")
 
-
-
   #With and without pretraining
   global_weights<-df %>% filter(Model %in% c("1000 birds","RandomWeight"))
   global_weights[global_weights$Model == "1000 birds","Pretrained"] = TRUE
@@ -61,8 +59,9 @@
 
   vector_data <- df %>%filter(Model %in% c("1000 birds","None")) %>% group_by(Model, newname, variable) %>% summarize(value=mean(value)) %>% pivot_wider(names_from = c("Model","variable"),values_from="value")
   ggplot(vector_data) + geom_point(aes(col=newname, x=`None_Recall`,y=`None_Precision`)) + geom_segment(show.legend =FALSE,aes(col=newname, x=`None_Recall`,y=`None_Precision`,xend=`1000 birds_Recall`,yend=`1000 birds_Precision`), arrow = arrow(length = unit(0.5, "cm"))) +
-    labs(x="Recall",y="Precision", col="Dataset") + theme_bw()
+    labs(x="Recall",y="Precision", col="Dataset") + theme_bw() + theme(legend.position="left")
   ggsave("Vector_arrows.png",height=4,width=6)
+  ggsave("Vector_arrows.svg",height=4,width=6)
 
   df %>% filter(Model == "None") %>% ggplot(.,aes(x=variable, y=value)) + geom_violin() + geom_point(aes(col=newname)) + labs(x="", col="Dataset") + ylim(0,1) +
     theme(legend.position = "bottom") + guides(col=guide_legend(ncol=2))
@@ -74,7 +73,7 @@
     summarize(value=mean(value)) %>% pivot_wider(names_from = c("Model","variable"),values_from="value")
 
   None_df <- df %>%
-    filter(Model %in% c("1000 birds")) %>% group_by(Model, Annotations,newname, variable, Iteration) %>%
+    filter(Model %in% c("1000 birds")) %>% group_by(Model, Annotations,newname, variable) %>%
     summarize(value=mean(value)) %>% pivot_wider(names_from = c("Model","variable"),values_from="value")
 
   annotation_df <- random_df %>% inner_join(None_df) %>%
@@ -82,11 +81,11 @@
     filter(!is.na(Annotations)) %>% select(newname, Annotations, Recall=Recall_diff, Precision=Precision_diff) %>%
     melt(id.vars=c("newname","Annotations"))
 
-  ggplot(annotation_df,aes(x=Annotations,y=value,col=newname)) +
-    facet_wrap(~variable, ncol=1) + geom_line() + geom_point(size=3) +
+  ggplot(annotation_df,aes(x=as.factor(Annotations),y=value,col=newname)) +
+    facet_wrap(~variable, ncol=1) + geom_line() + geom_point(size=1.5) +
     geom_hline(yintercept = 0, linetype="dashed") +
     labs(y="Difference from Fine-tuned Model", x="Local Annotations",col="Dataset") + theme_bw() +
-    scale_y_continuous(labels=scales::percent_format()) + xlim(0,10000)
+    scale_y_continuous(labels=scales::percent_format())
   ggsave("Fine_tuned_Annotations.png",height=5,width=7.5)
 
   # zeo shot difference and random weights
@@ -102,7 +101,7 @@
   ggplot(annotation_df,aes(x=Annotations,y=value,col=newname)) +
     facet_wrap(~variable) + geom_line() + geom_point() +
     geom_hline(yintercept = 0, linetype="dashed") +
-    labs(y="Difference from Fine-tuned Model", x="Local Annotations",col="Dataset")
+    labs(y="Difference from Zeroshot Model", x="Local Annotations",col="Dataset")
 
   #Local only vectors
 
