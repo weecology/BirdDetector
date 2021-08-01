@@ -215,7 +215,7 @@ def mini_fine_tune(dataset, comet_logger, config, savedir, n):
         print("There are {} annotations in {}, cannot select {}".format(df.shape[0],dataset, n))
         return None
     
-    for i in range(2):
+    for i in range(3):
         try:
             image_save_dir = "{}/{}_mini_{}_{}".format(savedir, dataset, i, n)
             os.mkdir(image_save_dir)
@@ -260,7 +260,7 @@ def mini_random_weights(dataset, comet_logger, config, savedir, n):
     
     #Fine tuning, up to 1000 birds from train
     min_annotation_results = []
-    for i in range(2):
+    for i in range(3):
         try:
             image_save_dir = "{}/{}_random_{}_{}".format(savedir, dataset, i, n)
             os.mkdir(image_save_dir)

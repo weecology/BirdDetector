@@ -34,6 +34,11 @@
   m %>% group_by(Model, variable) %>% summarize(mean = mean(value))
   m %>% group_by(newname,Model, variable) %>% summarize(mean = mean(value)) %>% filter(Model=="None") %>% as.data.frame()
 
+  df %>% filter(Model %in% c("1000 birds", "All available")) %>% filter(Annotations == 1000 & Model == "1000 birds" | Model=="All available") %>% group_by(Model, newname, variable) %>% summarize(value = mean(value)) %>% pivot_wider(names_from = c("Model","variable"),values_from="value") %>%
+    ggplot(.,aes(x))  + geom_point(aes(col=newname, x=`1000 birds_Recall`,y=`1000 birds_Precision`)) + geom_segment(show.legend =FALSE,aes(col=newname, xend=`All available_Recall`,yend=`All available_Precision`,x=`1000 birds_Recall`,y=`1000 birds_Precision`), arrow = arrow(length = unit(0.5, "cm"))) +
+    labs(x="Recall",y="Precision", col="Dataset") + theme_bw()
+  ggsave("All_available_vectors.png",height=4,width=6)
+
   ggplot(m %>% filter(Model %in% c("None","1000 birds")),aes(x=value,fill=Model)) + geom_density(alpha=0.5) + facet_wrap(~variable)
 
   zenodo<-df %>% filter(Model == "Fine Tune")
@@ -47,19 +52,14 @@
   ggplot(global_weights,aes(x=newname,y=value, col=Pretrained)) + geom_boxplot() + facet_wrap(~variable) + coord_flip() + theme_bw()
   ggsave("Globalweights.png",height=5,width=8)
 
-  ## Vector arrows
-  df$newname<-factor(df$newname,levels = str_sort(as.character(unique(df$newname)),numeric = T))
-  vector_data <- df %>%filter(Model %in% c("1000 birds","None")) %>% group_by(Model, newname, variable) %>% summarize(value=mean(value)) %>% pivot_wider(names_from = c("Model","variable"),values_from="value")
-  ggplot(vector_data) + geom_point(aes(col=newname, x=`None_Recall`,y=`None_Precision`)) + geom_segment(show.legend =FALSE,aes(col=newname, x=`None_Recall`,y=`None_Precision`,xend=`1000 birds_Recall`,yend=`1000 birds_Precision`), arrow = arrow(length = unit(0.5, "cm"))) +
-    labs(x="Recall",y="Precision", col="Dataset") + theme_bw()
-  ggsave("Vector_arrows.png",height=4,width=6)
-  #Boxplot with insets
-  df %>% filter(Model == "None") %>% ggplot(.,aes(x=variable, y=value)) + geom_violin() + geom_point() + labs(x="") + ylim(0,1)
+    #Boxplot with insets
+  df %>% filter(Model == c("1000 birds","RandomWeight"), newname=="9. Seabirds - North Atlantic")  %>% ggplot(.,aes(x=as.factor(Annotations), y=value, fill=Model)) + geom_point(aes(col=Model)) + labs(x="Local Annotations",fill="Dataset") + facet_wrap(newname~variable, scales="free")
   ggsave("Boxplots_zeroshot.svg",height=4,width=4)
 
-  vector_data <- df %>%filter(Model %in% c("1000 birds","None")) %>% group_by(Model, newname, variable) %>% summarize(value=mean(value)) %>% pivot_wider(names_from = c("Model","variable"),values_from="value")
+  df$newname<-factor(df$newname,levels = str_sort(as.character(unique(df$newname)),numeric = T))
+  vector_data <- df %>%filter(Model %in% c("1000 birds","None")) %>% group_by(Model, newname, variable) %>% filter(Annotations==1000|is.na(Annotations)) %>% summarize(value=mean(value)) %>% pivot_wider(names_from = c("Model","variable"),values_from="value")
   ggplot(vector_data) + geom_point(aes(col=newname, x=`None_Recall`,y=`None_Precision`)) + geom_segment(show.legend =FALSE,aes(col=newname, x=`None_Recall`,y=`None_Precision`,xend=`1000 birds_Recall`,yend=`1000 birds_Precision`), arrow = arrow(length = unit(0.5, "cm"))) +
-    labs(x="Recall",y="Precision", col="Dataset") + theme_bw() + theme(legend.position="left")
+    labs(x="Recall",y="Precision", col="Dataset") + theme_bw()
   ggsave("Vector_arrows.png",height=4,width=6)
   ggsave("Vector_arrows.svg",height=4,width=6)
 
@@ -82,7 +82,7 @@
     melt(id.vars=c("newname","Annotations"))
 
   ggplot(annotation_df,aes(x=as.factor(Annotations),y=value,col=newname)) +
-    facet_wrap(~variable, ncol=1) + geom_line() + geom_point(size=1.5) +
+    facet_wrap(~variable, ncol=1) + geom_line(aes(group=newname)) + geom_point(size=1.5) +
     geom_hline(yintercept = 0, linetype="dashed") +
     labs(y="Difference from Fine-tuned Model", x="Local Annotations",col="Dataset") + theme_bw() +
     scale_y_continuous(labels=scales::percent_format())
@@ -101,7 +101,7 @@
   ggplot(annotation_df,aes(x=Annotations,y=value,col=newname)) +
     facet_wrap(~variable) + geom_line() + geom_point() +
     geom_hline(yintercept = 0, linetype="dashed") +
-    labs(y="Difference from Zeroshot Model", x="Local Annotations",col="Dataset")
+    labs(y="Difference from Zeroshot Model", x="Local Annotations",col="Dataset") + theme_bw()
 
   #Local only vectors
 
@@ -121,17 +121,3 @@
     geom_segment(show.legend =FALSE,aes(col=newname, x=`RandomWeight_Recall`,y=`RandomWeight_Precision`,xend=`All available_Recall`,yend=`All available_Precision`), arrow = arrow(length = unit(0.25, "cm"))) +
     labs(x="Recall",y="Precision", col="Dataset") + theme_bw()
   ggsave("Vector_arrows_finetune_size.png",height=4,width=6)
-
-  #AS Differences
-  vector_data <- df %>%filter(Model %in% c("RandomWeight","All available")) %>%
-    group_by(Model, newname, variable, Annotations) %>%
-    summarize(value=mean(value)) %>%
-    pivot_wider(names_from = c("Model","variable"),values_from="value") %>% mutate(Recall= `All available_Recall` - `RandomWeight_Recall`) %>%
-    mutate(Precision = `All available_Precision` - `RandomWeight_Precision`) %>% select(Annotations, newname, Recall, Precision) %>%
-    melt(id.vars=c("newname","Annotations"))
-
-  ggplot(vector_data,aes(x=Annotations, y= value, col=newname), size=5) +
-    facet_wrap(~variable, ncol=1) + geom_point()  +
-    scale_y_continuous(labels = scales::percent_format()) +
-    theme_bw() +
-    geom_hline(yintercept=0,linetype="dashed") + labs(col="Dataset",y="Difference from Local Only Model")
