@@ -44,7 +44,7 @@ def upload(ACCESS_TOKEN, path):
 if __name__== "__main__":
     
     zipped_datasets = []
-    for x in ['mckellar',"seabirdwatch","palmyra","penguins","monash"]:
+    for x in ['michigan',"pfeifer","neill","poland","newmexico"]:
         z = zip_dataset(x)
         zipped_datasets.append(z)
     
