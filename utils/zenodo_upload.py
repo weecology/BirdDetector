@@ -7,8 +7,11 @@ import zipfile
 
 def zip_dataset(dataset):
     train = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))
-    test = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset))
-    df = pd.concat([train, test])
+    try:
+        test = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset))
+        df = pd.concat([train, test])
+    except:
+        df = train
     images_to_upload = df.image_path.unique()
     zipname = "/blue/ewhite/b.weinstein/generalization/zenodo/{}.zip".format(dataset)
     z = zipfile.ZipFile(zipname,'w')
