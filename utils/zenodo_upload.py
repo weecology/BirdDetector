@@ -16,7 +16,10 @@ def zip_dataset(dataset):
     zipname = "/blue/ewhite/b.weinstein/generalization/zenodo/{}.zip".format(dataset)
     z = zipfile.ZipFile(zipname,'w')
     z.write("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset), arcname="{}_train.csv".format(dataset))
-    z.write("/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), arcname="{}_test.csv".format(dataset))    
+    try:
+        z.write("/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset), arcname="{}_test.csv".format(dataset))  
+    except:
+        pass
     for x in images_to_upload:
         z.write("/blue/ewhite/b.weinstein/generalization/crops/{}".format(x), arcname=x)
     z.close()
