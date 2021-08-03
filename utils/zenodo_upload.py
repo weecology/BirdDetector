@@ -28,6 +28,8 @@ def zip_dataset(dataset):
 
 def get_token():
     token = os.environ.get('ZENODO_TOKEN')
+    if token is None:
+		raise ValueError("Token is {}".format(token)
     return token
 
 def upload(ACCESS_TOKEN, path):
@@ -40,7 +42,7 @@ def upload(ACCESS_TOKEN, path):
     # seperated by a slash.
     with open(path, "rb") as fp:
         r = requests.put(
-            "%s/%s" % (bucket_url, filename),
+            "{}/{}".format(bucket_url, filename),
             data=fp,
             params={'access_token': ACCESS_TOKEN},
         )
