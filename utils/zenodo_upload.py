@@ -29,7 +29,8 @@ def zip_dataset(dataset):
 def get_token():
     token = os.environ.get('ZENODO_TOKEN')
     if token is None:
-        raise ValueError("Token is {}".format(token)
+        raise ValueError("Token is {}".format(token))
+    
     return token
 
 def upload(ACCESS_TOKEN, path):
