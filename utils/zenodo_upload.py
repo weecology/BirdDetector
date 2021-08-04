@@ -52,12 +52,16 @@ def upload(ACCESS_TOKEN, path):
     
 if __name__== "__main__":
     
-    zipped_datasets = []
-    for x in ['michigan',"pfeifer","neill","poland","newmexico"]:
-        z = zip_dataset(x)
-        zipped_datasets.append(z)
+    #zipped_datasets = []
+    #for x in ['michigan',"pfeifer","neill","poland","newmexico"]:
+        #z = zip_dataset(x)
+        #zipped_datasets.append(z)
     
-    #zipped_datasets = glob.glob("/blue/ewhite/b.weinstein/generalization/zenodo/*.zip")
-    ACCESS_TOKEN = get_token()    
-    for f in zipped_datasets:
-        upload(ACCESS_TOKEN, f)
+    ##zipped_datasets = glob.glob("/blue/ewhite/b.weinstein/generalization/zenodo/*.zip")
+    #ACCESS_TOKEN = get_token()    
+    #for f in zipped_datasets:
+        #upload(ACCESS_TOKEN, f)
+
+    for x in ['michigan',"pfeifer","newmexico","hayes","penguins","terns","USGS","seabirdwatch","palmyra","neill","mckellar","monash"]:
+        ACCESS_TOKEN = get_token()    
+        upload(ACCESS_TOKEN, "{}_finetune.pt".format(x))
