@@ -16,6 +16,7 @@ comet_logger.experiment.add_tag(dataset)
 df = pd.read_csv("/blue/ewhite/b.weinstein/generalization/crops/{}_train.csv".format(dataset))  
 n = df.shape[0]
 model = BirdDetector(transforms = deepforest_transform)
+model.model.load_state_dict(torch.load("/blue/ewhite/b.weinstein/generalization/snapshots/terns_zeroshot.pt"))
 n=20000
 train_annotations = select(df, n=n)
 #model.config["validation"]["csv_file"] = "/blue/ewhite/b.weinstein/generalization/crops/{}_test.csv".format(dataset)

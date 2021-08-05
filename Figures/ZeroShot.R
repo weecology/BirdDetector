@@ -48,9 +48,9 @@
   global_weights<-df %>% filter(Model %in% c("1000 birds","RandomWeight"))
   global_weights[global_weights$Model == "1000 birds","Pretrained"] = TRUE
   global_weights[!global_weights$Model == "1000 birds","Pretrained"] = FALSE
-
-  ggplot(global_weights,aes(x=newname,y=value, col=Pretrained)) + geom_boxplot() + facet_wrap(~variable) + coord_flip() + theme_bw()
-  ggsave("Globalweights.png",height=5,width=8)
+  global_weights$newname <- factor(global_weights$newname, levels=rev(str_sort(unique(global_weights$newname), numeric = T)))
+  ggplot(global_weights,aes(x=newname,y=value, col=Pretrained)) + geom_boxplot(fill="grey90", size=0.5) + facet_wrap(Annotations~variable) + coord_flip() + theme_bw()
+  ggsave("Globalweights.png",height=6,width=8)
 
     #Boxplot with insets
   vardata <- df %>% filter(Model %in% c("1000 birds","RandomWeight")) %>% group_by(Model, Annotations, variable) %>% summarize(var=var(value))
@@ -68,12 +68,19 @@
   ggsave("Vector_arrows.png",height=4,width=6)
   ggsave("Vector_arrows.svg",height=4,width=6)
 
-  violin_data<-df %>% filter(Model %in% c("None","1000 birds")) %>% filter(is.na(Annotations) | Annotations == 1000) %>% group_by(Model, newname, Annotations, variable) %>% summarize(value=mean(value))
-  violin_data$Model <- factor(violin_data$Model,levels=c("None","1000 birds"))
-  ggplot(violin_data,aes(x=Model, y=value)) + facet_wrap(~variable) + geom_violin() + geom_point(col="grey60") +
-    labs(x="Local data", col="Dataset") + ylim(0,1) + geom_line(aes(col=newname,group=newname), alpha=0.75,size=0.5, show.legend = T, arrow=arrow(length = unit(0.2, "cm"))) + theme_bw() +
+  violin_data<-df %>% filter(Model %in% c("None","1000 birds")) %>%
+    filter(is.na(Annotations) | Annotations == 1000) %>%
+    group_by(Model, newname, Annotations, variable) %>% summarize(value=mean(value)) %>% mutate(Model = as.character(Model))
+  violin_data[violin_data$Model == "None","Model"] <- "0"
+  violin_data$Model[violin_data$Model == "1000 birds"] <- "1000"
+  violin_data$Model <- as.numeric(violin_data$Model)
+
+  ggplot(violin_data,aes(x=as.factor(Model), y=value)) + facet_wrap(~variable) + geom_violin() + geom_point(col="grey60") +
+    labs(x="Local Annotations", col="Dataset") + ylim(0,1) + geom_line(aes(col=newname,group=newname), alpha=0.75,size=0.5, show.legend = T, arrow=arrow(length = unit(0.2, "cm"))) + theme_bw() +
  guides()
-  ggsave("Violinplots.svg",height=3.5,width=6.5) + theme_bw()
+  ggsave("Violinplots.svg",height=4,width=7.5) + theme_bw()
+  ggsave("Violinplots.png",height=4,width=7.5) + theme_bw()
+
   # zeo shot difference and random weights
   random_df <- df %>%
     filter(Model %in% c("RandomWeight")) %>% group_by(Model, Annotations,newname, variable) %>%
