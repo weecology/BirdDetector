@@ -22,11 +22,11 @@ pip install deepforest
 
 Where possible we have released data to make a 'machine learning ready' dataset. See the [zenodo archive](https://zenodo.org/record/5033174). Each dataset was zipped into an archive. Each contains images and two .csv files one for train and one for test. 
 
-## Everglades Model
+## Everglades Models
 
-The everglades data was annotated on Zooniverse and parsed using the utilities in the EvergladesWadingBird [Zooniverse repo](https://github.com/weecology/EvergladesWadingBird/blob/master/Zooniverse/aggregate.py). This repo starts after the data have been downloaded and split into training/test.
+### Bird Detector
+
+The everglades data was annotated on Zooniverse and parsed using the utilities in the EvergladesWadingBird [Zooniverse repo](https://github.com/weecology/EvergladesWadingBird/blob/master/Zooniverse/aggregate.py). This repo starts after the data have been downloaded and split into training/test using this [script](https://github.com/weecology/EvergladesWadingBird/blob/main/Zooniverse/create_bird_detector_annotations.py).
 The everglades.py script creates a [comet experiment](https://www.comet.ml/bw4sz/everglades).
-
-
 
 
