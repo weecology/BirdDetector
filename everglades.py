@@ -10,6 +10,8 @@ import os
 import numpy as np
 import torch
 from datetime import datetime
+import yaml
+from pathlib import Path
 
 def is_empty(precision_curve, threshold):
     precision_curve.score = precision_curve.score.astype(float)
@@ -80,8 +82,14 @@ def predict_empty_frames(model, empty_images, comet_experiment, invert=False):
 def train_model(train_path, test_path, empty_images_path=None, save_dir=".", debug = False):
     """Train a DeepForest model"""
     
-    comet_logger = CometLogger(api_key="ypQZhYfs3nSyKzOfz13iuJpj2",
-                                  project_name="everglades", workspace="bw4sz")
+    comet_yaml_path = str(Path(Path.home(), Path("comet_ml.yml")))
+    with open(comet_yaml_path, 'r') as file:
+        comet_yaml = yaml.safe_load(file)
+
+    comet_logger = CometLogger(api_key=comet_yaml['api_key'],
+                               project_name="everglades",
+                               workspace=comet_yaml['workspace'])
+
     
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     model_savedir = "{}/{}".format(save_dir,timestamp)  
