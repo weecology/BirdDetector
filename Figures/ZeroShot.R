@@ -45,11 +45,11 @@
   write.csv(zenodo,"finetuned_results.csv")
 
   #With and without pretraining
-  global_weights<-df %>% filter(Model %in% c("1000 birds","RandomWeight"))
+  global_weights<-df %>% filter(Model %in% c("1000 birds","RandomWeight")) %>% group_by(Model, Annotations,variable, newname)
   global_weights[global_weights$Model == "1000 birds","Pretrained"] = TRUE
   global_weights[!global_weights$Model == "1000 birds","Pretrained"] = FALSE
   global_weights$newname <- factor(global_weights$newname, levels=rev(str_sort(unique(global_weights$newname), numeric = T)))
-  ggplot(global_weights,aes(x=newname,y=value, col=Pretrained)) + geom_boxplot(fill="grey90", size=0.5) + facet_wrap(Annotations~variable) + coord_flip() + theme_bw()
+  ggplot(global_weights,aes(x=as.factor(Annotations), y=value, col=variable, fill=Pretrained)) + geom_boxplot() + facet_wrap(variable~newname) + scale_fill_manual(values = c("white","black"))
   ggsave("Globalweights.png",height=6,width=8)
 
     #Boxplot with insets
@@ -58,7 +58,7 @@
   vardata[!vardata$Model == "1000 birds","Pretrained"] = FALSE
 
     ggplot(vardata,aes(x=Annotations, y=var, shape=variable, col=Pretrained)) + geom_line() + geom_point(col="black") +
-    labs(x="Local Annotations",fill="Dataset", y="Variance") + labs(shape="Metric") + theme_bw()
+    labs(x="Local Annotations",fill="Dataset", y="Variance") + labs(shape="Metric") + theme_bw() + scale_x_continuous(breaks = c(0,1000,5000,10000,20000))
   ggsave("Variance.png",height=4,width=6)
 
   df$newname<-factor(df$newname,levels = str_sort(as.character(unique(df$newname)),numeric = T))

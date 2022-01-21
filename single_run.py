@@ -38,6 +38,8 @@ result = run(path_dict=path_dict,
              config=config,
              train_sets=train_sets,
              test_sets=test_sets,
+             run_mini=False,
+             run_random=False,
              comet_logger=comet_logger,
              savedir=savedir)
 
